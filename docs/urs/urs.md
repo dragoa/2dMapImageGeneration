@@ -3,11 +3,11 @@
 ##### DIBRIS – Università di Genova. Scuola Politecnica, Software Engineering Course 80154
 
 
-**VERSION : X.X**
+**VERSION : 1.0**
 
 **Authors**  
-XXXX
-YYYY
+Alessandro Drago
+Abdullah Al Foysal
 
 **REVISION HISTORY**
 
