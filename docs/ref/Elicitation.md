@@ -8,17 +8,14 @@
 2. [Instruments](#p2)
 	1. [Passive Instruments](#sp2.1)
 	2. [Active Instruments](#sp2.2)
-3. [Requirement](#p3)
- 	1. [Stakeholders](#sp3.1)
- 	2. [Functional Requirements](#sp3.2)
- 	3. [Non-Functional Requirements](#sp3.3)
-  
+3. [References](#p3)
   
 <a name="p1"></a>
 
 ## 1. Introduction to Earth observation
 #### What is Earth observation?
-> Earth observation is the process of **acquiring observation of the Earth's surface** via different instruments mounted in different platforms.
+> Earth observation is the process of **acquiring observation of the Earth's surface** via different instruments mounted in different platforms. 
+> It can be performed via remote-sensing technologies (Earth observation satellites) or through direct-contact sensors in ground-based or airborne platforms (such as weather stations and weather balloons, for example)
 
 This instruments can be:
 - Active
@@ -32,20 +29,30 @@ The platforms could be for example:
 <a name="sp1.1"></a>
 
 ### 1.1 Definitions
-#### Remote Sensing 
-> The acquisition of information about an object or phenomenon without making physical contact with the object: the term can be applied to acquiring information about the Earth and other planets.
+#### Remote Sensing
+> The acquisition of information about an object or phenomenon without making physical contact with the object: the term can be applied to acquiring information about the Earth and other planets. <br>
+> [Remote sensing](https://en.wikipedia.org/wiki/Remote_sensing) can be divided into two types of methods: Passive remote sensing and Active remote sensing. Passive sensors gather radiation that is emitted or reflected by the object or surrounding areas. Reflected sunlight is the most common source of radiation measured by passive sensors. Active collection, on the other hand, emits energy in order to scan objects and areas whereupon a sensor then detects and measures the radiation that is reflected or backscattered from the target.
 
-#### Spatial resolution
+<picture>
+  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://upload.wikimedia.org/wikipedia/commons/6/61/Remote_Sensing_Illustration.jpg" width="40%" height="10%">
+</picture>
+<picture>
+  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://www.earthdata.nasa.gov/s3fs-public/imported/activePassive.png?VersionId=LwgT4UZ4_eLF7Gks6AgKU7l___M7IXIh" width="50%" height="20%">
+</picture>
+
+#### [Spatial resolution](https://en.wikipedia.org/wiki/Spatial_resolution)
 How can I measure an image resolution? 
 > One possibility is the physical dimension that represent a pixel of the image.
 
 #### Spectral resolution
-> Spectral resolution describes the amount of spectral detail in a band.
+> Spectral resolution describes the amount of spectral detail in a band. <br> 
+Spectral resolution is the ability of a sensor to discern finer wavelengths, that is, having more and narrower bands. Many sensors are considered to be multispectral, meaning they have 3-10 bands. Some sensors have hundreds to even thousands of bands and are considered to be hyperspectral.
+The narrower the range of wavelengths for a given band, the finer the spectral resolution.
 
 #### Revisit time
 > The time elapsed between subsequent observations of the same area of interest.
 
-<a name="sp2"></a>
+<a name="p2"></a>
 
 ## 2. Instruments 
 Not all the electromagnetic spectrum can be used for Earth observation. We could use:
@@ -123,3 +130,12 @@ Thanks to the ranging capability of radar it measure the surface topography prof
 
 #### 2.2.4 **Radar scatterometer**
 A radar scatterometer is a microwave radar sensor used to measure the **reflection** or scattering effect **produced while scanning the surface of the Earth** from an aircraft or a satellite. It provides a measure of wind speed and direction near the sea surface.
+
+<a name="p3"></a>
+
+## 3.0 References
+- https://en.wikipedia.org/wiki/Earth_observation
+- https://www.esa.int/Applications/Observing_the_Earth
+- https://www.oecd.org/environment/indicators-modelling-outlooks/Earth_Observation_for_Decision_Making.pdf
+- https://www.earthdata.nasa.gov/learn/backgrounders/remote-sensing#:~:text=Spectral%20resolution%20is%20the%20ability,are%20considered%20to%20be%20hyperspectral.
+- https://gisgeography.com/spatial-resolution-vs-spectral-resolution/
