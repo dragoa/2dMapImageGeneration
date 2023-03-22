@@ -1,7 +1,7 @@
 **Please - modify this readme according to the following**
 
 # TITLE OF THE PROJECT
-### Company name
+### Fade Out Software
 #### Small description of the project
 
 

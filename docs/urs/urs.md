@@ -1,6 +1,6 @@
 
-### User Requirements Specification Document
-##### DIBRIS – Università di Genova. Scuola Politecnica, Software Engineering Course 80154
+### Usr Requirements Specification Document
+##### DIBRIS – Università di Genova. Scuola Politecnica, Software Engineering Course 80154e
 
 
 **VERSION : 1.0**
