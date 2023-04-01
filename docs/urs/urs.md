@@ -52,6 +52,7 @@ This paper introduces the Requirements Analysis for the Software Engineering cou
 | SE-80154							   | Software Engineering course, 2023 at university of Genoa, 80154 is its ID number |
 | WASDI								   | Web Advanced Space Developer Interface |
 | FadeOut Software					   |  |
+| EO					   			   |  Earth Observation |
 
 
 <a name="sp1.3"></a>
@@ -64,6 +65,8 @@ This paper introduces the Requirements Analysis for the Software Engineering cou
 
 ## 2. System Description
 <a name="sp2.15"></a>
+WASDI is an online platform that offers services to develop and deploy online applications that use satellite data. 
+The project involves the developement of a platform that helps Earth Observation (EO) experts process satellite imagery on the cloud. The team is working on developing new software tools that can extract images and data from the results of the analytics tools present on the platform, in order to help communicate the results of the analyses to the stakeholders involved. The project aims to ease the communication of the results of the applications so that decision makers can better understand the phenomena they are dealing with and respond quickly to questions such as flood size, building count, and wildfire location. The team is open to exploring various programming languages and frameworks to achieve their goals.
 
 ### 2.1 Context and Motivation
 
