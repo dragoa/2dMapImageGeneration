@@ -17,10 +17,10 @@ Notes:
 - **C**: A possible new feature could be the ability to export a gif file showing the time evolution of a particular phenomenon. One problem to consider is that the images are stored in a WASDI database and need to be downloaded. These images may also be very large, so resizing may be necessary.
 We would also like to have the ability to export the report, when finished, to a pdf file, for example. We are also open to any suggestions related to improving the user interface.
 
-**How does wasdi work with data? And how are they read**
+**How does wasdi work with data? And how are they read?**
 - **C**: WASDI takes images from different providers, these are then preprocessed before being displayed and then saved in a database. When wasdi is first launched, these images must be downloaded and a function in the WASDI library returns the path to them. There is also an heuristic algorithm that shows the best images from different providers.
 
-**So what we should do at first? And what are the programming languages that you are using**
+**So what we should do at first? And what are the programming languages that you are using?**
 - **C**: Lets warm up the things with trying the WASDI platform and look out for any suggestion. It can be accessed via browser or directly from your machine using one of the supported WASDI libraries. WASDI in fact supports several programming languages, but to get started it may be useful to use Python. WASDI also provides [some documentation](https://wasdi.readthedocs.io/en/latest/index.html#) and some tutorials that you can check out.
 
 **Do we need any particular requirement to use WASDI on our PC?**
