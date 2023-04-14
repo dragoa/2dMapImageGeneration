@@ -81,7 +81,7 @@ Examples could be the detection of floods, or wildfire location.
 ### 2.2 Project Obectives 
 A required feature would be a processor that works as a print server to create a document in pdf format out of the content described by the users.<br>
 The user shall be able to submit a file in some markup language, for example LaTeX, containing a description of what he would like to add in the report.
-Another desiderable feature would be the possibility for the user to export an animated gif file out of a set of tiff images. 
+Another desiderable feature would be the possibility for the user to export an animated GIF file out of a set of TIFF images. As per our previous discussions, we are currently developing a print server that will allow users to create documents out of the content they describe. With LaTeX, our print server will enable users to produce documents with precise and consistent formatting, making it ideal for academic writing and research.
 
 <a name="p3"></a>
 
@@ -108,6 +108,7 @@ WASDI
 | 1.0 | Improve the general user interface of the web application | M |
 | 2.0 | The user shall be able to export a report in pdf format | M |
 | 3.0 | The user shall be able to generate a gif file from a set of TIFF files | D |
+| 4.0 | The pdf shall contain all the information that the GIF will have and also will depend on the user that what information USER wants | M |
 
 <a name="sp3.3"></a>
 ### 3.2 Non-Functional Requirements 
