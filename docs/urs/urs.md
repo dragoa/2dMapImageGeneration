@@ -14,7 +14,8 @@ Alessandro Drago
 | Version    | Date        | Authors      | Notes        |
 | ----------- | ----------- | ----------- | ----------- |
 | 1.0 | 27/03/2023 | Alessandro Drago | Given a first description of the project. |
-| 1.1 | 13/04/2023 | Alessandro Drago | Update of the urs file, added Context and Motivations |
+| 1.1 | 13/04/2023 | Alessandro Drago | Update of the urs file, added Context and Motivations. |
+| 1.2 | 05/07/2023 | Alessandro Drago | Refined the urs file, added non functional requirements. |
 
 # Table of Contents
 
@@ -106,13 +107,20 @@ WASDI
 | ID | Descrizione | Priorità |
 | --------------- | ----------- | ---------- | 
 | 1.0 | Improve the general user interface of the web application | M |
-| 2.0 | The user shall be able to export a report in pdf format | M |
-| 3.0 | The user shall be able to generate a gif file from a set of TIFF files | D |
-| 4.0 | The pdf shall contain all the information that the GIF will have and also will depend on the user that what information USER wants | M |
+| 2.0 | The user shall be able to generate a gif file from a set of TIFF files | D |
+| 3.0 | The user shall be able to export a report in a pdf format | M |
 
 <a name="sp3.3"></a>
 ### 3.2 Non-Functional Requirements 
  
 | ID | Descrizione | Priorità |
 | --------------- | ----------- | ---------- | 
-| 1.0 | XXXXX |M|
+| 1.0 | The report shall contain the result of the analysis done on wasdi. |M|
+| 2.0 | The report shall have a predefined format. |M|
+| 3.0 | The report shall display the logo of the company. |M|
+| 4.0 | The report shall contain the images processed via wasdi. |M|
+| 5.0 | The report shall contain also images with a specific style uploaded by the user. |M|
+| 6.0 | Images used for creating the GIF file should be resized. |M|
+| 7.0 | Images used for creating the GIF file should have a style uploaded by the user. |D|
+
+
