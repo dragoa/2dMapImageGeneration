@@ -13,9 +13,9 @@ Alessandro Drago
 
 | Version    | Date        | Authors      | Notes        |
 | ----------- | ----------- | ----------- | ----------- |
-| 1.0 | 27/03/2023 | Alessandro Drago, Abdullah Al Foysal | Given a first description of the project, explained the requiremnts for the project. |
-| 1.1 | 13/04/2023 | Alessandro Drago, Abdullah Al Foysal | Update of the urs file, added Context and Motivations. |
-| 1.2 | 05/07/2023 | Alessandro Drago, Abdullah Al Foysal | Refined the urs file, added non functional requirements. |
+| 1.0 | 27/03/2023 | Alessandro Drago | Given a first description of the project, explained the requiremnts for the project. |
+| 1.1 | 13/04/2023 | Alessandro Drago | Update of the urs file, added Context and Motivations. |
+| 1.2 | 05/07/2023 | Alessandro Drago | Refined the urs file, added non functional requirements. |
 | 1.3 | 21/07/2023 | Alessandro Drago, Abdullah Al Foysal | Requirements are now refined. |
 
 # Table of Contents
@@ -57,6 +57,7 @@ This paper introduces the Requirements Analysis for the Software Engineering cou
 | EO					   			   | Earth Observation |
 | TIFF					   			   | Stands for Tag Image File Format. It is a file format used to store raster graphics and image information. |
 | GeoServer					   		   | Open source server for sharing geospatial data |
+| Workspace							   | Space on WASDI where a user can store and manipulate satellitar images |
 
 
 <a name="sp1.3"></a>
@@ -112,21 +113,17 @@ WASDI
 
 | ID | Descrizione | Priorità |
 | --------------- | ----------- | ---------- | 
-| 1.0 | The user shall be able to export a full report of the analysis in a PDF format | M |
+| 1.0 | The user shall be able to export a full report of the analysis in a PDF format. |M|
 | 2.0 | The report shall contain the result of the analysis done on wasdi. |M|
 | 3.0 | The report shall have a predefined format. |M|
 | 4.0 | The report shall display the logo of the company. |M|
 | 5.0 | The report shall contain the images processed via WASDI. |M|
 | 6.0 | The report shall contain also images with a specific style uploaded by the user. |M|
 | 7.0 | Users shall be able to select a specif area on the images generated. |M|
-| 8.0 | Users shall be able to generate a GIF file from a set of TIFFs. | D |
-| 9.0 | Users shall be able to generate a PDF file as the output and all the details will be contained by that pdf. | M |
+| 8.0 | Users shall be able to generate a GIF file from a set of TIFFs. |D|
 
 <a name="sp3.3"></a>
 ### 3.2 Non-Functional Requirements 
  
-| ID | Descrizione | Priorità |
-| 1.0 | reportlab.pdfgen( can customize the content of the PDF file by modifying the create_pdf() function. | M | 
-
-
-
+ ID | Descrizione | Priorità |
+| --------------- | ----------- | ---------- | 

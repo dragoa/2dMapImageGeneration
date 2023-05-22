@@ -1,17 +1,17 @@
-# Title of the project
+# Genarate a full report on WASDI
 
 ## Design Requirement Specification Document
 
 DIBRIS – Università di Genova. Scuola Politecnica, Corso di Ingegneria del Software 80154
 
 
-<div align='right'> <b> Authors </b> <br> AA <br> BB  </div>
+<div align='left'> <b> Authors </b> <br> Abdullah Al Foysal<br> Alessandro Drago </div>
 
 ### REVISION HISTORY
 
 Version | Data | Author(s)| Notes
 ---------|------|--------|------
-1 | XX/YY/ZZ | AA <br> BB | First Versionn of the document. Document Template
+1 | 05/21/23 | Alessandro Drago | First Versionn of the document. Document Template
 
 ## Table of Content
 
@@ -82,38 +82,40 @@ Version | Data | Author(s)| Notes
 
 ### <a name="project-intro"></a> 2.1 Project Introduction 
 <details> 
-    <summary>  Describe at an high level what is the goal of the project and a possible solution
-    </summary>
-    <p>This sub section should describe ...</p>
+    <p>Through workspaces and applications in the marketplace, researchers are able to collect satellite data and run algorithms on them. Once this phase is finished, a required feature is the ability to create a report in PDF containing all the information from the processing.This report will then be given by the researchers to those less experienced users or stakeholders.<br>
+    The document shall have a predefined template in which various information such as date, name and logo of the company, images that were processed and explanatory paragraphs of text are present.
+    The images found in WASDI's workspace are in TIFF format and therefore before they are inserted into the document, they must be processed.<br>
+    On the various servers in which these images are stored is an instance of GeoServer is present. 
+    So the idea is to take the images from the WASDI workspace, process them with GeoServer by, for example, selecting a certain area of that image, or applying a style, and return this image in a desirable format (PNG or GIF).</p>
 </details>
 
 ### <a name="tech"></a> 2.2 Technologies used
 
 <details> 
-    <summary> Description of the overall architecture. </summary>
-    <p>Graphical representation of the system architecture.  May be composed by multiple diagrams depending on the differences in the environment
-specifications    </p>
+    <summary> Software used to develope the algorithm. </summary>
+    <p>https://www.jetbrains.com/pycharm/  (PyCharm IDE)</p>
+    <p>https://www.wasdi.net/#!/home (WASDI cloud services and libraries)</p>
+    <p>https://geoserver.org/ (GeoServer Open source server for sharing geospatial data)</p>
 </details>
 
 ### <a name="constraints"></a> 2.3 Assumption and Constraint 
 <details> 
-    <summary> Put a summary of the section
-    </summary>
-    <p>This sub section should describe ...</p>
+    <summary> Assumptions and Constraints</summary>
+    <p>Since this is a WASDI processor you will need an account to execute the code correctly.</p>
 </details>
 
 ## <a name="system-overview"></a>  3 System Overview
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>This sub section should describe ...</p>
+    <p><img src="imgs/WASDI.svg" alt="System Architecture" style="width: 500px;" /></p>
 </details>
 
 ### <a name="architecture"></a>  3.1 System Architecture
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>...</p>
 </details>
 
 ### <a name="interfaces"></a>  3.2 System Interfaces
