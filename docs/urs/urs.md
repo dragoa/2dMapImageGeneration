@@ -6,7 +6,7 @@
 **VERSION : 1.1**
 
 **Authors**  
-Abdullah Al Foysal
+Abdullah Al Foysal<br>
 Alessandro Drago
 
 **REVISION HISTORY**
