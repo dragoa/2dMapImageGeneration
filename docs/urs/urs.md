@@ -13,7 +13,7 @@ Alessandro Drago
 
 | Version    | Date        | Authors      | Notes        |
 | ----------- | ----------- | ----------- | ----------- |
-| 1.0 | 27/03/2023 | Alessandro Drago | Given a first description of the project. |
+| 1.0 | 27/03/2023 | Alessandro Drago, Abdullah Al Foysal | Given a first description of the project, explained the requiremnts for the project. |
 | 1.1 | 13/04/2023 | Alessandro Drago, Abdullah Al Foysal | Update of the urs file, added Context and Motivations. |
 | 1.2 | 05/07/2023 | Alessandro Drago, Abdullah Al Foysal | Refined the urs file, added non functional requirements. |
 | 1.3 | 21/07/2023 | Alessandro Drago, Abdullah Al Foysal | Requirements are now refined. |
