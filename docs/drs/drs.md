@@ -11,7 +11,8 @@ DIBRIS – Università di Genova. Scuola Politecnica, Corso di Ingegneria del So
 
 Version | Data | Author(s)| Notes
 ---------|------|--------|------
-1 | 05/21/23 | Alessandro Drago | First Versionn of the document. Document Template
+1 | 05/21/23 | Alessandro Drago | First Versionn of the document. Document Template.
+2 | 05/22/23 | Alessandro Drago | Added System Architecture and refined some parts.
 
 ## Table of Content
 
@@ -47,22 +48,24 @@ Version | Data | Author(s)| Notes
     
 ### <a name="purpose"></a> 1.1 Purpose and Scope
 <details> 
-    <summary> The goal of this section is to describe the purpose of this document and intended audience  </summary>
+    <summary> The goal of this is to create a full report of the analysis done by the reaserchers on WASDI.
+    </summary>
     <p>This sub section should describe ...</p>
 </details>
 
 ### <a name="def"></a> 1.2 Definitions
-<details> 
-    <summary> Put a summary of the section
-    </summary>
-    <p>This sub section should describe ...</p>
     
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
-    
-</details>
+| Acronym				| Definition | 
+| ------------------------------------- | ----------- | 
+| SE23                                 | Software Engineering course, 2023 at university of Genoa |
+| SE-80154							   | Software Engineering course, 2023 at university of Genoa, 80154 is its ID number |
+| WASDI								   | Web Advanced Space Developer Interface |
+| FadeOut Software					   | Company holder of WASDI |
+| EO					   			   | Earth Observation |
+| TIFF					   			   | Stands for Tag Image File Format. It is a file format used to store raster graphics and image information. |
+| GeoServer					   		   | Open source server for sharing geospatial data |
+| Workspace							   | Space on WASDI where a user can store and manipulate satellitar images |
+
 
 ### <a name="overview"></a> 1.3 Document Overview
 <details> 
@@ -73,9 +76,10 @@ Version | Data | Author(s)| Notes
 
 ### <a name="biblio"></a> 1.4 Bibliography
 <details> 
-    <summary> Put a summary of the section
+    <summary> Useful documentation 
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>https://wasdi.readthedocs.io/en/latest/index.html (WASDI documentation)</p>
+    <p>https://docs.geoserver.org/ (GeoServer documentation)</p>
 </details>
 
 ## <a name="description"></a> 2 Project Description
@@ -106,30 +110,32 @@ Version | Data | Author(s)| Notes
 
 ## <a name="system-overview"></a>  3 System Overview
 <details> 
-    <summary> Put a summary of the section
+    <summary> System Overview
     </summary>
-    <p><img src="imgs/WASDI.svg" alt="System Architecture" style="width: 500px;" /></p>
+    <p>Graphical representation of the system overview.</p>
+    <img src="imgs/WASDI.svg" alt="System Architecture" style="width: 500px;" /><
 </details>
 
 ### <a name="architecture"></a>  3.1 System Architecture
 <details> 
-    <summary> Put a summary of the section
+    <summary> Graphic of the System Architecture
     </summary>
-    <p>...</p>
+    <p>Graphical representation of the system architecture.</p>
+    <img src="imgs/SysArchitecture.png" alt="System Architecture" style="width: 600px;" />
 </details>
 
 ### <a name="interfaces"></a>  3.2 System Interfaces
 <details> 
-    <summary> Put a summary of the section
+    <summary> The system should use a command line interface.
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>For now we'll develop a command line interface using Python, but a graphical interface will be added in the future.</p>
 </details>
 
 ### <a name="data"></a>  3.3 System Data
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>The system takes in input two JSON files: the parameters file and a config file required to work with WASDI</p>
 </details>
 
 #### <a name="inputs"></a>  3.3.1 System Inputs
