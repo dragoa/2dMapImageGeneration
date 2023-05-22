@@ -6,7 +6,7 @@
 **VERSION : 1.1**
 
 **Authors**  
-Abdullah Al Foysal<br>
+Abdullah Al Foysal
 Alessandro Drago
 
 **REVISION HISTORY**
@@ -14,9 +14,9 @@ Alessandro Drago
 | Version    | Date        | Authors      | Notes        |
 | ----------- | ----------- | ----------- | ----------- |
 | 1.0 | 27/03/2023 | Alessandro Drago | Given a first description of the project. |
-| 1.1 | 13/04/2023 | Alessandro Drago | Update of the urs file, added Context and Motivations. |
-| 1.2 | 05/07/2023 | Alessandro Drago | Refined the urs file, added non functional requirements. |
-| 1.3 | 21/07/2023 | Alessandro Drago | Requirements are now refined. |
+| 1.1 | 13/04/2023 | Alessandro Drago, Abdullah Al Foysal | Update of the urs file, added Context and Motivations. |
+| 1.2 | 05/07/2023 | Alessandro Drago, Abdullah Al Foysal | Refined the urs file, added non functional requirements. |
+| 1.3 | 21/07/2023 | Alessandro Drago, Abdullah Al Foysal | Requirements are now refined. |
 
 # Table of Contents
 
@@ -36,7 +36,7 @@ Alessandro Drago
 <a name="p1"></a>
 
 ## 1. Introduction
-This document contains what are the functional and non-functional requirements for a Software Engineering project at FadeOut Software.
+This document contains what are the functional and non-functional requirements for a Software Engineering project at FadeOut Software. As well as explained the reason for using those functional and non-functional sectors.
 
 <a name="sp1.1"></a>
 
@@ -120,12 +120,13 @@ WASDI
 | 6.0 | The report shall contain also images with a specific style uploaded by the user. |M|
 | 7.0 | Users shall be able to select a specif area on the images generated. |M|
 | 8.0 | Users shall be able to generate a GIF file from a set of TIFFs. | D |
+| 9.0 | Users shall be able to generate a PDF file as the output and all the details will be contained by that pdf. | M |
 
 <a name="sp3.3"></a>
 ### 3.2 Non-Functional Requirements 
  
 | ID | Descrizione | Priorità |
-| --------------- | ----------- | ---------- | 
+| 1.0 | reportlab.pdfgen( can customize the content of the PDF file by modifying the create_pdf() function. | M | 
 
 
 
