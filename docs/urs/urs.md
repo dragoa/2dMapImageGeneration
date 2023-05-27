@@ -15,8 +15,9 @@ Alessandro Drago
 | ----------- | ----------- | ----------- | ----------- |
 | 1.0 | 27/03/2023 | Alessandro Drago | Given a first description of the project, explained the requiremnts for the project. |
 | 1.1 | 13/04/2023 | Alessandro Drago | Update of the urs file, added Context and Motivations. |
-| 1.2 | 05/07/2023 | Alessandro Drago | Refined the urs file, added non functional requirements. |
-| 1.3 | 21/07/2023 | Alessandro Drago, Abdullah Al Foysal | Requirements are now refined. |
+| 1.2 | 07/05/2023 | Alessandro Drago | Refined the urs file, added non functional requirements. |
+| 1.3 | 21/05/2023 | Alessandro Drago, Abdullah Al Foysal | Requirements are now refined. |
+| 1.4 | 27/05/2023 | Alessandro Drago | Updated the requirements. |
 
 # Table of Contents
 
@@ -52,13 +53,18 @@ This paper introduces the Requirements Analysis for the Software Engineering cou
 | ------------------------------------- | ----------- | 
 | SE23                                 | Software Engineering course, 2023 at university of Genoa |
 | SE-80154							   | Software Engineering course, 2023 at university of Genoa, 80154 is its ID number |
-| WASDI								   | Web Advanced Space Developer Interface |
 | FadeOut Software					   | Company holder of WASDI |
-| EO					   			   | Earth Observation |
-| TIFF					   			   | Stands for Tag Image File Format. It is a file format used to store raster graphics and image information. |
-| GeoServer					   		   | Open source server for sharing geospatial data |
+| WASDI								   | Web Advanced Space Developer Interface |
 | Workspace							   | Space on WASDI where a user can store and manipulate satellitar images |
-
+| EO					   			   | Earth Observation |
+| GeoServer					   		   | Open source server for sharing geospatial data |
+| TIFF					   			   | Stands for Tag Image File Format. It is a file format used to store raster graphics and image information. |
+| GIF					   			   | Stands for Graphics Interchange Format. It's an image file format that can be used to create still images or animated images |
+| Band					   			   | Range of frequencies along the electromagnetic spectrum that the satellite measures |
+| Bounding-Box						   | Imaginary rectangle that outlines an object in an image |
+| CRS					   			   | Stands for Coordinate Reference System. Defines how georeferenced spatial data relates to real locations on the Earth’s surface |
+| EPSG					   			   | Stands for European Petroleum Survey Group. It's an unique identifier for a coordinate system or a projection. |
+| SLD					   			   | Stands for Styled Layer Descriptor. It's an XML file used for styling TIFF images  |
 
 <a name="sp1.3"></a>
 
@@ -88,7 +94,7 @@ There are also several applications in the Marketplace that are used to process 
 Through workspaces and applications in the marketplace, researchers are able to collect satellite data and run algorithms on them. Once this phase is finished, a required feature is the ability to create a report in PDF containing all the information from the processing. This report will then be given by the researchers to those less experienced users or stakeholders. 
 The document shall have a predefined template in which various information such as date, name and logo of the company, images that were processed and explanatory paragraphs of text are present.
 The images found in WASDI's workspace are in TIFF format and therefore before they are inserted into the document, they must be processed. 
-On the various servers in which these images are stored is an instance of GeoServer is present. 
+On the various servers in which these images are stored an instance of GeoServer is present. 
 So the idea is to take the images from the WASDI workspace, process them with GeoServer by, for example, selecting a certain area of that image, or applying a style, and return this image in a desirable format (PNG or GIF). 
 
 <a name="p3"></a>
@@ -113,14 +119,18 @@ WASDI
 
 | ID | Descrizione | Priorità |
 | --------------- | ----------- | ---------- | 
-| 1.0 | The user shall be able to export a full report of the analysis in a PDF format. |M|
-| 2.0 | The report shall contain the result of the analysis done on wasdi. |M|
-| 3.0 | The report shall have a predefined format. |M|
-| 4.0 | The report shall display the logo of the company. |M|
-| 5.0 | The report shall contain the images processed via WASDI. |M|
-| 6.0 | The report shall contain also images with a specific style uploaded by the user. |M|
-| 7.0 | Users shall be able to select a specif area on the images generated. |M|
-| 8.0 | Users shall be able to generate a GIF file from a set of TIFFs. |D|
+| 1.0 | The user should be able to export a report of the analysis done in WASDI in a PDF format. |M|
+| 2.0 | The system should take as input a list of satellite images stored in the WASDI workspace. |M|
+| 3.0 | The system should take as input the band of a satellite image. |M|
+| 4.0 | The system should take as input the bounding-box of a satellite image. |M|
+| 5.0 | The system should take as input the CRS with an explicit EPSG code. |M|
+| 6.0 | The system should take as input the size of a satellite image. |M|
+| 7.0 | The system should take as input the file format of the processed satellite image. |M|
+| 8.0 | The system should take as input a style file in SLD format. |M|
+| 9.0 | The system should take as input an explanatory text of the analysis done in WASDI |M|
+| 10.0 | The system should use the inputs to generate a list of images to add to the report. |M|
+| 11.0 | The report should display the logo of the company. |M|
+| 12.0 | The system should generate a GIF file from the set of satellite images. |D|
 
 <a name="sp3.3"></a>
 ### 3.2 Non-Functional Requirements 
