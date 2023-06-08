@@ -1,0 +1,33 @@
+<html>
+<head>
+  <title>Geoserver + Leaflet Example</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+</head>
+<body>
+  <div id="map" style="width: 800px; height: 600px"></div>
+  <script>
+    // initialize the map
+    var map = L.map('map').setView([51.505, -0.09], 13);
+
+    // add a base layer from OpenStreetMap
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+      maxZoom: 18
+    }).addTo(map);
+
+    // add a layer from Geoserver using WMS
+    L.tileLayer.wms('http://localhost:8080/geoserver/wms', {
+      layers: 'topp:states', // change this to your layer name
+      format: 'image/png',
+      transparent: true,
+      attribution: 'States © topp'
+    }).addTo(map);
+  </script>
+</body>
+</html>

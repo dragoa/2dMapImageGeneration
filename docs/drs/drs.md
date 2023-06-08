@@ -5,7 +5,7 @@
 DIBRIS – Università di Genova. Scuola Politecnica, Corso di Ingegneria del Software 80154
 
 
-<div align='left'> <b> Authors </b> <br> Abdullah Al Foysal<br> Alessandro Drago </div>
+<div align='right'> <b> Authors </b> <br> Abdullah Al Foysal<br> Alessandro Drago </div>
 
 ### REVISION HISTORY
 
@@ -13,6 +13,7 @@ Version | Data | Author(s)| Notes
 ---------|------|--------|------
 1 | 05/21/23 | Alessandro Drago | First Versionn of the document. Document Template.
 2 | 05/22/23 | Alessandro Drago | Added System Architecture and refined some parts.
+3 | 06/08/23 | Alessandro Drago | Refined some parts.
 
 ## Table of Content
 
@@ -50,7 +51,7 @@ Version | Data | Author(s)| Notes
 <details> 
     <summary> The goal of this is to create a full report of the analysis done by the reaserchers on WASDI.
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>The project involves the developement of a platform that helps Earth Observation (EO) experts process satellite imagery on the cloud. The team at WASDI is working on developing new software tools that can extract images and data from the results of the analytics tools present on the platform, in order to help communicate the results of the analyses to the stakeholders involved. The project aims to ease the communication of the results of the applications so that decision makers can better understand the phenomena they are dealing with.</p>
 </details>
 
 ### <a name="def"></a> 1.2 Definitions
@@ -65,14 +66,6 @@ Version | Data | Author(s)| Notes
 | TIFF					   			   | Stands for Tag Image File Format. It is a file format used to store raster graphics and image information. |
 | GeoServer					   		   | Open source server for sharing geospatial data |
 | Workspace							   | Space on WASDI where a user can store and manipulate satellitar images |
-
-
-### <a name="overview"></a> 1.3 Document Overview
-<details> 
-    <summary> Explain how is organized the document
-    </summary>
-    <p>This sub section should describe ...</p>
-</details>
 
 ### <a name="biblio"></a> 1.4 Bibliography
 <details> 
@@ -113,7 +106,7 @@ Version | Data | Author(s)| Notes
     <summary> System Overview
     </summary>
     <p>Graphical representation of the system overview.</p>
-    <img src="imgs/WASDI.svg" alt="System Architecture" style="width: 500px;" /><
+    <img src="imgs/SysArchitecture1.png" alt="System Architecture" style="width: 500px;" />
 </details>
 
 ### <a name="architecture"></a>  3.1 System Architecture
@@ -121,7 +114,7 @@ Version | Data | Author(s)| Notes
     <summary> Graphic of the System Architecture
     </summary>
     <p>Graphical representation of the system architecture.</p>
-    <img src="imgs/SysArchitecture.png" alt="System Architecture" style="width: 600px;" />
+    <img src="imgs/SysArchitecture2.png" alt="System Architecture" style="width: 600px;" />
 </details>
 
 ### <a name="interfaces"></a>  3.2 System Interfaces
@@ -133,23 +126,23 @@ Version | Data | Author(s)| Notes
 
 ### <a name="data"></a>  3.3 System Data
 <details> 
-    <summary> Put a summary of the section
+    <summary> In this section we describe the inputs and their format.
     </summary>
-    <p>The system takes in input two JSON files: the parameters file and a config file required to work with WASDI</p>
+    <p></p>
 </details>
 
 #### <a name="inputs"></a>  3.3.1 System Inputs
 <details> 
-    <summary> Put a summary of the section
+    <summary> Here we describe the line inputs of the system.
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>The system takes in input two JSON files: the parameters file and a config file required to work with WASDI. In the config file there is the username and password to access WASDI, the workspace name, and the path to the parameters file.</p>
 </details>
 
 #### <a name="outputs"></a>  3.3.2 System Ouputs
 <details> 
-    <summary> Put a summary of the section
+    <summary> Here we describe the line outputs of the system.
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>The final output of the system is a report in PDF containing all the information from the processing done in WASDI. This report will then be given by the researchers to those less experienced users or stakeholders.</p>
 </details>
 
 ## <a name="sys-module-1"></a>  4 System Module 1
