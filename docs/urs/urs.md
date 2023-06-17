@@ -18,7 +18,7 @@ Alessandro Drago
 | 1.2 | 07/05/2023 | Alessandro Drago | Refined the urs file, and added non-functional requirements. |
 | 1.3 | 21/05/2023 | Alessandro Drago, Abdullah Al Foysal | Requirements are now refined. |
 | 1.4 | 27/05/2023 | Alessandro Drago | Updated the requirements. |
-| 1.g | 17/06/2023 | Abdullah Al Foysal | Added the issues. |
+| 1.5 | 17/06/2023 | Abdullah Al Foysal | Added the issues. |
 
 
 # Table of Contents
