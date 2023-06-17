@@ -3,7 +3,7 @@
 ##### DIBRIS – Università di Genova. Scuola Politecnica, Software Engineering Course 80154e
 
 
-**VERSION : 1.4**
+**VERSION: 1.4**
 
 **Authors**  
 Abdullah Al Foysal<br>
@@ -13,11 +13,13 @@ Alessandro Drago
 
 | Version    | Date        | Authors      | Notes        |
 | ----------- | ----------- | ----------- | ----------- |
-| 1.0 | 27/03/2023 | Alessandro Drago | Given a first description of the project, explained the requiremnts for the project. |
+| 1.0 | 27/03/2023 | Alessandro Drago | Given a first description of the project, and explained the requirements for the project. |
 | 1.1 | 13/04/2023 | Alessandro Drago | Update of the urs file, added Context and Motivations. |
-| 1.2 | 07/05/2023 | Alessandro Drago | Refined the urs file, added non functional requirements. |
+| 1.2 | 07/05/2023 | Alessandro Drago | Refined the urs file, and added non-functional requirements. |
 | 1.3 | 21/05/2023 | Alessandro Drago, Abdullah Al Foysal | Requirements are now refined. |
 | 1.4 | 27/05/2023 | Alessandro Drago | Updated the requirements. |
+| 1.g | 17/06/2023 | Abdullah Al Foysal | Added the issues. |
+
 
 # Table of Contents
 
@@ -63,7 +65,7 @@ This paper introduces the Requirements Analysis for the Software Engineering cou
 | Band					   			   | Range of frequencies along the electromagnetic spectrum that the satellite measures |
 | Bounding-Box						   | Imaginary rectangle that outlines an object in an image |
 | CRS					   			   | Stands for Coordinate Reference System. Defines how georeferenced spatial data relates to real locations on the Earth’s surface |
-| EPSG					   			   | Stands for European Petroleum Survey Group. It's an unique identifier for a coordinate system or a projection. |
+| EPSG					   			   | Stands for European Petroleum Survey Group. It's a unique identifier for a coordinate system or a projection. |
 | SLD					   			   | Stands for Styled Layer Descriptor. It's an XML file used for styling TIFF images  |
 
 <a name="sp1.3"></a>
@@ -81,18 +83,18 @@ This paper introduces the Requirements Analysis for the Software Engineering cou
 ## 2. System Description
 <a name="sp2.15"></a>
 WASDI is an online platform that offers services to develop and deploy online applications that use satellite data. 
-The project involves the developement of a platform that helps Earth Observation (EO) experts process satellite imagery on the cloud. The team is working on developing new software tools that can extract images and data from the results of the analytics tools present on the platform, in order to help communicate the results of the analyses to the stakeholders involved. The project aims to ease the communication of the results of the applications so that decision makers can better understand the phenomena they are dealing with and respond quickly to questions such as flood size, building count, and wildfire location.
+The project involves the development of a platform that helps Earth Observation (EO) experts process satellite imagery on the cloud. The team is working on developing new software tools that can extract images and data from the results of the analytics tools present on the platform, in order to help communicate the results of the analyses to the stakeholders involved. The project aims to ease the communication of the results of the applications so that decision makers can better understand the phenomena they are dealing with and respond quickly to questions such as flood size, building count, and wildfire location.
 
 ### 2.1 Context and Motivation
 
 <a name="sp2.2"></a>
 WASDI's web interface provides several tools for both experienced and novice users.<br>
-In fact, WASDI allows researchers to create workspaces in which gather satellite data, in particular the Sentinel ones, display them on-line, run algorithms, displaying and evaluating the results, and allows to share these projects among different users.<br>
-There are also several applications in the Marketplace that are used to process satellite images and study a particular phenomena. In general this is done by the more experienced users.
+In fact, WASDI allows researchers to create workspaces in which gather satellite data, in particular the Sentinel ones, display them online, run algorithms, display and evaluate the results, and allows to share these projects among different users.<br>
+There are also several applications in the Marketplace that are used to process satellite images and study particular phenomena. In general, this is done by the more experienced users.
 
-### 2.2 Project Obectives 
+### 2.2 Project Objectives 
 Through workspaces and applications in the marketplace, researchers are able to collect satellite data and run algorithms on them. Once this phase is finished, a required feature is the ability to create a report in PDF containing all the information from the processing. This report will then be given by the researchers to those less experienced users or stakeholders. 
-The document shall have a predefined template in which various information such as date, name and logo of the company, images that were processed and explanatory paragraphs of text are present.
+The document shall have a predefined template in which various information such as date, name, and logo of the company, images that were processed, and explanatory paragraphs of text are present.
 The images found in WASDI's workspace are in TIFF format and therefore before they are inserted into the document, they must be processed. 
 On the various servers in which these images are stored an instance of GeoServer is present. 
 So the idea is to take the images from the WASDI workspace, process them with GeoServer by, for example, selecting a certain area of that image, or applying a style, and return this image in a desirable format (PNG or GIF). 
@@ -119,10 +121,10 @@ WASDI
 
 | ID | Descrizione | Priorità |
 | --------------- | ----------- | ---------- | 
-| 1.0 | The user should be able to export a report of the analysis done in WASDI in a PDF format. |M|
+| 1.0 | The user should be able to export a report of the analysis done in WASDI in PDF format. |M|
 | 2.0 | The system should take as input a list of satellite images stored in the WASDI workspace. |M|
 | 3.0 | The system should take as input the band of a satellite image. |M|
-| 4.0 | The system should take as input the bounding-box of a satellite image. |M|
+| 4.0 | The system should take as input the bounding box of a satellite image. |M|
 | 5.0 | The system should take as input the CRS with an explicit EPSG code. |M|
 | 6.0 | The system should take as input the size of a satellite image. |M|
 | 7.0 | The system should take as input the file format of the processed satellite image. |M|
