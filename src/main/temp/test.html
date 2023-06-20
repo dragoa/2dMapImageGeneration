@@ -1,13 +1,11 @@
 <html>
 <head>
   <title>Geoserver + Leaflet Example</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""/>
-    <!-- Make sure you put this AFTER Leaflet's CSS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module">import "leaflet-easyprint";</script>
+  <!-- <script type="module" src="https://unpkg.com/leaflet-easyprint@2.0.0/src/main.js"></script> -->
 </head>
 <body>
   <div id="map" style="width: 800px; height: 600px"></div>
@@ -28,6 +26,8 @@
       transparent: true,
       attribution: 'States © topp'
     }).addTo(map);
+
+    let print = L.control.easyPrint({ title: "Print map", position: "topright", sizeModes: ["A4Portrait", "A4Landscape"] }).addTo(map);
   </script>
 </body>
 </html>
