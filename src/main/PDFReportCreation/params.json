@@ -1,12 +1,11 @@
 {
-  "pdf_path": "WASDI FINAL REPORT",
+  "pdf_path": "WASDI_FINAL_REPORT.pdf",
   "header": {
     "title": "WASDI FINAL REPORT",
-    "source": "https://example.com",
     "logo": "wasdi_logo.jpg",
     "name": "Abdullah Al Foysal",
     "company_name": "UNIGE",
-    "address": "16126,Genova, Italy"
+    "address": "16126, Genova, Italy"
   },
   "chapters": [
     {
@@ -14,7 +13,7 @@
       "sections": [
         {
           "subtitle": "Section 1.1: Overview",
-          "content": "For some time past vessels had been met by an enormous thing, a long object, spindle-shaped, occasionally phosphorescent, and infinitely larger and more rapid in its movements than a whale.",
+          "content": "The subject for this study emerged from a development project...",
           "image_path": "photo-3.png"
         }
       ]
@@ -34,12 +33,13 @@
       "sections": [
         {
           "subtitle": "Section 3.1: Research Design",
-          "content": "This section describes the research design and methodology used."
+          "content": "This section describes the research design and methodology used.",
+          "image_path": ""
         },
         {
           "subtitle": "Section 3.2: Data Collection",
           "content": "This section explains the data collection process.",
-          "image_path": "C:\\Users\\FOYSAL\\PycharmProjects\\pythonProject15\\photo-3.png"
+          "image_path": "photo-3.png"
         }
       ]
     },
@@ -58,7 +58,8 @@
       "sections": [
         {
           "subtitle": "Section 5.1: Findings",
-          "content": "This section discusses the findings of the research."
+          "content": "This section discusses the findings of the research.",
+          "image_path": ""
         }
       ]
     },
