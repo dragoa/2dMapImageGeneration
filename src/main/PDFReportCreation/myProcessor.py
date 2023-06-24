@@ -1,35 +1,37 @@
-import json
 import wasdi
 import os
 from fpdf import FPDF
 from PIL import Image
 
+
 class CustomPDF(FPDF):
+    # Template for creating the pdf report
     def __init__(self, params):
         super().__init__()
         self.asParametersDict = params
 
     def header(self):
-        header_params = self.asParametersDict['header']
-        title = header_params['title']
-        logo = header_params['logo']
-        name = header_params['name']
-        company_name = header_params['company_name']
-        address = header_params['address']
+        # Getting the parameters for the header
+        osHeaderParams = self.asParametersDict['HEADER']
+        sTitle = osHeaderParams['TITLE']
+        sLogo = osHeaderParams['LOGO']
+        sName = osHeaderParams['NAME']
+        sCompanyName = osHeaderParams['COMPANY_NAME']
+        sAddress = osHeaderParams['ADDRESS']
 
         # Set logo
-        self.image(logo, x=10, y=10, w=30)
+        self.image(sLogo, x=10, y=10, w=30)
 
         # Set header title
         self.set_font('Helvetica', 'B', 15)
-        self.cell(0, 10, title, border=0, ln=1, align='C')
+        self.cell(0, 10, sTitle, border=0, ln=1, align='C')
 
         # Set name and company
         self.set_font('Helvetica', '', 12)
         self.cell(0, 5, '', ln=1, align='R')  # Empty cell for alignment
-        self.cell(0, 5, f'Author: {name}', ln=1, align='R')
-        self.cell(0, 5, f'Company: {company_name}', ln=1, align='R')
-        self.cell(0, 5, f'Address: {address}', ln=1, align='R')
+        self.cell(0, 5, f'Author: {sName}', ln=1, align='R')
+        self.cell(0, 5, f'Company: {sCompanyName}', ln=1, align='R')
+        self.cell(0, 5, f'Address: {sAddress}', ln=1, align='R')
         self.ln(10)
 
     def footer(self):
@@ -37,42 +39,42 @@ class CustomPDF(FPDF):
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, f'Page {self.page_no()}', align='C')
 
-    def chapter_title(self, ch_num, ch_title):
+    def chapterTitle(self, ch_num, ch_title):
         self.set_fill_color(34, 139, 34)  # Set fill color to green
         self.set_text_color(255)  # Set text color to white
         self.set_font('Helvetica', 'B', 12)
         self.cell(0, 10, f'Chapter {ch_num}: {ch_title}', ln=1, fill=True)
         self.ln()
 
-    def chapter_body(self, chapter_data):
+    def chapterBody(self, oChapterData):
         self.set_fill_color(255)  # Set fill color back to white
         self.set_text_color(0)  # Set text color back to black
         self.set_font('Times', '', 12)
 
-        chapter_sections = chapter_data.get('sections', [])
-        for section in chapter_sections:
-            subtitle = section.get('subtitle')
-            content = section.get('content')
-            image_file = section.get('image_path')
+        aoChapterSections = oChapterData.get('SECTIONS', [])
+        for section in aoChapterSections:
+            sSubtitle = section.get('SUBTITLE')
+            sContent = section.get('CONTENT')
+            sImageFile = section.get('IMAGE_PATH')
 
             # Print subtitle
             self.set_font('Helvetica', 'B', 12)
-            self.cell(0, 5, subtitle, ln=1, fill=True)
+            self.cell(0, 5, sSubtitle, ln=1, fill=True)
             self.ln()
 
             # Print content
             self.set_font('Times', '', 12)
-            self.multi_cell(0, 10, content)
+            self.multi_cell(0, 10, sContent)
             self.ln(10)
 
             # Add image if specified
-            if image_file:
-                if os.path.exists(image_file):
+            if sImageFile:
+                if os.path.exists(sImageFile):
                     # Calculate the available width for the image
                     available_width = self.w - self.l_margin - self.r_margin
 
                     # Load the image using PIL to get its dimensions
-                    image = Image.open(image_file)
+                    image = Image.open(sImageFile)
                     image_width, image_height = image.size
 
                     # Calculate the scale factor for resizing the image
@@ -86,128 +88,131 @@ class CustomPDF(FPDF):
                     image_y = self.get_y()
 
                     # Set the position for the image and print it
-                    self.image(image_file, x=self.l_margin, y=image_y, w=scaled_width, h=scaled_height)
+                    self.image(sImageFile, x=self.l_margin, y=image_y, w=scaled_width, h=scaled_height)
                 else:
-                    wasdi.wasdiLog(f"Image file not found: {image_file}")
+                    wasdi.wasdiLog(f"[WARNING] Image file not found: {sImageFile}")
 
     def print_chapter(self, ch_num, ch_title, chapter_data):
         self.add_page()
-        self.chapter_title(ch_num, ch_title)
-        self.chapter_body(chapter_data)
+        self.chapterTitle(ch_num, ch_title)
+        self.chapterBody(chapter_data)
 
 
-def create_pdf(pdf_path, params):
+def createPdf(pdf_path, params):
     pdf = CustomPDF(params)
 
     for key, value in params.items():
         wasdi.wasdiLog(f"{key}: {pdf.asParametersDict[key]}")
 
-    pdf.set_author('Abdullah Al Foysal')
+    # pdf.set_author('Abdullah Al Foysal')
 
     pdf.add_page()
 
-    for i, chapter in enumerate(params['chapters'], start=1):
-        pdf.print_chapter(i, chapter['title'], chapter)
+    for i, chapter in enumerate(params['CHAPTERS'], start=1):
+        pdf.print_chapter(i, chapter['TITLE'], chapter)
 
     pdf.output(pdf_path)
 
 
-def validate_parameters(params):
-    if 'pdf_path' not in params:
-        wasdi.wasdiLog("Error: 'pdf_path' is missing in the parameters.")
-        params['pdf_path'] = 'WASDI_FINAL_REPORT.pdf'  # Assign a default value
+def validateParameters(params):
+    # Check of the parameters
+    if 'PDF_PATH' not in params:
+        wasdi.wasdiLog("[WARNING] The PDF path is missing.")
+        params['PDF_PATH'] = 'wasdi_final_report.pdf'  # Assign a default value
     else:
-        if not params['pdf_path'].endswith('.pdf'):
-            wasdi.wasdiLog("Warning: 'pdf_path' should have a '.pdf' extension.")
+        if not params['PDF_PATH'].endswith('.pdf'):
+            wasdi.wasdiLog("[WARNING] 'pdf_path' should have a '.pdf' extension.")
+            # params['PDF_PATH'] += '.pdf'
 
-    if 'header' not in params:
-        wasdi.wasdiLog("Error: 'header' is missing in the parameters.")
-        params['header'] = {}  # Assign an empty dictionary
+    if 'HEADER' not in params:
+        wasdi.wasdiLog("[WARNING] The header is missing.")
+        params['HEADER'] = {}  # Assign an empty dictionary
 
-    header = params['header']
-    if 'title' not in header:
-        wasdi.wasdiLog("Error: 'title' is missing in the header.")
-        header['title'] = 'WASDI FINAL REPORT'  # Assign a default value
+    header = params['HEADER']
+    if 'TITLE' not in header:
+        wasdi.wasdiLog("[WARNING] The title of the header is missing.")
+        header['TITLE'] = 'WASDI FINAL REPORT'  # Assign a default value
 
-    if 'logo' not in header:
-        wasdi.wasdiLog("Error: 'logo' is missing in the header.")
-        header['logo'] = 'wasdi_logo.jpg'  # Assign a default value
+    if 'LOGO' not in header:
+        wasdi.wasdiLog("[WARNING] The logo is missing in the header.")
+        header['LOGO'] = 'wasdi_logo.jpg'  # Assign a default value
 
-    if 'name' not in header:
-        wasdi.wasdiLog("Error: 'name' is missing in the header.")
-        header['name'] = ''  # Assign an empty string
+    if 'NAME' not in header:
+        wasdi.wasdiLog("[WARNING] 'name' is missing in the header.")
+        header['NAME'] = ''  # Assign an empty string
 
-    if 'company_name' not in header:
-        wasdi.wasdiLog("Error: 'company_name' is missing in the header.")
-        header['company_name'] = ''  # Assign an empty string
+    if 'COMPANY_NAME' not in header:
+        wasdi.wasdiLog("[WARNING] 'company_name' is missing in the header.")
+        header['COMPANY_NAME'] = ''  # Assign an empty string
 
-    if 'address' not in header:
-        wasdi.wasdiLog("Error: 'address' is missing in the header.")
-        header['address'] = ''  # Assign an empty string
+    if 'ADDRESS' not in header:
+        wasdi.wasdiLog("[WARNING] 'address' is missing in the header.")
+        header['ADDRESS'] = ''  # Assign an empty string
 
-    if 'chapters' not in params:
-        wasdi.wasdiLog("Error: 'chapters' is missing in the parameters.")
-        params['chapters'] = []  # Assign an empty list
+    if 'CHAPTERS' not in params:
+        wasdi.wasdiLog("[WARNING] 'chapters' is missing in the parameters.")
+        params['CHAPTERS'] = []  # Assign an empty list
 
-    for chapter in params['chapters']:
-        if 'title' not in chapter:
-            wasdi.wasdiLog("Error: 'title' is missing in a chapter.")
-            chapter['title'] = ''  # Assign an empty string
+    for chapter in params['CHAPTERS']:
+        if 'TITLE' not in chapter:
+            wasdi.wasdiLog("[WARNING] 'title' is missing in a chapter.")
+            chapter['TITLE'] = ''  # Assign an empty string
 
-        if 'sections' not in chapter:
-            wasdi.wasdiLog("Error: 'sections' is missing in a chapter.")
-            chapter['sections'] = []  # Assign an empty list
+        if 'SECTIONS' not in chapter:
+            wasdi.wasdiLog("[WARNING] 'sections' is missing in a chapter.")
+            chapter['SECTIONS'] = []  # Assign an empty list
 
-        for section in chapter['sections']:
-            if 'subtitle' not in section:
-                wasdi.wasdiLog("Error: 'subtitle' is missing in a section.")
-                section['subtitle'] = ''  # Assign an empty string
+        for section in chapter['SECTIONS']:
+            if 'SUBTITLE' not in section:
+                wasdi.wasdiLog("[WARNING] 'subtitle' is missing in a section.")
+                section['SUBTITLE'] = ''  # Assign an empty string
 
-            if 'content' not in section:
-                wasdi.wasdiLog("Error: 'content' is missing in a section.")
-                section['content'] = ''  # Assign an empty string
+            if 'CONTENT' not in section:
+                wasdi.wasdiLog("[WARNING] 'content' is missing in a section.")
+                section['CONTENT'] = ''  # Assign an empty string
 
-            if 'image_path' not in section:
-                wasdi.wasdiLog("Error: 'image_path' is missing in a section.")
-                section['image_path'] = ''  # Assign an empty string
+            if 'IMAGE_PATH' not in section:
+                wasdi.wasdiLog("[WARNING] 'image_path' is missing in a section.")
+                section['IMAGE_PATH'] = ''  # Assign an empty string
 
     return params
 
 
-def sanitize_parameters(params):
-    params['pdf_path'] = params['pdf_path'].strip()  # Remove leading/trailing whitespace
+def sanitizeParameters(params):
+    params['PDF_PATH'] = params['PDF_PATH'].strip()  # Remove leading/trailing whitespace
 
-    header = params['header']
-    header['title'] = header['title'].strip()
-    header['logo'] = header['logo'].strip()
-    header['name'] = header['name'].strip()
-    header['company_name'] = header['company_name'].strip()
-    header['address'] = header['address'].strip()
+    header = params['HEADER']
+    header['TITLE'] = header['TITLE'].strip()
+    header['LOGO'] = header['LOGO'].strip()
+    header['NAME'] = header['NAME'].strip()
+    header['COMPANY_NAME'] = header['COMPANY_NAME'].strip()
+    header['ADDRESS'] = header['ADDRESS'].strip()
 
-    for chapter in params['chapters']:
-        chapter['title'] = chapter['title'].strip()
+    for chapter in params['CHAPTERS']:
+        chapter['TITLE'] = chapter['TITLE'].strip()
 
-        for section in chapter['sections']:
-            section['subtitle'] = section['subtitle'].strip()
-            section['content'] = section['content'].strip()
-            section['image_path'] = section['image_path'].strip()
+        for section in chapter['SECTIONS']:
+            section['SUBTITLE'] = section['SUBTITLE'].strip()
+            section['CONTENT'] = section['CONTENT'].strip()
+            section['IMAGE_PATH'] = section['IMAGE_PATH'].strip()
 
     return params
 
 
 def run():
     wasdi.wasdiLog("PDF tutorial v.1.1")
-    wasdi.wasdiLog("PDF tutorial v.1.1")
 
-    with open('params.json', 'r') as params_file:
-        params = json.load(params_file)
-        wasdi.wasdiLog("Printing params:")
-        wasdi.wasdiLog(json.dumps(params, indent=4))
+    # Read from the parameters file
+    try:
+        aoParams = wasdi.getParametersDict()
+        aoParams = validateParameters(aoParams)
+        aoParams = sanitizeParameters(aoParams)
 
-    params = validate_parameters(params)
-    params = sanitize_parameters(params)
-
-    create_pdf(params['pdf_path'], params)
+        createPdf(aoParams['PDF_PATH'], aoParams)
+    except Exception as oEx:
+        wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
+        wasdi.updateStatus("ERROR", 0)
+        return
 
 
 if __name__ == '__main__':
