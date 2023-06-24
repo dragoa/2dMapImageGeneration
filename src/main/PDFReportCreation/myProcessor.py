@@ -88,7 +88,7 @@ class CustomPDF(FPDF):
                     # Set the position for the image and print it
                     self.image(image_file, x=self.l_margin, y=image_y, w=scaled_width, h=scaled_height)
                 else:
-                    print(f"Image file not found: {image_file}")
+                    wasdi.wasdiLog(f"Image file not found: {image_file}")
 
     def print_chapter(self, ch_num, ch_title, chapter_data):
         self.add_page()
@@ -100,7 +100,7 @@ def create_pdf(pdf_path, params):
     pdf = CustomPDF(params)
 
     for key, value in params.items():
-        print(f"{key}: {pdf.asParametersDict[key]}")
+        wasdi.wasdiLog(f"{key}: {pdf.asParametersDict[key]}")
 
     pdf.set_author('Abdullah Al Foysal')
 
@@ -112,14 +112,102 @@ def create_pdf(pdf_path, params):
     pdf.output(pdf_path)
 
 
+def validate_parameters(params):
+    if 'pdf_path' not in params:
+        wasdi.wasdiLog("Error: 'pdf_path' is missing in the parameters.")
+        params['pdf_path'] = 'WASDI_FINAL_REPORT.pdf'  # Assign a default value
+    else:
+        if not params['pdf_path'].endswith('.pdf'):
+            wasdi.wasdiLog("Warning: 'pdf_path' should have a '.pdf' extension.")
+
+    if 'header' not in params:
+        wasdi.wasdiLog("Error: 'header' is missing in the parameters.")
+        params['header'] = {}  # Assign an empty dictionary
+
+    header = params['header']
+    if 'title' not in header:
+        wasdi.wasdiLog("Error: 'title' is missing in the header.")
+        header['title'] = 'WASDI FINAL REPORT'  # Assign a default value
+
+    if 'logo' not in header:
+        wasdi.wasdiLog("Error: 'logo' is missing in the header.")
+        header['logo'] = 'wasdi_logo.jpg'  # Assign a default value
+
+    if 'name' not in header:
+        wasdi.wasdiLog("Error: 'name' is missing in the header.")
+        header['name'] = ''  # Assign an empty string
+
+    if 'company_name' not in header:
+        wasdi.wasdiLog("Error: 'company_name' is missing in the header.")
+        header['company_name'] = ''  # Assign an empty string
+
+    if 'address' not in header:
+        wasdi.wasdiLog("Error: 'address' is missing in the header.")
+        header['address'] = ''  # Assign an empty string
+
+    if 'chapters' not in params:
+        wasdi.wasdiLog("Error: 'chapters' is missing in the parameters.")
+        params['chapters'] = []  # Assign an empty list
+
+    for chapter in params['chapters']:
+        if 'title' not in chapter:
+            wasdi.wasdiLog("Error: 'title' is missing in a chapter.")
+            chapter['title'] = ''  # Assign an empty string
+
+        if 'sections' not in chapter:
+            wasdi.wasdiLog("Error: 'sections' is missing in a chapter.")
+            chapter['sections'] = []  # Assign an empty list
+
+        for section in chapter['sections']:
+            if 'subtitle' not in section:
+                wasdi.wasdiLog("Error: 'subtitle' is missing in a section.")
+                section['subtitle'] = ''  # Assign an empty string
+
+            if 'content' not in section:
+                wasdi.wasdiLog("Error: 'content' is missing in a section.")
+                section['content'] = ''  # Assign an empty string
+
+            if 'image_path' not in section:
+                wasdi.wasdiLog("Error: 'image_path' is missing in a section.")
+                section['image_path'] = ''  # Assign an empty string
+
+    return params
+
+
+def sanitize_parameters(params):
+    params['pdf_path'] = params['pdf_path'].strip()  # Remove leading/trailing whitespace
+
+    header = params['header']
+    header['title'] = header['title'].strip()
+    header['logo'] = header['logo'].strip()
+    header['name'] = header['name'].strip()
+    header['company_name'] = header['company_name'].strip()
+    header['address'] = header['address'].strip()
+
+    for chapter in params['chapters']:
+        chapter['title'] = chapter['title'].strip()
+
+        for section in chapter['sections']:
+            section['subtitle'] = section['subtitle'].strip()
+            section['content'] = section['content'].strip()
+            section['image_path'] = section['image_path'].strip()
+
+    return params
+
+
 def run():
     wasdi.wasdiLog("PDF tutorial v.1.1")
-    print("PDF tutorial v.1.1")
+    wasdi.wasdiLog("PDF tutorial v.1.1")
+
     with open('params.json', 'r') as params_file:
         params = json.load(params_file)
-        print("Printing params:")
-        print(json.dumps(params, indent=4))
-    create_pdf('WASDI FINAL REPORT.pdf', params)
+        wasdi.wasdiLog("Printing params:")
+        wasdi.wasdiLog(json.dumps(params, indent=4))
+
+    params = validate_parameters(params)
+    params = sanitize_parameters(params)
+
+    create_pdf(params['pdf_path'], params)
 
 
 if __name__ == '__main__':
