@@ -198,19 +198,21 @@ Version | Data | Author(s)| Notes
 
 ##### <a name="cd-description"></a>  4.1.1.1 Class Description
 <details> 
-    <summary> Put a summary of the section
+    <summary> This class diagram represents the structure and relationships of the CustomPDF class and its methods based on the provided code
     </summary>
-    <p>The class CustomPDF represents a customized version of the FPDF class for PDF generation.
-*Attributes:
-*asParametersDict: a private attribute to hold the parameters dictionary.
-*Methods:
-*header(): generates the header section of the PDF.
-*footer(): generates the footer section of the PDF.
-*chapter_title(ch_num, ch_title): generates the chapter title section of the PDF.
-*chapter_body(chapter_data): generates the chapter body section of the PDF.
-*print_chapter(ch_num, ch_title, chapter_data): prints a chapter, combining the title and body sections.
-*This class diagram represents the structure and relationships of the CustomPDF class and its methods based on the provided code.
-</p>
+    <p>The class CustomPDF represents a customized version of the FPDF class for PDF generation.</p>
+    <p>Attributes: </p>
+    <ul> 
+        <li> asParametersDict: a private attribute to hold the parameters dictionary.</li>
+    </ul>
+    <p>Methods: </p>
+    <ul>
+        <li> header(): generates the header section of the PDF.</li>
+        <li> footer(): generates the footer section of the PDF.</li>
+        <li> chapter_title(ch_num, ch_title): generates the chapter title section of the PDF.</li>
+        <li> chapter_body(chapter_data): generates the chapter body section of the PDF.</li>
+        <li> print_chapter(ch_num, ch_title, chapter_data): prints a chapter, combining the title and body sections.</li>
+    </ul>
 </details>
 
 #### <a name="od"></a>  4.1.2 Object diagram
