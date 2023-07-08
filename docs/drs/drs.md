@@ -14,6 +14,7 @@ Version | Data | Author(s)| Notes
 1 | 05/21/23 | Alessandro Drago | First Versionn of the document. Document Template.
 2 | 05/22/23 | Alessandro Drago | Added System Architecture and refined some parts.
 3 | 06/08/23 | Alessandro Drago | Refined some parts.
+4 | 07/08/23 | Alessandro Drago | Added some parts.
 
 ## Table of Content
 
@@ -107,6 +108,24 @@ Version | Data | Author(s)| Notes
     </summary>
     <p>Graphical representation of the system overview.</p>
     <img src="imgs/SysArchitecture1.png" alt="System Architecture" style="width: 500px;" />
+
+| Use Case      | 1.0           |
+| ------------- | ------------- |
+| Name          | ImgProcessing |
+| Actors        | Expert User  |    
+| Entry Point   | (i) List of Input Arguments <br> (ii) List of Output Arguments   |
+| Exit  Point   | File where the processed image must be stored in the correct format |
+| Event Flow    | (1) User invoke the system by command line (for now) <br> (2) User provide a valid path to an input image in .TIFF format present in a WASDI workspace <br> (3) User provide a list of symbols representing the input arguments <br> (4) User provide a list of arguments representing the output arguments <br> (5) User provide a valid file name where the system should store the output image <br> (6) System validates the input image <br> (7) System validates the list of input arguments <br> (8) System valdiates the list of output arguments <br> (9) System validates the output file <br> (10) Input image is uploaded on an instance of GeoServer <br> (11) The new layer is processed following the input arguments <br> (12) System correctly process the input file and store the image in memory <br> (13) System write the image in memory into the output file |
+    
+    
+| Use Case      | 2.0           |
+| ------------- | ------------- |
+| Name          | Report Creation |
+| Actors        | Expert User |    
+| Entry Point   | List of Input Arguments |
+| Exit  Point   | PDF file where the analysis report must be stored |
+| Event Flow    | (1) User invoke the system by command line (for now) <br> (2) User provide a list of sysmbols representing the input arguments <br> (3) User provide a valid file name where the system should store the PDF document <br> (4) System validates the input arguments <br> (5) System validates the output file <br> (6) System write the text into the output file | 
+
 </details>
 
 ### <a name="architecture"></a>  3.1 System Architecture
@@ -125,17 +144,28 @@ Version | Data | Author(s)| Notes
 </details>
 
 ### <a name="data"></a>  3.3 System Data
-<details> 
-    <summary> In this section we describe the inputs and their format.
-    </summary>
-    <p></p>
-</details>
+<summary> In this section we describe the inputs and their format.
+</summary>
+<p></p>
 
 #### <a name="inputs"></a>  3.3.1 System Inputs
 <details> 
     <summary> Here we describe the line inputs of the system.
     </summary>
-    <p>The system takes in input two JSON files: the parameters file and a config file required to work with WASDI. In the config file there is the username and password to access WASDI, the workspace name, and the path to the parameters file.</p>
+    <p>The system takes in input two JSON files: the parameters file and a config file required to work with WASDI. In the config file there is the username and password to access WASDI, the workspace name, and the path to the parameters file.</p><br>
+    <p> In the parameters JSON file the inputs of the system are: </p>
+    <ul> 
+        <li> PRODUCT: name of an image in .TIFF format present in the WASDI workspace that we want to process.</li>
+        <li> BAND: Range of frequencies along the electromagnetic spectrum that the satellite measures.</li>
+        <li> BBOX: A json structure divided into "northEast" and "southWest", in each subfield is specified both a latitude and a longitude. This defines the desired area.</li>
+        <li> CRS: Stands for Coordinate Reference System. Defines how georeferenced spatial data relates to real locations on the Earth’s surface.</li>
+        <li> WIDTH: desidered width of the image.</li>
+        <li> HEIGHT: desidered height of the image.</li>
+        <li> FORMAT: desidered format of the image. See at (https://docs.geoserver.org/stable/en/user/services/wms/outputformats.html).</li>
+        <li> STYLE: XML file used for styling TIFF images.</li>
+        <li> LAYER ID: id of a layer already present on a GeoServer instance.</li>
+        <li> GEOSERVER URL: link to an existing server.</li>
+    </ul>
 </details>
 
 #### <a name="outputs"></a>  3.3.2 System Ouputs
