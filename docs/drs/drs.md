@@ -193,7 +193,7 @@ Version | Data | Author(s)| Notes
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>This sub section should describe ...</p>
+    <img src="imgs/class.png" alt="System Architecture" style="width: 600px;" />
 </details>
 
 ##### <a name="cd-description"></a>  4.1.1.1 Class Description
