@@ -14,7 +14,7 @@ Version | Data | Author(s)| Notes
 1 | 05/21/23 | Alessandro Drago | First Versionn of the document. Document Template.
 2 | 05/22/23 | Alessandro Drago | Added System Architecture and refined some parts.
 3 | 06/08/23 | Alessandro Drago | Refined some parts.
-4 | 07/08/23 | Alessandro Drago | Added some parts.
+4 | 07/08/23 | Abdullah Al Foysal, Alessandro Drago | Added some parts.
 
 ## Table of Content
 
@@ -200,7 +200,17 @@ Version | Data | Author(s)| Notes
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>The class CustomPDF represents a customized version of the FPDF class for PDF generation.
+*Attributes:
+*asParametersDict: a private attribute to hold the parameters dictionary.
+*Methods:
+*header(): generates the header section of the PDF.
+*footer(): generates the footer section of the PDF.
+*chapter_title(ch_num, ch_title): generates the chapter title section of the PDF.
+*chapter_body(chapter_data): generates the chapter body section of the PDF.
+*print_chapter(ch_num, ch_title, chapter_data): prints a chapter, combining the title and body sections.
+*This class diagram represents the structure and relationships of the CustomPDF class and its methods based on the provided code.
+</p>
 </details>
 
 #### <a name="od"></a>  4.1.2 Object diagram
