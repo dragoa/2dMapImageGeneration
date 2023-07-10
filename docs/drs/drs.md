@@ -186,7 +186,22 @@ Version | Data | Author(s)| Notes
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>The given code implements a Python script for generating a PDF report using the FPDF library. The script follows a modular structure and begins by importing the necessary modules, including json, wasdi, os, FPDF, and PIL.Image.
+The core functionality is encapsulated within the CustomPDF class, which inherits from the FPDF class and provides additional customization options. The class has an __init__ method that initializes the CustomPDF object with the provided parameters and sets the initial state of the index_added attribute.
+The header method handles the generation of the header section in the PDF. It extracts the required header parameters from the provided dictionary and sets the logo, title, author name, company name, and address accordingly.
+The generate_index method is responsible for creating the index text by iterating over the chapters and their titles. It generates a formatted index with the chapter numbers and titles.
+The footer method adds the footer section to each page, displaying the current page number.
+The chapter_title method is used to print the title of each chapter. It applies a red background color and white text to highlight the chapter titles.
+The chapter_body method is responsible for handling the content of each chapter. It prints the subtitles, content, and optional images for each section.
+The print_chapter method combines the chapter title and body to print a complete chapter with its sections.
+The create_pdf function is responsible for creating the PDF report. It initializes a CustomPDF object, sets the author, adds pages, and iterates over the provided chapters to print them.
+The validate_parameters function ensures that the provided parameters contain the necessary fields. If any required fields are missing, it assigns default values to them.
+The sanitize_parameters function removes any leading or trailing whitespace from the parameters to ensure consistent formatting.
+The run function serves as the main entry point of the script. It reads the parameters from a JSON file, validates and sanitizes them, and then calls the create_pdf function to generate the PDF report.
+
+In summary, the code utilizes object-oriented programming and modular design principles to create a PDF report generator. It allows for customization of the header, index, chapter titles, and content, including optional images. The script provides flexibility for generating informative and visually appealing PDF reports based on the provided parameters.
+
+</p>
 </details>
 
 #### <a name="cd"></a>  4.1.1 Class diagram
