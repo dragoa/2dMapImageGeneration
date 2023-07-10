@@ -179,14 +179,24 @@ Version | Data | Author(s)| Notes
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>The system module in the given code plays a crucial role in generating the PDF report. It encompasses various components and functions that contribute to the overall functionality and structure of the system. At the core of the system module is the CustomPDF class, which extends the FPDF class. This class serves as the foundation for creating a customized PDF report. It handles the header, index, chapter titles, content, and footer sections of the report.
+The header method within the CustomPDF class takes care of setting up the header section of the report. It includes the report title, logo, author's name, company name, and address. These details provide essential context and identification for the report.
+The generate_index method is responsible for generating the index section of the report. It iterates over the provided chapters and extracts their titles, creating an organized and structured index for easy navigation.
+To maintain consistency and enhance readability, the footer method is implemented. It adds a footer to each page, displaying the current page number. This feature allows readers to track their progress and locate specific information within the report.
+The chapter_title method plays a crucial role in visually distinguishing the different chapters. It formats and highlights the chapter titles by applying a red background color and white text, making them stand out in the report.
+The chapter_body method handles the content within each chapter. It prints the subtitles and content, allowing for detailed descriptions and explanations. Additionally, it provides support for including optional images that further enhance the presentation and understanding of the content.
+The print_chapter method combines the chapter title and body, enabling the printing of complete chapters with their respective sections. This ensures that the report maintains a logical and organized structure.
+The create_pdf function acts as the main component for generating the PDF report. It initializes the CustomPDF object, sets the author, adds pages, and iterates over the chapters to print them in the correct order.
+To ensure that the provided parameters are valid, the validate_parameters function checks for missing or incorrect values. It assigns default values to any missing fields and raises warnings for any potential issues.
+The sanitize_parameters function removes leading or trailing whitespace from the parameters. This helps maintain consistency and avoid any formatting or display discrepancies within the report.
+Overall, the system module forms the backbone of the PDF report generation process. It combines different components and functions to produce a well-structured and visually appealing report based on the provided parameters.</p>
 </details>
 
 ### <a name="sd"></a>  4.1 Structural Diagrams
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>The given code implements a Python script for generating a PDF report using the FPDF library. The script follows a modular structure and begins by importing the necessary modules, including json, wasdi, os, FPDF, and PIL.Image.
+    <p>The given code implements a Python script for generating a PDF report using the FPDF library. The script follows a modular structure and begins by importing the necessary modules, including JSON, wasdi, os, FPDF, and PIL.Image.
 The core functionality is encapsulated within the CustomPDF class, which inherits from the FPDF class and provides additional customization options. The class has an __init__ method that initializes the CustomPDF object with the provided parameters and sets the initial state of the index_added attribute.
 The header method handles the generation of the header section in the PDF. It extracts the required header parameters from the provided dictionary and sets the logo, title, author name, company name, and address accordingly.
 The generate_index method is responsible for creating the index text by iterating over the chapters and their titles. It generates a formatted index with the chapter numbers and titles.
