@@ -226,5 +226,5 @@ Version | Data | Author(s)| Notes
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>This sub section should describe ...</p>
+    <p>The dynamic diagram showcases the flow of activities in the CustomPDF program for generating a custom PDF report. It begins with the instantiation of the CustomPDF object and passing parameters. The header section is set, including the title, logo, author information, and company details. Pages are added for each chapter. Each chapter's title, sections, and images are printed. Font styles, cells, multiline text, and images are handled using various methods. The footer with page numbers is added. Finally, the output() method generates the PDF file. This diagram provides an overview of the program's flow and interactions.</p>
 </details>
