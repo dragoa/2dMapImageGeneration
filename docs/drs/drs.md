@@ -244,12 +244,11 @@ In summary, the code utilizes object-oriented programming and modular design pri
 <details> 
     <summary> Put a summary of the section
     </summary>
-    <p>The object diagram presents a clear representation of the CustomPDF program's object structure and interactions. The central object, CustomPDF, serves as the main class responsible for generating customized PDF reports. It is instantiated as pdf_instance and holds the asParametersDict attribute, storing the parameters required for customization. The pdf_instance object is associated with the header_instance object, representing the header parameters like title, logo, name, company_name, and address. Additionally, the pdf_instance includes chapters, represented by chapters_instance, each containing a title and sections. The sections, represented by section_instance objects, encapsulate subtitle, content, and image_path attributes.
-The diagram also features image_instance objects representing the images used within the sections, storing the respective file_path. Through these objects and their relationships, the CustomPDF program orchestrates the generation of customized PDF reports.
-This visual representation of object relationships offers a concise and professional overview of the program's structure and data flow. It aids in understanding the interactions between objects during PDF generation, facilitating comprehension of the program's dynamics.
-It's important to note that the actual instances and attribute values may vary based on specific implementation details or runtime scenarios. Nonetheless, the object diagram provides a valuable visual guide to comprehend the object relationships within the CustomPDF program.
-
-</p>
+    <img src="imgs/dynamic diagram.jpg" alt="Dynamic diagram" style="width: 600px;" />
+    <p>The object diagram presents a clear representation of the CustomPDF program's object structure and interactions.<br>The central object, CustomPDF, serves as the main class responsible for generating customized PDF reports. It is instantiated as pdf_instance and holds the asParametersDict attribute, storing the parameters required for customization. The pdf_instance object is associated with the header_instance object, representing the header parameters like title, logo, name, company_name, and address.<br>Additionally, the pdf_instance includes chapters, represented by chapters_instance, each containing a title and sections. The sections, represented by section_instance objects, encapsulate subtitle, content, and image_path attributes.<br><br>
+    The diagram also features image_instance objects representing the images used within the sections, storing the respective file_path. Through these objects and their relationships, the CustomPDF program orchestrates the generation of customized PDF reports.<br>
+    This visual representation of object relationships offers a concise and professional overview of the program's structure and data flow. It aids in understanding the interactions between objects during PDF generation, facilitating comprehension of the program's dynamics.<br>
+    It's important to note that the actual instances and attribute values may vary based on specific implementation details or runtime scenarios. Nonetheless, the object diagram provides a valuable visual guide to comprehend the object relationships within the CustomPDF program.</p>
 </details>
 
 #### <a name="dm"></a>  4.2 Dynamic Models
