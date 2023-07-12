@@ -9,6 +9,7 @@ class CustomPDF(FPDF):
     def __init__(self, params):
         super().__init__()
         self.asParametersDict = params
+        self.index_added = False  # Initialize index_added attribute to False
 
     def header(self):
         # Getting the parameters for the header
@@ -34,13 +35,31 @@ class CustomPDF(FPDF):
         self.cell(0, 5, f'Address: {sAddress}', ln=1, align='R')
         self.ln(10)
 
+        # Add index
+        if not self.index_added:
+            self.set_xy(20, 70)  # Adjust the coordinates based on your requirements
+            self.set_font('Helvetica', 'B', 16)  # Set font size and style for the index title
+            self.set_text_color(255)  # Set text color to red
+            self.cell(0, 10, 'INDEX', ln=1, align='L', fill=True)  # Print the index title with red background
+            self.set_text_color(0)  # Reset text color to default (black)
+            self.set_font('Helvetica', '', 12)
+            self.multi_cell(0, 5, self.generate_index(), align='L')
+            self.index_added = True
+        self.ln(10)
+
+    def generate_index(self):
+        index_text = ''
+        for i, chapter in enumerate(self.asParametersDict['CHAPTERS'], start=1):
+            index_text += f'Chapter {i}: {chapter["TITLE"]}\n'
+        return index_text
+
     def footer(self):
         self.set_y(-10)
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, f'Page {self.page_no()}', align='C')
 
     def chapterTitle(self, ch_num, ch_title):
-        self.set_fill_color(34, 139, 34)  # Set fill color to green
+        self.set_fill_color(255, 0, 0)  # Set fill color to red
         self.set_text_color(255)  # Set text color to white
         self.set_font('Helvetica', 'B', 12)
         self.cell(0, 10, f'Chapter {ch_num}: {ch_title}', ln=1, fill=True)
@@ -70,19 +89,23 @@ class CustomPDF(FPDF):
             # Add image if specified
             if sImageFile:
                 if os.path.exists(sImageFile):
-                    # Calculate the available width for the image
+                    # Calculate the available width and height for the image
                     available_width = self.w - self.l_margin - self.r_margin
+                    available_height = 30 * self.k  # Convert inches to points
 
                     # Load the image using PIL to get its dimensions
                     image = Image.open(sImageFile)
                     image_width, image_height = image.size
 
                     # Calculate the scale factor for resizing the image
-                    scale_factor = available_width / image_width
+                    scale_factor = min(available_width / image_width, available_height / image_height)
 
                     # Calculate the scaled dimensions for the image
                     scaled_width = image_width * scale_factor
                     scaled_height = image_height * scale_factor
+
+                    # Calculate the position to center the image horizontally
+                    image_x = self.l_margin + (available_width - scaled_width) / 2
 
                     # Calculate the position to center the image vertically
                     image_y = self.get_y()
