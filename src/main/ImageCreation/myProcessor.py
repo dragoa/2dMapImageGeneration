@@ -1,4 +1,5 @@
 import json
+import os
 
 import owslib.util
 import requests
@@ -56,14 +57,23 @@ class Layer:
 
     def get_map_request(self, params):
 
-        # Try to get the map image
         try:
             # Make the request and save the response as a file
             response = self.wms.getmap(**params)
-            with open(f"""{params['product']}.{self.format}""", "wb") as o:
+            # Specify the folder path
+            folder_path = "img/"
+
+            # Create the folder if it doesn't exist
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+
+            # Construct the file path
+            file_path = os.path.join(folder_path, f"{params['product']}.{self.format}")
+
+            with open(file_path, "wb") as o:
                 o.write(response.read())
                 wasdi.wasdiLog('Map image saved successfully.')
-                # wasdi.addFileToWASDI("map.tiff", "")
+                # wasdi.addFileToWASDI("map.tiff", "")  # You can add this line if needed
 
         except requests.exceptions.ConnectionError:
             # Handle network errors
@@ -230,7 +240,7 @@ def run():
 
 
 def process_layers(layers):
-    layers[1].process_layers(layers)
+    layers[0].process_layers(layers)
 
 
 if __name__ == "__main__":
