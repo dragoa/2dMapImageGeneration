@@ -1,5 +1,6 @@
 import json
 import os
+import uuid
 
 import owslib.util
 import requests
@@ -10,7 +11,7 @@ from owslib.wms import WebMapService
 
 
 class Layer:
-    def __init__(self, product, band, bbox, crs, width, height, img_format, style, geoserver_url, layer_id):
+    def __init__(self, product, band, bbox, crs, width, height, img_format, style, geoserver_url, layer_id, sFileName):
         self.wms = None
         self.product = product
         self.band = band
@@ -22,6 +23,7 @@ class Layer:
         self.style = style
         self.geoserver_url = geoserver_url
         self.layer_id = layer_id
+        self.filename = sFileName
 
     def create_web_map_service(self):
 
@@ -30,6 +32,22 @@ class Layer:
 
         except Exception as oEx:
             wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
+            wasdi.updateStatus("ERROR", 0)
+            return None
+
+    def get_bounding_box_list(self):
+        try:
+            if self.bbox == "":
+                # Get the bounding box and the correspondent coordinate system
+                to_bounding_box_list = self.wms[self.layer_id].boundingBox
+                wasdi.wasdiLog(f"The Bounding Box used is {to_bounding_box_list}")
+            else:
+                to_bounding_box_list = [float(x) for x in self.bbox.split(",")]
+                to_bounding_box_list.append(self.crs)
+            return to_bounding_box_list
+
+        except Exception as ex:
+            wasdi.wasdiLog(f'An error occurred: {repr(ex)}')
             wasdi.updateStatus("ERROR", 0)
             return None
 
@@ -58,17 +76,22 @@ class Layer:
     def get_map_request(self, params):
 
         try:
+            # Construct the GetMap request URL
+            url_params = "&".join([f"{key}={value}" for key, value in params.items()])
+            getmap_url = f"{self.geoserver_url}?{url_params}"
+            print(getmap_url)
+
             # Make the request and save the response as a file
             response = self.wms.getmap(**params)
-            # Specify the folder path
-            folder_path = "img/"
+            # Get the local base save path for a product
+            folder_path = wasdi.getSavePath()
 
-            # Create the folder if it doesn't exist
-            if not os.path.exists(folder_path):
-                os.makedirs(folder_path)
+            # # Create the folder if it doesn't exist
+            # if not os.path.exists(folder_path):
+            #     os.makedirs(folder_path)
 
             # Construct the file path
-            file_path = os.path.join(folder_path, f"{params['product']}.{self.format}")
+            file_path = os.path.join(folder_path, f"{self.filename}.{self.format}")
 
             with open(file_path, "wb") as o:
                 o.write(response.read())
@@ -130,23 +153,8 @@ class Layer:
                 parameters = self.create_query_wms(to_bounding_box_list)
                 self.get_map_request(parameters)
 
-    def get_bounding_box_list(self):
-        try:
-            if self.bbox == "":
-                # Get the bounding box and the correspondent coordinate system
-                to_bounding_box_list = self.wms[self.layer_id].boundingBox
-                wasdi.wasdiLog(f"The Bounding Box used is {to_bounding_box_list}")
-            else:
-                to_bounding_box_list = [float(x) for x in self.bbox.split(",")]
-                to_bounding_box_list.append(self.crs)
-            return to_bounding_box_list
-
-        except Exception as ex:
-            wasdi.wasdiLog(f'An error occurred: {repr(ex)}')
-            wasdi.updateStatus("ERROR", 0)
-            return None
-
     def process_layers(self, layers):
+
         wasdi.wasdiLog("You are now stacking layers!")
         to_bounding_box_list = self.get_bounding_box_list()
 
@@ -173,6 +181,7 @@ class Layer:
             'transparent': True,
             'product': self.product
         }
+
         self.get_map_request(parameters)
 
 
@@ -183,6 +192,7 @@ def run():
     bStackLayers = wasdi.getParameter("stackLayers")
 
     layers = []
+    background_layer = None
 
     for oProduct in aoProducts:
         # Read from params the bands we want to extract and the product
@@ -196,6 +206,8 @@ def run():
         sStyle = oProduct["STYLE"]
         sGeoServerUrl = oProduct["GEOSERVER URL"]
         sLayerId = oProduct["LAYER ID"]
+        sFileName = oProduct["FILENAME"]
+        bIsBackground = oProduct["isBackground"]
 
         # Check the Bounding Box: is needed
         if sBBox != "":
@@ -212,6 +224,12 @@ def run():
         if sCRS == "":
             wasdi.wasdiLog("CRS Parameter not set.")
 
+        # If the filename is not set generate a random one
+        if sFileName == "":
+            wasdi.wasdiLog("FileName is not set! Generating a random UUID one...")
+            sFileName = uuid.uuid4()
+
+        # Create the layer
         layer = Layer(
             sProduct,
             sBand,
@@ -222,8 +240,15 @@ def run():
             sFormat,
             sStyle,
             sGeoServerUrl,
-            sLayerId
+            sLayerId,
+            sFileName
         )
+
+        if bIsBackground:
+            background_layer = layer
+            wasdi.wasdiLog(f"Background Layer: {background_layer.product}")
+        else:
+            layers.append(layer)
 
         # check for GeoServer url
         if sGeoServerUrl != "" and sLayerId != "":
@@ -236,11 +261,19 @@ def run():
             layer.process_layer(bStackLayers)
 
     if bStackLayers:
-        process_layers(layers)
+
+        # If the background was not specified
+        if background_layer is None:
+            wasdi.wasdiLog("No background layer specified.")
+            wasdi.wasdiLog("exit")
+            wasdi.updateStatus("ERROR", 0)
+            return None
+
+        process_layers(background_layer, layers)
 
 
-def process_layers(layers):
-    layers[0].process_layers(layers)
+def process_layers(background_layer, layers):
+    background_layer.process_layers(layers)
 
 
 if __name__ == "__main__":
