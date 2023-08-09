@@ -55,7 +55,7 @@ class CustomPDF(FPDF):
         for section in aoChapterSections:
             sSubtitle = section.get('SUBTITLE')
             sContent = section.get('CONTENT')
-            sImageFile = section.get('IMAGE_PATH')
+            sImageFile = section.get('IMAGE_FILENAME')
 
             # Print subtitle
             self.set_font('Helvetica', 'B', 12)
@@ -116,13 +116,13 @@ def createPdf(pdf_path, params):
 
 def validateParameters(params):
     # Check of the parameters
-    if 'PDF_PATH' not in params:
+    if 'FILENAME' not in params:
         wasdi.wasdiLog("[WARNING] The PDF path is missing.")
-        params['PDF_PATH'] = 'wasdi_final_report.pdf'  # Assign a default value
+        params['FILENAME'] = 'wasdi_final_report.pdf'  # Assign a default value
     else:
-        if not params['PDF_PATH'].endswith('.pdf'):
-            wasdi.wasdiLog("[WARNING] 'pdf_path' should have a '.pdf' extension.")
-            # params['PDF_PATH'] += '.pdf'
+        if not params['FILENAME'].endswith('.pdf'):
+            wasdi.wasdiLog("[WARNING] 'FILENAME' should have a '.pdf' extension.")
+            # params['FILENAME'] += '.pdf'
 
     if 'HEADER' not in params:
         wasdi.wasdiLog("[WARNING] The header is missing.")
@@ -171,15 +171,15 @@ def validateParameters(params):
                 wasdi.wasdiLog("[WARNING] 'content' is missing in a section.")
                 section['CONTENT'] = ''  # Assign an empty string
 
-            if 'IMAGE_PATH' not in section:
-                wasdi.wasdiLog("[WARNING] 'image_path' is missing in a section.")
-                section['IMAGE_PATH'] = ''  # Assign an empty string
+            if 'IMAGE_FILENAME' not in section:
+                wasdi.wasdiLog("[WARNING] 'IMAGE_FILENAME' is missing in a section.")
+                section['IMAGE_FILENAME'] = ''  # Assign an empty string
 
     return params
 
 
 def sanitizeParameters(params):
-    params['PDF_PATH'] = params['PDF_PATH'].strip()  # Remove leading/trailing whitespace
+    params['FILENAME'] = params['FILENAME'].strip()  # Remove leading/trailing whitespace
 
     header = params['HEADER']
     header['TITLE'] = header['TITLE'].strip()
@@ -194,7 +194,7 @@ def sanitizeParameters(params):
         for section in chapter['SECTIONS']:
             section['SUBTITLE'] = section['SUBTITLE'].strip()
             section['CONTENT'] = section['CONTENT'].strip()
-            section['IMAGE_PATH'] = section['IMAGE_PATH'].strip()
+            section['IMAGE_FILENAME'] = section['IMAGE_FILENAME'].strip()
 
     return params
 
@@ -208,7 +208,7 @@ def run():
         aoParams = validateParameters(aoParams)
         aoParams = sanitizeParameters(aoParams)
 
-        createPdf(aoParams['PDF_PATH'], aoParams)
+        createPdf(aoParams['FILENAME'], aoParams)
     except Exception as oEx:
         wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
         wasdi.updateStatus("ERROR", 0)
