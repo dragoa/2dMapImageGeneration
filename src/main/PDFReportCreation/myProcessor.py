@@ -61,16 +61,20 @@ class CustomPDF(FPDF):
     def footer(self):
         self.set_y(-15)  # Position at 1.5 cm from bottom
         self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, f'Page {self.page_no()}', align='C')
+        page_number_alignment = self.asParametersDict.get('footer_page_number_alignment',
+                                                          'center')  # Get page number alignment preference
+        self.cell(0, 10, f'Page {self.page_no()}', align=page_number_alignment)
 
         company_link = self.asParametersDict['header'].get('company_link', '')  # Get company link from parameters
         if company_link:  # If a link is provided, add it to the footer
-            link_x = 10  # Set x position for the link
-            link_y = self.h - 25  # Set y position for the link to be above the page number
+            link_alignment = self.asParametersDict.get('footer_link_alignment',
+                                                       'center')  # Get link alignment preference
+            link_x, link_y = self.calculate_link_position(link_alignment)
+
             self.set_xy(link_x, link_y)  # Position the cell for the link
             self.set_text_color(0, 0, 255)  # Set link color to blue
             self.set_font('Arial', 'U', 8)  # Set font to underline
-            self.cell(0, 10, 'Wasdi', ln=True, align='C',
+            self.cell(0, 10, 'Wasdi', ln=True, align=link_alignment,
                       link=company_link)  # Add the link with anchor text
             self.set_text_color(0, 0, 0)  # Reset text color to black
 
@@ -91,6 +95,10 @@ class CustomPDF(FPDF):
             subtitle = section.get('subtitle')
             content = section.get('content')
             image_file = section.get('image_path')
+            image_x = section.get('image_x', self.l_margin)  # Default to left margin
+            image_y = section.get('image_y', self.get_y())  # Default to current Y position
+            image_width = section.get('image_width', available_width)
+            image_height = section.get('image_height', available_height)
 
             # Print subtitle
             self.set_font('Helvetica', 'B', 12)
@@ -126,9 +134,9 @@ class CustomPDF(FPDF):
                     # Calculate the position to center the image vertically
                     image_y = self.get_y()
 
-                    # Set the position for the image and print it
-                    self.image(image_file, x=image_x, y=image_y, w=scaled_width, h=scaled_height)
-                else:
+                    # Set the position for the image and print it with the specified width and height
+                    self.image(image_file, x=image_x, y=image_y, w=image_width, h=image_height)
+            else:
                     wasdi.wasdiLog(f"Image file not found: {image_file}")
 
     def print_chapter(self, ch_num, ch_title, chapter_data):
@@ -185,18 +193,28 @@ def validate_parameters(params):
         wasdi.wasdiLog("Error: 'address' is missing in the header.")
         header['address'] = ''  # Assign an empty string
 
-        # Validate company details
-        if 'company_address' not in header:
-            wasdi.wasdiLog("Warning: 'company_address' is missing in the header.")
-            header['company_address'] = ''  # Assign an empty string
+    # Validate company details
+    if 'company_address' not in header['header']:  # Corrected key access
+        wasdi.wasdiLog("Warning: 'company_address' is missing in the header.")
+        header['header']['company_address'] = ''  # Assign an empty string
 
-        if 'company_link' not in header:
-            wasdi.wasdiLog("Warning: 'company_link' is missing in the header.")
-            header['company_link'] = ''  # Assign an empty string
+    if 'company_link' not in header['header']:  # Corrected key access
+        wasdi.wasdiLog("Warning: 'company_link' is missing in the header.")
+        header['header']['company_link'] = ''  # Assign an empty string
 
-        if 'company_phone' not in header:
-            wasdi.wasdiLog("Warning: 'company_phone' is missing in the header.")
-            header['company_phone'] = ''  # Assign an empty string
+    if 'company_phone' not in header['header']:  # Corrected key access
+        wasdi.wasdiLog("Warning: 'company_phone' is missing in the header.")
+        header['header']['company_phone'] = ''  # Assign an empty string
+
+    if 'footer_link_alignment' not in header:
+        wasdi.wasdiLog("Warning: 'footer_link_alignment' is missing in the header.")
+        wasdi.wasdiLog("Using default alignment: 'center'")
+        header['footer_link_alignment'] = 'center'  # Assign a default value
+
+    if 'footer_page_number_alignment' not in header:
+        wasdi.wasdiLog("Warning: 'footer_page_number_alignment' is missing in the header.")
+        wasdi.wasdiLog("Using default alignment: 'center'")
+        header['footer_page_number_alignment'] = 'center'  # Assign a default value
 
     if 'chapters' not in params:
         wasdi.wasdiLog("Error: 'chapters' is missing in the parameters.")
@@ -226,7 +244,6 @@ def validate_parameters(params):
 
     return params
 
-
 def sanitize_parameters(params):
     params['pdf_path'] = params['pdf_path'].strip()  # Remove leading/trailing whitespace
 
@@ -248,21 +265,34 @@ def sanitize_parameters(params):
     return params
 
 
+def get_user_image_params():
+    image_x = float(input("Enter X-coordinate for image position: "))
+    image_y = float(input("Enter Y-coordinate for image position: "))
+    image_width = float(input("Enter image width: "))
+    image_height = float(input("Enter image height: "))
+    return image_x, image_y, image_width, image_height
+
 def run():
     wasdi.wasdiLog("PDF tutorial v.1.1")
 
-    # Read from the parameters file
     try:
         aoParams = wasdi.getParametersDict()
         aoParams = validate_parameters(aoParams)
         aoParams = sanitize_parameters(aoParams)
 
-        create_pdf(aoParams['pdf_path'], aoParams)  # Fix dictionary key to be consistent
+        for chapter in aoParams['chapters']:
+            for section in chapter['sections']:
+                image_x, image_y, image_width, image_height = get_user_image_params()
+                section['image_x'] = image_x
+                section['image_y'] = image_y
+                section['image_width'] = image_width
+                section['image_height'] = image_height
+
+        create_pdf(aoParams['pdf_path'], aoParams)
     except Exception as oEx:
         wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
         wasdi.updateStatus("ERROR", 0)
         return
-
 
 if __name__ == '__main__':
     wasdi.init("./config.json")
