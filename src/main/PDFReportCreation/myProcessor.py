@@ -293,14 +293,6 @@ def run():
         aoParams = validate_parameters(aoParams)
         aoParams = sanitize_parameters(aoParams)
 
-        for chapter in aoParams['chapters']:
-            for section in chapter['sections']:
-                image_x, image_y, image_width, image_height = get_user_image_params()
-                section['image_x'] = image_x
-                section['image_y'] = image_y
-                section['image_width'] = image_width
-                section['image_height'] = image_height
-
         create_pdf(aoParams['pdf_path'], aoParams)
     except Exception as oEx:
         wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
