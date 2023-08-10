@@ -10,7 +10,9 @@
     "telephone": "+39 010 209XXXX",
     "company_link": "https://www.wasdi.cloud/",
     "footer_link_alignment": "center",
-    "footer_page_number_alignment": "center"
+    "footer_page_number_alignment": "center",
+    "company_address": "Company Address Here",
+    "company_phone": "+1 123-456-7890"
   },
   "chapters": [
     {

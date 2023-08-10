@@ -61,23 +61,19 @@ class CustomPDF(FPDF):
     def footer(self):
         self.set_y(-15)  # Position at 1.5 cm from bottom
         self.set_font('Arial', 'I', 8)
-        page_number_alignment = self.asParametersDict.get('footer_page_number_alignment',
-                                                          'center')  # Get page number alignment preference
+        page_number_alignment = self.asParametersDict.get('footer_page_number_alignment', 'center')
         self.cell(0, 10, f'Page {self.page_no()}', align=page_number_alignment)
 
-        company_link = self.asParametersDict['header'].get('company_link', '')  # Get company link from parameters
-        if company_link:  # If a link is provided, add it to the footer
-            link_alignment = self.asParametersDict.get('footer_link_alignment',
-                                                       'center')  # Get link alignment preference
-            link_x, link_y = self.calculate_link_position(link_alignment)
+        header_params = self.asParametersDict['header']
+        company_link = header_params.get('company_link', '')
+        footer_link_alignment = header_params.get('footer_link_alignment', 'center')  # Get link alignment from JSON
 
-            self.set_xy(link_x, link_y)  # Position the cell for the link
-            self.set_text_color(0, 0, 255)  # Set link color to blue
-            self.set_font('Arial', 'U', 8)  # Set font to underline
-            self.cell(0, 10, 'Wasdi', ln=True, align=link_alignment,
-                      link=company_link)  # Add the link with anchor text
-            self.set_text_color(0, 0, 0)  # Reset text color to black
-
+        if company_link:
+            self.set_xy(10, -10)  # Adjust the position based on alignment
+            self.set_text_color(0, 0, 255)
+            self.set_font('Arial', 'U', 8)
+            self.cell(0, 10, 'Wasdi', ln=True, align=footer_link_alignment, link=company_link)
+            self.set_text_color(0, 0, 0)
     def chapter_title(self, ch_num, ch_title):
         self.set_fill_color(255, 0, 0)  # Set fill color to red
         self.set_text_color(255)  # Set text color to white
@@ -95,10 +91,13 @@ class CustomPDF(FPDF):
             subtitle = section.get('subtitle')
             content = section.get('content')
             image_file = section.get('image_path')
-            image_x = section.get('image_x', self.l_margin)  # Default to left margin
-            image_y = section.get('image_y', self.get_y())  # Default to current Y position
-            image_width = section.get('image_width', available_width)
-            image_height = section.get('image_height', available_height)
+            image_settings = section.get('image_settings', {})
+
+            image_x = image_settings.get('x', self.l_margin)  # Default to left margin
+            image_y = image_settings.get('y', self.get_y())  # Default to current Y position
+            image_width = image_settings.get('width',
+                                             self.w - self.l_margin - self.r_margin)  # Default to available width
+            image_height = image_settings.get('height', 30 * self.k)  # Default to 30 points
 
             # Print subtitle
             self.set_font('Helvetica', 'B', 12)
@@ -113,30 +112,26 @@ class CustomPDF(FPDF):
             # Add image if specified
             if image_file:
                 if os.path.exists(image_file):
-                    # Calculate the available width and height for the image
-                    available_width = self.w - self.l_margin - self.r_margin
-                    available_height = 30 * self.k  # Convert inches to points
-
                     # Load the image using PIL to get its dimensions
                     image = Image.open(image_file)
                     image_width, image_height = image.size
 
                     # Calculate the scale factor for resizing the image
-                    scale_factor = min(available_width / image_width, available_height / image_height)
+                    scale_factor = min(image_width / image_width, image_height / image_height)
 
                     # Calculate the scaled dimensions for the image
                     scaled_width = image_width * scale_factor
                     scaled_height = image_height * scale_factor
 
                     # Calculate the position to center the image horizontally
-                    image_x = self.l_margin + (available_width - scaled_width) / 2
+                    image_x = self.l_margin + (self.w - self.l_margin - self.r_margin - scaled_width) / 2
 
                     # Calculate the position to center the image vertically
                     image_y = self.get_y()
 
                     # Set the position for the image and print it with the specified width and height
-                    self.image(image_file, x=image_x, y=image_y, w=image_width, h=image_height)
-            else:
+                    self.image(image_file, x=image_x, y=image_y, w=scaled_width, h=scaled_height)
+                else:
                     wasdi.wasdiLog(f"Image file not found: {image_file}")
 
     def add_table(self, data, col_widths):
