@@ -11,19 +11,29 @@
     "company_link": "https://www.wasdi.cloud/",
     "footer_link_alignment": "center",
     "footer_page_number_alignment": "center"
-},
+  },
   "chapters": [
     {
       "title": "Introduction",
       "sections": [
         {
           "subtitle": "Section 1.1: Overview",
-          "content": "GeoServer has emerged as an instrumental tool in the geospatial domain, allowing professionals to share, process, and edit geospatial data. Its flexibility and interoperability have paved the way for a myriad of applications, one of the most pertinent being flood analysis. The rapid and unpredictable nature of floods requires the use of robust technologies, and satellites play a crucial role in detecting and monitoring these disasters. This report delves into the intricacies of how GeoServer, in conjunction with satellite data, is revolutionizing flood analysis.",
+          "content": "GeoServer has emerged as an instrumental tool in the geospatial domain, allowing professionals to share, process, and edit geospatial data. Its flexibility and interoperability have paved the way for a myriad of applications, one of the most pertinent being flood analysis. This report delves into the intricacies of how GeoServer, in conjunction with satellite data, is revolutionizing flood analysis.",
           "image_path": "geography-vector-4752149.jpg",
           "image_x": 20,
           "image_y": 50,
           "image_width": 150,
           "image_height": 100
+        }
+      ],
+      "tables": [
+        {
+          "data": [
+            ["Column 1", "Column 2", "Column 3"],
+            ["Data 1", "Data 2", "Data 3"],
+            ["Data A", "Data B", "Data C"]
+          ],
+          "col_widths": [40, 40, 40]
         }
       ]
     },
@@ -38,6 +48,16 @@
           "image_y": 80,
           "image_width": 120,
           "image_height": 90
+        }
+      ],
+      "tables": [
+        {
+          "data": [
+            ["Column A", "Column B"],
+            ["Value 1", "Value 2"],
+            ["Value X", "Value Y"]
+          ],
+          "col_widths": [60, 60]
         }
       ]
     },
@@ -62,6 +82,16 @@
           "image_width": 110,
           "image_height": 70
         }
+      ],
+      "tables": [
+        {
+          "data": [
+            ["Header 1", "Header 2"],
+            ["Info A", "Info B"],
+            ["Info X", "Info Y"]
+          ],
+          "col_widths": [50, 50]
+        }
       ]
     },
     {
@@ -75,6 +105,16 @@
           "image_y": 60,
           "image_width": 130,
           "image_height": 110
+        }
+      ],
+      "tables": [
+        {
+          "data": [
+            ["Value X", "Value Y"],
+            ["Value A", "Value B"],
+            ["Number 1", "Number 2"]
+          ],
+          "col_widths": [50, 50]
         }
       ]
     },
@@ -90,6 +130,16 @@
           "image_width": 140,
           "image_height": 90
         }
+      ],
+      "tables": [
+        {
+          "data": [
+            ["Category 1", "Category 2", "Category 3"],
+            ["Result A", "Result B", "Result C"],
+            ["Conclusion X", "Conclusion Y", "Conclusion Z"]
+          ],
+          "col_widths": [40, 40, 40]
+        }
       ]
     },
     {
@@ -104,6 +154,16 @@
           "image_width": 160,
           "image_height": 120
         }
+      ],
+      "tables": [
+        {
+          "data": [
+            ["Conclusion 1", "Conclusion 2"],
+            ["Summary X", "Summary Y"],
+            ["Final Thoughts", "Remarks"]
+          ],
+          "col_widths": [60, 60]
+        }
       ]
     },
     {
@@ -117,6 +177,16 @@
           "image_y": 40,
           "image_width": 170,
           "image_height": 130
+        }
+      ],
+      "tables": [
+        {
+          "data": [
+            ["Recommendation 1", "Recommendation 2", "Recommendation 3"],
+            ["Suggestion A", "Suggestion B", "Suggestion C"],
+            ["Next Steps", "Exploration", "Prospects"]
+          ],
+          "col_widths": [40, 40, 40]
         }
       ]
     }

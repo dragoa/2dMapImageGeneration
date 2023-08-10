@@ -139,11 +139,24 @@ class CustomPDF(FPDF):
             else:
                     wasdi.wasdiLog(f"Image file not found: {image_file}")
 
+    def add_table(self, data, col_widths):
+        for row in data:
+            for i, col in enumerate(row):
+                self.cell(col_widths[i], 10, str(col), border=1)
+            self.ln()
+
     def print_chapter(self, ch_num, ch_title, chapter_data):
         self.add_page()
         self.chapter_title(ch_num, ch_title)
         self.chapter_body(chapter_data)
 
+        # Print table(s) if present
+        tables = chapter_data.get('tables', [])
+        for table in tables:
+            if 'data' in table and 'col_widths' in table:
+                table_data = table['data']
+                col_widths = table['col_widths']
+                self.add_table(table_data, col_widths)
 
 def create_pdf(pdf_path, params):
     pdf = CustomPDF(params)
@@ -194,17 +207,17 @@ def validate_parameters(params):
         header['address'] = ''  # Assign an empty string
 
     # Validate company details
-    if 'company_address' not in header['header']:  # Corrected key access
+    if 'company_address' not in header:  # Corrected key access
         wasdi.wasdiLog("Warning: 'company_address' is missing in the header.")
-        header['header']['company_address'] = ''  # Assign an empty string
+        header['company_address'] = ''  # Assign an empty string
 
-    if 'company_link' not in header['header']:  # Corrected key access
+    if 'company_link' not in header:  # Corrected key access
         wasdi.wasdiLog("Warning: 'company_link' is missing in the header.")
-        header['header']['company_link'] = ''  # Assign an empty string
+        header['company_link'] = ''  # Assign an empty string
 
-    if 'company_phone' not in header['header']:  # Corrected key access
+    if 'company_phone' not in header:  # Corrected key access
         wasdi.wasdiLog("Warning: 'company_phone' is missing in the header.")
-        header['header']['company_phone'] = ''  # Assign an empty string
+        header['company_phone'] = ''  # Assign an empty string
 
     if 'footer_link_alignment' not in header:
         wasdi.wasdiLog("Warning: 'footer_link_alignment' is missing in the header.")
