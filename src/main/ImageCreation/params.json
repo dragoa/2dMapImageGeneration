@@ -9,8 +9,10 @@
       "HEIGHT": "2955",
       "FORMAT": "PNG",
       "STYLE": "",
+      "FILENAME": "",
+      "GEOSERVER URL": "",
       "LAYER ID": "",
-      "GEOSERVER URL": ""
+      "stack_order": 1
     },
     {
       "PRODUCT": "PAK_2022-12-04_flood.tif",
@@ -21,9 +23,12 @@
       "HEIGHT": "2955",
       "FORMAT": "PNG",
       "STYLE": "",
+      "FILENAME": "",
+      "GEOSERVER URL": "",
       "LAYER ID": "",
-      "GEOSERVER URL": ""
+      "stack_order": 1
     }
     ],
-  "stackLayers": true
+  "stackLayers": true,
+  "bboxOptions": 1
 }
