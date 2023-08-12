@@ -1,194 +1,98 @@
-import json
-
-import owslib.util
-import requests
-import requests.exceptions
+import uuid
 import wasdi
-# Import the WebMapService class from owslib.wms
-from owslib.wms import WebMapService
+from Layer import Layer
 
 
 def run():
-    wasdi.wasdiLog("WMS client tutorial v.1.0")
-    # WMS Client
-    global wms
-    wms = ""
-    # Read from the parameters each product that we want to extract
+    wasdi.wasdiLog("WMS client tutorial v.1.3")
+
+    # Reading the parameters
     aoProducts = wasdi.getParameter("products")
+    iBBoxOptions = wasdi.getParameter("bboxOptions")
+    bStackLayers = wasdi.getParameter("stackLayers")
 
-    try:
-        for oProduct in aoProducts:
-            # Read from params the bands we want to extract and the product
-            sProduct = oProduct["PRODUCT"]
-            sBand = oProduct["BAND"]
-            sBBox = oProduct["BBOX"]
-            sCRS = oProduct["CRS"]
-            sWidthOfImage = oProduct["WIDTH"]
-            sHeightOfImage = oProduct["HEIGHT"]
-            sFormatOfImage = str.casefold(oProduct["FORMAT"])
-            sStyleOfImage = oProduct["STYLE"]
-            sGeoServerUrl = oProduct["GEOSERVER URL"]
-            sLayerId = oProduct["LAYER ID"]
+    layers = []
+    stack_orders = set()
+    valid_range = range(1, len(aoProducts) + 1)
+    valid = True
 
-            # Check the Bounding Box: is needed
-            if sBBox != "":
-                # Split the BBox: it is in the format: NORTH, WEST, SOUTH, EAST
-                asBBox = sBBox.split(",")
-                if len(asBBox) != 4:
-                    wasdi.wasdiLog("BBOX Not valid. Please use LATN,LONW,LATS,LONE")
-                    wasdi.wasdiLog("BBOX received:" + sBBox)
-                    wasdi.wasdiLog("exit")
-                    wasdi.updateStatus("ERROR", 0)
-                    return
+    for oProduct in aoProducts:
+        # Read from params the bands we want to extract and the product
+        sProduct = oProduct["PRODUCT"]
+        sBand = oProduct["BAND"]
+        sBBox = oProduct["BBOX"]
+        sCRS = oProduct["CRS"]
+        sWidth = oProduct["WIDTH"]
+        sHeight = oProduct["HEIGHT"]
+        sFormat = str.casefold(oProduct["FORMAT"])
+        sStyle = oProduct["STYLE"]
+        sFileName = oProduct["FILENAME"]
+        sGeoServerUrl = oProduct["GEOSERVER URL"]
+        sLayerId = oProduct["LAYER ID"]
+        iStackOrder = oProduct["stack_order"]
 
-            # Check the CRS: is needed
-            if sCRS == "":
-                wasdi.wasdiLog("CRS Parameter not set.")
-
-            # If I already have a GeoServer URL
-            if sGeoServerUrl != "":
-                wms = createWebMapService(sGeoServerUrl)
-                layer_names = ['ne:countries', 'ne:populated_places']
-                parameters = {
-                    'service': 'WMS',
-                    'version': '1.3.0',
-                    'request': 'GetMap',
-                    'layers': [','.join(layer_names)],  # Combine layer names with commas
-                    'styles': '',
-                    'bbox': (-180, -90, 180, 90),
-                    'size': (800, 600),
-                    'srs': 'EPSG:4326',
-                    'format': 'image/png'
-                }
-
-                getMapRequest(wms, parameters, "png", sGeoServerUrl)
-
-            # Get all the products in the WASDI workspace
-            asGetProducts = wasdi.getProductsByActiveWorkspace()
-            if sProduct not in asGetProducts:
-                wasdi.wasdiLog("An error occurred: The selected product is not in the workspace.")
+        # Check the Bounding Box: is needed
+        if sBBox != "":
+            # Split the BBox: it is in the format: NORTH, WEST, SOUTH, EAST
+            asBBox = sBBox.split(",")
+            if len(asBBox) != 4:
+                wasdi.wasdiLog("BBOX Not valid. Please use LATN,LONW,LATS,LONE")
+                wasdi.wasdiLog("BBOX received:" + sBBox)
+                wasdi.wasdiLog("exit")
                 wasdi.updateStatus("ERROR", 0)
-                return
+                return None
 
-            try:
-                sJsonResult = wasdi.getlayerWMS(sProduct, sBand)
-                # Convert the string to a Python object
-                data = json.loads(sJsonResult)
-                print(data)
+        # Check the CRS: is needed
+        if sCRS == "":
+            wasdi.wasdiLog("CRS Parameter not set.")
 
-                # Define the base URL of the WMS server
-                sGeoServerUrl = data["server"]
-                sLayerId = f"wasdi:{data['layerId']}"
+        # If the filename is not set generate a random one
+        if sFileName == "":
+            sFileName = uuid.uuid4()
+            wasdi.wasdiLog(f"FileName is not set! Generating a random UUID one... {sFileName}")
 
-                wms = createWebMapService(sGeoServerUrl)
-            except Exception as oEx:
-                # handle any error
-                wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
-                wasdi.updateStatus("ERROR", 0)
-                return
+        # Check on the stacking order
+        if iStackOrder not in valid_range:
+            valid = False
+            wasdi.wasdiLog(f"Invalid stack order for the product: {sProduct}")
+        elif iStackOrder in stack_orders:
+            valid = False
+            wasdi.wasdiLog(f"Duplicate stack order for : {sProduct}! Trying anyway...")
+        else:
+            stack_orders.add(iStackOrder)
 
-            if sBBox == "":
-                # get the bounding box and the correspondent coordinate system
-                toBoundingBoxList = wms[sLayerId].boundingBox
-                wasdi.wasdiLog(f"The Bounding Box used is {toBoundingBoxList}")
-            else:
-                toBoundingBoxList = [float(x) for x in sBBox.split(",")]
-                toBoundingBoxList.append(sCRS)
+        # Create the layer
+        layer = Layer(
+            sProduct,
+            sBand,
+            sBBox,
+            sCRS,
+            sWidth,
+            sHeight,
+            sFormat,
+            sStyle,
+            sFileName,
+            sGeoServerUrl,
+            sLayerId,
+            iStackOrder
+        )
 
-            # layer_names = ['wasdi:a6c50075-7723-4a6c-9994-1cbff25cea08', sLayerId]
-            layer_names = [sLayerId]
+        # Tracking all the layers
+        layers.append(layer)
 
-            parameters = {
-                'service': 'WMS',
-                'version': '1.3.0',
-                'request': 'GetMap',
-                "layers": [','.join(layer_names)],
-                "styles": [sStyleOfImage],
-                'srs': 'EPSG:4326',
-                'bbox': (toBoundingBoxList[:4]),
-                'size': (sWidthOfImage, sHeightOfImage),
-                'format': f'image/{sFormatOfImage}',
-                'transparent': True,
-                'product': sProduct
-            }
-            # createLayerGroup()
-            getMapRequest(wms, parameters, sFormatOfImage, sGeoServerUrl)
-    except Exception as oEx:
-        wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
-        wasdi.updateStatus("ERROR", 0)
-        return
+        # Process each layer alone if I'm not stacking (True by default)
+        for layer in layers:
+            layer.process_layer(bStackLayers)
 
+    if bStackLayers:
 
-def createWebMapService(sGeoserverUrl):
-    try:
-        wms = WebMapService(sGeoserverUrl, version='1.3.0')
-        return wms
-    except Exception as oEx:
-        wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
-        wasdi.updateStatus("ERROR", 0)
-        return
+        if valid:
+            # Sort layers based on stack_order
+            layers = sorted(layers, key=lambda x: x.stack)
+
+        layers[0].process_layers(layers, iBBoxOptions)
 
 
-def getMapRequest(wms, params, sFormatOfImage, sGeoserverUrl):
-    # response = requests.get(f'{sGeoserverUrl}wms', params=params)
-    #
-    # if response.status_code == 200:
-    #     with open('map.png', 'wb') as f:
-    #         f.write(response.content)
-    #     print('Map image saved successfully.')
-    # else:
-    #     print(f'Failed to retrieve map. Status code: {response.status_code}')
-
-    # try to get the map image
-    try:
-        # make the request and save the response as a file
-        response = wms.getmap(**params)
-        with open(f"""{params['product']}.{sFormatOfImage}""", "wb") as o:
-            o.write(response.read())
-            wasdi.wasdiLog('Map image saved successfully.')
-            # wasdi.addFileToWASDI("map.tiff", "")
-    except requests.exceptions.ConnectionError:
-        # handle network errors
-        wasdi.wasdiLog('Could not connect to the WMS server.')
-    except owslib.util.ServiceException as oEx:
-        # handle server errors
-        wasdi.wasdiLog(f'The WMS server returned an error: {repr(oEx)}')
-    except Exception as oEx:
-        # handle any other error
-        wasdi.wasdiLog(f'An unknown error occurred: {repr(oEx)}')
-        wasdi.updateStatus("ERROR", 0)
-        return
-
-
-def createLayerGroup():
-    base_url = 'http://localhost:8080/geoserver/'
-    username = 'admin'
-    password = 'geoserver'
-
-    layer_group_name = 'my_layer_group1'
-    layer_names = ['ne:countries', 'ne:populated_places']  # Replace with actual layer names
-    workspace = 'ne'  # Replace with the actual workspace name
-
-    layer_group = {
-        'name': layer_group_name,
-        'workspace': workspace,
-        'layers': {
-            'layer': layer_names
-        }
-    }
-    payload = json.dumps({'layerGroup': layer_group})
-
-    url = f'{base_url}rest/workspaces/{workspace}/layergroups'
-
-    response = requests.post(url, data=payload, auth=(username, password), headers={'Content-Type': 'application/json'})
-
-    if response.status_code == 201:
-        print('Layer group created successfully.')
-    else:
-        print(f'Failed to create layer group. Status code: {response.status_code}')
-        print(response.text)
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     wasdi.init('./config.json')
     run()

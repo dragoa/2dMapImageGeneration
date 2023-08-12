@@ -4,6 +4,7 @@ import os
 from fpdf import FPDF
 from PIL import Image
 
+
 class CustomPDF(FPDF):
     def __init__(self, params):
         super().__init__()
@@ -74,6 +75,7 @@ class CustomPDF(FPDF):
             self.set_font('Arial', 'U', 8)
             self.cell(0, 10, 'Wasdi', ln=True, align=footer_link_alignment, link=company_link)
             self.set_text_color(0, 0, 0)
+
     def chapter_title(self, ch_num, ch_title):
         self.set_fill_color(255, 0, 0)  # Set fill color to red
         self.set_text_color(255)  # Set text color to white
@@ -153,6 +155,7 @@ class CustomPDF(FPDF):
                 col_widths = table['col_widths']
                 self.add_table(table_data, col_widths)
 
+
 def create_pdf(pdf_path, params):
     pdf = CustomPDF(params)
 
@@ -167,6 +170,7 @@ def create_pdf(pdf_path, params):
         pdf.print_chapter(i, chapter['title'], chapter)
 
     pdf.output(pdf_path)
+
 
 def validate_parameters(params):
     if 'pdf_path' not in params:
@@ -252,6 +256,7 @@ def validate_parameters(params):
 
     return params
 
+
 def sanitize_parameters(params):
     params['pdf_path'] = params['pdf_path'].strip()  # Remove leading/trailing whitespace
 
@@ -280,6 +285,7 @@ def get_user_image_params():
     image_height = float(input("Enter image height: "))
     return image_x, image_y, image_width, image_height
 
+
 def run():
     wasdi.wasdiLog("PDF tutorial v.1.1")
 
@@ -293,6 +299,7 @@ def run():
         wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
         wasdi.updateStatus("ERROR", 0)
         return
+
 
 if __name__ == '__main__':
     wasdi.init("./config.json")
