@@ -1,5 +1,5 @@
 {
-  "pdf_path": "WASDI_FINAL_REPORT.pdf",
+  "filename": "report",
   "header": {
     "title": "WASDI FINAL REPORT",
     "logo": "wasdi_logo.jpg",
@@ -8,9 +8,6 @@
     "address": "16126, Genova, Italy",
     "website": "https://www.unige.it",
     "telephone": "+39 010 209XXXX",
-    "company_link": "https://www.wasdi.cloud/",
-    "footer_link_alignment": "center",
-    "footer_page_number_alignment": "center",
     "company_address": "Company Address Here",
     "company_phone": "+1 123-456-7890"
   },
@@ -192,5 +189,15 @@
         }
       ]
     }
-  ]
+  ],
+  "footer": {
+    "company_link": "https://www.wasdi.cloud/",
+    "footer_link_alignment": "left",
+    "footer_page_number_alignment": "center"
+  },
+  "style": {
+    "size": 13,
+    "family": "Arial",
+    "style": ""
+  }
 }

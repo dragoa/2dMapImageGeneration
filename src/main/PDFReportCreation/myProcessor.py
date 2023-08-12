@@ -1,163 +1,12 @@
-import json
 import wasdi
-import os
-from fpdf import FPDF
-from PIL import Image
 
-
-class CustomPDF(FPDF):
-    def __init__(self, params):
-        super().__init__()
-        self.asParametersDict = params
-        self.index_added = False  # Initialize index_added attribute to False
-
-    def header(self):
-        header_params = self.asParametersDict['header']
-        title = header_params['title']
-        logo = header_params['logo']
-        name = header_params['name']
-        company_name = header_params['company_name']
-        address = header_params['address']
-        website = header_params.get('website', '')  # Using get method to ensure backward compatibility
-        telephone = header_params.get('telephone', '')
-
-        # Set logo
-        self.image(logo, x=10, y=10, w=30)
-
-        # Set header title
-        self.set_font('Helvetica', 'B', 15)
-        self.cell(0, 10, title, border=0, ln=1, align='C')
-
-        # Set name and company
-        self.set_font('Helvetica', '', 12)
-        self.cell(0, 5, '', ln=1, align='R')  # Empty cell for alignment
-        self.cell(0, 5, f'Author: {name}', ln=1, align='R')
-        self.cell(0, 5, f'Company: {company_name}', ln=1, align='R')
-        self.cell(0, 5, f'Address: {address}', ln=1, align='R')
-        self.cell(0, 5, f'Website: {website}', ln=1, align='R')
-        self.cell(0, 5, f'Telephone: {telephone}', ln=1, align='R')
-        self.ln(10)
-
-    # Moved the add_index method out of the header
-    def add_index(self):
-        if not self.index_added:
-            self.set_xy(10, 70)
-            self.set_font('Helvetica', 'B', 16)
-            self.set_text_color(255, 255, 255)
-            self.cell(0, 10, 'INDEX', ln=1, align='L', fill=True)
-            self.set_fill_color(255, 0, 0)
-            self.set_text_color(0, 0, 0)
-            self.set_font('Helvetica', '', 12)
-            self.multi_cell(0, 10, self.generate_index(), align='L')
-            self.index_added = True
-            self.ln(10)
-
-    # Moved the generate_index method out of the header
-    def generate_index(self):
-        index_text = ''
-        for i, chapter in enumerate(self.asParametersDict['chapters'], start=1):
-            index_text += f'Chapter {i}: {chapter["title"]}\n'
-        return index_text
-
-    def footer(self):
-        self.set_y(-15)  # Position at 1.5 cm from bottom
-        self.set_font('Arial', 'I', 8)
-        page_number_alignment = self.asParametersDict.get('footer_page_number_alignment', 'center')
-        self.cell(0, 10, f'Page {self.page_no()}', align=page_number_alignment)
-
-        header_params = self.asParametersDict['header']
-        company_link = header_params.get('company_link', '')
-        footer_link_alignment = header_params.get('footer_link_alignment', 'center')  # Get link alignment from JSON
-
-        if company_link:
-            self.set_xy(10, -10)  # Adjust the position based on alignment
-            self.set_text_color(0, 0, 255)
-            self.set_font('Arial', 'U', 8)
-            self.cell(0, 10, 'Wasdi', ln=True, align=footer_link_alignment, link=company_link)
-            self.set_text_color(0, 0, 0)
-
-    def chapter_title(self, ch_num, ch_title):
-        self.set_fill_color(255, 0, 0)  # Set fill color to red
-        self.set_text_color(255)  # Set text color to white
-        self.set_font('Helvetica', 'B', 12)
-        self.cell(0, 10, f'Chapter {ch_num}: {ch_title}', ln=1, fill=True)
-        self.ln()
-
-    def chapter_body(self, chapter_data):
-        self.set_fill_color(255)  # Set fill color back to white
-        self.set_text_color(0)  # Set text color back to black
-        self.set_font('Times', '', 12)
-
-        chapter_sections = chapter_data.get('sections', [])
-        for section in chapter_sections:
-            subtitle = section.get('subtitle')
-            content = section.get('content')
-            image_file = section.get('image_path')
-            image_settings = section.get('image_settings', {})
-
-            image_x = image_settings.get('x', self.l_margin)  # Default to left margin
-            image_y = image_settings.get('y', self.get_y())  # Default to current Y position
-            image_width = image_settings.get('width',
-                                             self.w - self.l_margin - self.r_margin)  # Default to available width
-            image_height = image_settings.get('height', 30 * self.k)  # Default to 30 points
-
-            # Print subtitle
-            self.set_font('Helvetica', 'B', 12)
-            self.cell(0, 5, subtitle, ln=1, fill=True)
-            self.ln()
-
-            # Print content
-            self.set_font('Times', '', 12)
-            self.multi_cell(0, 10, content)
-            self.ln(10)
-
-            # Add image if specified
-            if image_file:
-                if os.path.exists(image_file):
-                    # Load the image using PIL to get its dimensions
-                    image = Image.open(image_file)
-                    image_width, image_height = image.size
-
-                    # Calculate the scale factor for resizing the image
-                    scale_factor = min(image_width / image_width, image_height / image_height)
-
-                    # Calculate the scaled dimensions for the image
-                    scaled_width = image_width * scale_factor
-                    scaled_height = image_height * scale_factor
-
-                    # Calculate the position to center the image horizontally
-                    image_x = self.l_margin + (self.w - self.l_margin - self.r_margin - scaled_width) / 2
-
-                    # Calculate the position to center the image vertically
-                    image_y = self.get_y()
-
-                    # Set the position for the image and print it with the specified width and height
-                    self.image(image_file, x=image_x, y=image_y, w=scaled_width, h=scaled_height)
-                else:
-                    wasdi.wasdiLog(f"Image file not found: {image_file}")
-
-    def add_table(self, data, col_widths):
-        for row in data:
-            for i, col in enumerate(row):
-                self.cell(col_widths[i], 10, str(col), border=1)
-            self.ln()
-
-    def print_chapter(self, ch_num, ch_title, chapter_data):
-        self.add_page()
-        self.chapter_title(ch_num, ch_title)
-        self.chapter_body(chapter_data)
-
-        # Print table(s) if present
-        tables = chapter_data.get('tables', [])
-        for table in tables:
-            if 'data' in table and 'col_widths' in table:
-                table_data = table['data']
-                col_widths = table['col_widths']
-                self.add_table(table_data, col_widths)
+from CustomPDF import CustomPDF
 
 
 def create_pdf(pdf_path, params):
     pdf = CustomPDF(params)
+
+    wasdi.wasdiLog("Creating PDF...")
 
     for key, value in params.items():
         wasdi.wasdiLog(f"{key}: {pdf.asParametersDict[key]}")
@@ -171,26 +20,45 @@ def create_pdf(pdf_path, params):
 
     pdf.output(pdf_path)
 
+    wasdi.wasdiLog("PDF created successfully")
+
+
+def get_user_image_params():
+    image_x = float(input("Enter X-coordinate for image position: "))
+    image_y = float(input("Enter Y-coordinate for image position: "))
+    image_width = float(input("Enter image width: "))
+    image_height = float(input("Enter image height: "))
+    return image_x, image_y, image_width, image_height
+
+
+def sanitize_parameters(params):
+    # Recursive function that removes leading/trailing whitespace
+    if isinstance(params, str):
+        return params.strip()
+    elif isinstance(params, list):
+        return [sanitize_parameters(item) for item in params]
+    elif isinstance(params, dict):
+        return {key: sanitize_parameters(value) for key, value in params.items()}
+    else:
+        return params
+
 
 def validate_parameters(params):
-    if 'pdf_path' not in params:
-        wasdi.wasdiLog("Error: 'pdf_path' is missing in the parameters.")
-        params['pdf_path'] = 'WASDI_FINAL_REPORT.pdf'  # Assign a default value
-    else:
-        if not params['pdf_path'].endswith('.pdf'):
-            wasdi.wasdiLog("Warning: 'pdf_path' should have a '.pdf' extension.")
+    if "filename" not in params:
+        wasdi.wasdiLog("A filename is missing in the parameters! Using a default one")
+        params["filename"] = "Wasdi report"  # Assign a default value
 
-    if 'header' not in params:
-        wasdi.wasdiLog("Error: 'header' is missing in the parameters.")
-        params['header'] = {}  # Assign an empty dictionary
+    if "header" not in params:
+        wasdi.wasdiLog("Header is missing in the parameters.")
+        params["header"] = {}  # Assign an empty dictionary
 
-    header = params['header']
-    if 'title' not in header:
-        wasdi.wasdiLog("Error: 'title' is missing in the header.")
+    header = params["header"]
+    if "title" not in header:
+        wasdi.wasdiLog("Title is missing in the header.")
         header['title'] = 'WASDI FINAL REPORT'  # Assign a default value
 
-    if 'logo' not in header:
-        wasdi.wasdiLog("Error: 'logo' is missing in the header.")
+    if "logo" not in header:
+        wasdi.wasdiLog("Logo is missing in the header.")
         header['logo'] = 'wasdi_logo.jpg'  # Assign a default value
 
     if 'name' not in header:
@@ -257,44 +125,18 @@ def validate_parameters(params):
     return params
 
 
-def sanitize_parameters(params):
-    params['pdf_path'] = params['pdf_path'].strip()  # Remove leading/trailing whitespace
-
-    header = params['header']
-    header['title'] = header['title'].strip()
-    header['logo'] = header['logo'].strip()
-    header['name'] = header['name'].strip()
-    header['company_name'] = header['company_name'].strip()
-    header['address'] = header['address'].strip()
-
-    for chapter in params['chapters']:
-        chapter['title'] = chapter['title'].strip()
-
-        for section in chapter['sections']:
-            section['subtitle'] = section['subtitle'].strip()
-            section['content'] = section['content'].strip()
-            section['image_path'] = section['image_path'].strip()
-
-    return params
-
-
-def get_user_image_params():
-    image_x = float(input("Enter X-coordinate for image position: "))
-    image_y = float(input("Enter Y-coordinate for image position: "))
-    image_width = float(input("Enter image width: "))
-    image_height = float(input("Enter image height: "))
-    return image_x, image_y, image_width, image_height
-
-
 def run():
-    wasdi.wasdiLog("PDF tutorial v.1.1")
+    wasdi.wasdiLog("PDF tutorial v.1.2")
 
+    # Reading the parameters
     try:
-        aoParams = wasdi.getParametersDict()
-        aoParams = validate_parameters(aoParams)
-        aoParams = sanitize_parameters(aoParams)
 
-        create_pdf(aoParams['pdf_path'], aoParams)
+        aoParams = wasdi.getParametersDict()
+        aoParams = sanitize_parameters(aoParams)
+        aoParams = validate_parameters(aoParams)
+
+        filename = f"{aoParams['filename']}.pdf"
+        create_pdf(filename, aoParams)
     except Exception as oEx:
         wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
         wasdi.updateStatus("ERROR", 0)
