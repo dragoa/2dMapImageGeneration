@@ -92,6 +92,18 @@ def run():
 
         layers[0].process_layers(layers, iBBoxOptions)
 
+    # Create the payload object
+    aoPayload = {}
+    # Save the inputs that we received
+    aoPayload["inputs"] = wasdi.getParametersDict()
+    # Save the output we created
+    aoPayload["output"] = sFileName
+    # Save the payload
+    wasdi.setPayload(aoPayload)
+
+    # Close the process setting the status to DONE
+    wasdi.updateStatus("DONE", 100)
+    
 
 if __name__ == "__main__":
     wasdi.init('./config.json')
