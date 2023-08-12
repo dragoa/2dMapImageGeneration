@@ -8,11 +8,13 @@ def run():
 
     # Reading the parameters
     aoProducts = wasdi.getParameter("products")
-    bStackLayers = wasdi.getParameter("stackLayers")
     iBBoxOptions = wasdi.getParameter("bboxOptions")
+    bStackLayers = wasdi.getParameter("stackLayers")
 
     layers = []
-    background_layer = None
+    stack_orders = set()
+    valid_range = range(1, len(aoProducts) + 1)
+    valid = True
 
     for oProduct in aoProducts:
         # Read from params the bands we want to extract and the product
@@ -24,10 +26,10 @@ def run():
         sHeight = oProduct["HEIGHT"]
         sFormat = str.casefold(oProduct["FORMAT"])
         sStyle = oProduct["STYLE"]
+        sFileName = oProduct["FILENAME"]
         sGeoServerUrl = oProduct["GEOSERVER URL"]
         sLayerId = oProduct["LAYER ID"]
-        sFileName = oProduct["FILENAME"]
-        bIsBackground = oProduct["isBackground"]
+        iStackOrder = oProduct["stack_order"]
 
         # Check the Bounding Box: is needed
         if sBBox != "":
@@ -46,8 +48,18 @@ def run():
 
         # If the filename is not set generate a random one
         if sFileName == "":
-            wasdi.wasdiLog("FileName is not set! Generating a random UUID one...")
             sFileName = uuid.uuid4()
+            wasdi.wasdiLog(f"FileName is not set! Generating a random UUID one... {sFileName}")
+
+        # Check on the stacking order
+        if iStackOrder not in valid_range:
+            valid = False
+            wasdi.wasdiLog(f"Invalid stack order for the product: {sProduct}")
+        elif iStackOrder in stack_orders:
+            valid = False
+            wasdi.wasdiLog(f"Duplicate stack order for : {sProduct}! Trying anyway...")
+        else:
+            stack_orders.add(iStackOrder)
 
         # Create the layer
         layer = Layer(
@@ -59,41 +71,26 @@ def run():
             sHeight,
             sFormat,
             sStyle,
+            sFileName,
             sGeoServerUrl,
             sLayerId,
-            sFileName
+            iStackOrder
         )
 
-        if bIsBackground:
-            background_layer = layer
-            wasdi.wasdiLog(f"Background Layer: {background_layer.product}")
-        else:
-            layers.append(layer)
-
-        # check for GeoServer url
-        if sGeoServerUrl != "" and sLayerId != "":
-            layer.geoserver_url = sGeoServerUrl
-            layer.layer_id = sLayerId
-
+        # Tracking all the layers
         layers.append(layer)
 
+        # Process each layer alone if I'm not stacking (True by default)
         for layer in layers:
             layer.process_layer(bStackLayers)
 
     if bStackLayers:
 
-        # If the background was not specified
-        if background_layer is None:
-            wasdi.wasdiLog("No background layer specified.")
-            wasdi.wasdiLog("exit")
-            wasdi.updateStatus("ERROR", 0)
-            return None
+        if valid:
+            # Sort layers based on stack_order
+            layers = sorted(layers, key=lambda x: x.stack)
 
-        process_layers(background_layer, layers, iBBoxOptions)
-
-
-def process_layers(background_layer, layers, iBBoxOptions):
-    background_layer.process_layers(layers, iBBoxOptions)
+        layers[0].process_layers(layers, iBBoxOptions)
 
 
 if __name__ == "__main__":

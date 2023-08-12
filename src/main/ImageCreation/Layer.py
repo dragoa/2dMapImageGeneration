@@ -39,8 +39,8 @@ def calculate_bbox_union(box1, box2):
 
 
 class Layer:
-    def __init__(self, product, band, bbox, crs, width, height, img_format, style, geoserver_url, layer_id,
-                 sFileName):
+    def __init__(self, product, band, bbox, crs, width, height, img_format, style, sFileName,
+                 geoserver_url, layer_id, iStackOrder):
         self.wms = None
         self.product = product
         self.band = band
@@ -53,6 +53,7 @@ class Layer:
         self.geoserver_url = geoserver_url
         self.layer_id = layer_id
         self.filename = sFileName
+        self.stack = iStackOrder
 
     def create_web_map_service(self):
 
@@ -70,7 +71,7 @@ class Layer:
             if self.bbox == "":
                 # Get the bounding box and the correspondent coordinate system
                 to_bounding_box_list = self.wms[self.layer_id].boundingBox
-                wasdi.wasdiLog(f"The Bounding Box used is {to_bounding_box_list}")
+                wasdi.wasdiLog(f"Finding the correct BBox... used {to_bounding_box_list} for {self.product}")
             else:
                 # Using bbox provided by the user
                 to_bounding_box_list = [float(x) for x in self.bbox.split(",")]
@@ -145,13 +146,6 @@ class Layer:
 
         if self.wms is None:
 
-            # Get all the products in the WASDI workspace
-            as_get_products = wasdi.getProductsByActiveWorkspace()
-            if self.product not in as_get_products:
-                wasdi.wasdiLog("An error occurred: The selected product is not in the workspace.")
-                wasdi.updateStatus("ERROR", 0)
-                return None
-
             try:
                 # try to connect to the provided Geoserver url
                 if self.geoserver_url == "":
@@ -159,7 +153,7 @@ class Layer:
                     s_json_result = wasdi.getlayerWMS(self.product, self.band)
                     # Convert the string to a Python object
                     data = json.loads(s_json_result)
-                    print(data)
+                    wasdi.wasdiLog(data)
 
                     # Define the base URL of the WMS server
                     self.geoserver_url = data["server"]
@@ -172,6 +166,7 @@ class Layer:
                 wasdi.updateStatus("ERROR", 0)
                 return None
 
+            # Getting the bbox for each layer
             to_bounding_box_list = self.get_bounding_box_list()
 
             layers_to_stack = []
@@ -203,10 +198,11 @@ class Layer:
                     box2 = bboxes[j]
 
                     intersection_area = calculate_bbox_intersection(box1, box2)
-                    print(f"Intersection area between box {i + 1} and box {j + 1}: {intersection_area}")
+                    wasdi.wasdiLog(f"Intersection area between box {i + 1} and box {j + 1}: {intersection_area}")
 
                     to_bounding_box_list = intersection_area
 
+        # Using the union of BBoxes
         elif iBBoxOptions == 1:
             wasdi.wasdiLog("You are now using the union of the BBoxes.")
             bboxes = []
@@ -214,15 +210,13 @@ class Layer:
             for layer in layers:
                 bboxes.append(layer.get_bounding_box_list())
 
-            print(bboxes)
-
             for i in range(len(bboxes)):
                 for j in range(i + 1, len(bboxes)):
                     box1 = bboxes[i]
                     box2 = bboxes[j]
 
                     union_area = calculate_bbox_union(box1, box2)
-                    print(f"Union area between box {i + 1} and box {j + 1}: {union_area}")
+                    wasdi.wasdiLog(f"Union area between box {i + 1} and box {j + 1}: {union_area}")
 
                     to_bounding_box_list = union_area
 
