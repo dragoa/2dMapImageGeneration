@@ -99,10 +99,13 @@ class CustomPDF(FPDF):
 
         chapter_sections = chapter_data.get('sections', [])
         for section in chapter_sections:
-            subtitle = section.get('subtitle')
-            content = section.get('content')
-            image_file = section.get('image_path')
-            image_settings = section.get('image_settings', {})
+            subtitle = section.get("subtitle")
+            content = section.get("content")
+            image_file = section.get("image_path")
+            image_x = section.get("image_x")
+            image_y = section.get("image_x")
+            image_width = section.get("image_width")
+            image_height = section.get("image_height")
 
             # Print subtitle
             self.cell(0, 5, subtitle, ln=1, fill=True)
@@ -115,29 +118,31 @@ class CustomPDF(FPDF):
             # Add image if specified
             if image_file:
                 if os.path.exists(image_file):
+
                     # Calculate the available width and height for the image
                     available_width = self.w - self.l_margin - self.r_margin
                     available_height = 30 * self.k  # Convert inches to points
 
                     # Load the image using PIL to get its dimensions
                     image = Image.open(image_file)
-                    image_width, image_height = image.size
+                    if image_width and image_height == "":
+                        image_width, image_height = image.size
 
-                    # Calculate the scale factor for resizing the image
-                    scale_factor = min(available_width / image_width, available_height / image_height)
+                        # Calculate the scale factor for resizing the image
+                        scale_factor = min(available_width / image_width, available_height / image_height)
 
-                    # Calculate the scaled dimensions for the image
-                    scaled_width = image_width * scale_factor
-                    scaled_height = image_height * scale_factor
+                        # Calculate the scaled dimensions for the image
+                        image_width = image_width * scale_factor
+                        image_height = image_height * scale_factor
 
-                    # Calculate the position to center the image horizontally
-                    image_x = self.l_margin + (available_width - scaled_width) / 2
-
-                    # Calculate the position to center the image vertically
-                    image_y = self.get_y()
+                        if image_x and image_y == "":
+                            # Calculate the position to center the image horizontally
+                            image_x = self.l_margin + (available_width - image_width) / 2
+                            # Calculate the position to center the image vertically
+                            image_y = self.get_y()
 
                     # Set the position for the image and print it
-                    self.image(image_file, x=image_x, y=image_y, w=scaled_width, h=scaled_height)
+                    self.image(image_file, x=image_x, y=image_y, w=image_width, h=image_height)
                 else:
                     wasdi.wasdiLog(f"Image file not found: {image_file}")
 

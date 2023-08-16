@@ -18,6 +18,7 @@ def create_pdf(pdf_path, params):
     for i, chapter in enumerate(params['chapters'], start=1):
         pdf.print_chapter(i, chapter['title'], chapter)
 
+    pdf.oversized_images = "WARN"
     pdf.output(pdf_path)
 
     wasdi.wasdiLog("PDF created successfully")
