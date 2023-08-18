@@ -104,7 +104,7 @@ def validate_parameters(params):
     for chapter in params['chapters']:
         if 'title' not in chapter:
             wasdi.wasdiLog("Error: 'title' is missing in a chapter.")
-            chapter['title'] = ''  # Assign an empty string
+            chapter['title'] = ""  # Assign an empty string
 
         if 'sections' not in chapter:
             wasdi.wasdiLog("Error: 'sections' is missing in a chapter.")
@@ -113,15 +113,15 @@ def validate_parameters(params):
         for section in chapter['sections']:
             if 'subtitle' not in section:
                 wasdi.wasdiLog("Error: 'subtitle' is missing in a section.")
-                section['subtitle'] = ''  # Assign an empty string
+                section['subtitle'] = ""  # Assign an empty string
 
             if 'content' not in section:
                 wasdi.wasdiLog("Error: 'content' is missing in a section.")
-                section['content'] = ''  # Assign an empty string
+                section['content'] = ""  # Assign an empty string
 
             if 'image_path' not in section:
                 wasdi.wasdiLog("Error: 'image_path' is missing in a section.")
-                section['image_path'] = ''  # Assign an empty string
+                section['image_path'] = ""  # Assign an empty string
 
     return params
 
@@ -133,8 +133,8 @@ def run():
     try:
 
         aoParams = wasdi.getParametersDict()
-        aoParams = sanitize_parameters(aoParams)
-        aoParams = validate_parameters(aoParams)
+        # aoParams = sanitize_parameters(aoParams)
+        # aoParams = validate_parameters(aoParams)
 
         filename = f"{aoParams['filename']}.pdf"
         create_pdf(filename, aoParams)

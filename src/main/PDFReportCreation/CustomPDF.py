@@ -108,43 +108,40 @@ class CustomPDF(FPDF):
             image_height = section.get("image_height")
 
             # Print subtitle
+            self.set_font('Helvetica', 'B', 12)
             self.cell(0, 5, subtitle, ln=1, fill=True)
             self.ln()
 
             # Print content
+            self.set_font('Times', '', 12)
             self.multi_cell(0, 10, content)
             self.ln(10)
 
             # Add image if specified
-            if image_file:
-                if os.path.exists(image_file):
+            if image_file and os.path.exists(image_file):
 
-                    # Calculate the available width and height for the image
-                    available_width = self.w - self.l_margin - self.r_margin
-                    available_height = 30 * self.k  # Convert inches to points
+                with Image.open(image_file) as image:
 
-                    # Load the image using PIL to get its dimensions
-                    image = Image.open(image_file)
-                    if image_width and image_height == "":
+                    if image_width == '' and image_height == '':
                         image_width, image_height = image.size
+                        aspect_ratio = image_width / image_height
 
-                        # Calculate the scale factor for resizing the image
-                        scale_factor = min(available_width / image_width, available_height / image_height)
-
-                        # Calculate the scaled dimensions for the image
-                        image_width = image_width * scale_factor
-                        image_height = image_height * scale_factor
-
-                        if image_x and image_y == "":
+                        if image_x == '' and image_y == '':
                             # Calculate the position to center the image horizontally
-                            image_x = self.l_margin + (available_width - image_width) / 2
-                            # Calculate the position to center the image vertically
+                            image_x = self.l_margin
                             image_y = self.get_y()
+
+                            # Default values
+                            image_width = self.w - self.l_margin - self.r_margin
+                            image_height = 30 * self.k
 
                     # Set the position for the image and print it
                     self.image(image_file, x=image_x, y=image_y, w=image_width, h=image_height)
-                else:
-                    wasdi.wasdiLog(f"Image file not found: {image_file}")
+                    # Update Y position for next content
+                    self.set_y(image_y + image_height + 10)
+
+            else:
+                wasdi.wasdiLog(f"Image file not found: {image_file}")
 
     def add_table(self, data, col_widths):
         for row in data:

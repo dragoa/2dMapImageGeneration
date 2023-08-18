@@ -19,10 +19,10 @@
           "subtitle": "Section 1.1: Overview",
           "content": "GeoServer has emerged as an instrumental tool in the geospatial domain, allowing professionals to share, process, and edit geospatial data. Its flexibility and interoperability have paved the way for a myriad of applications, one of the most pertinent being flood analysis. This report delves into the intricacies of how GeoServer, in conjunction with satellite data, is revolutionizing flood analysis.",
           "image_path": "geography-vector-4752149.jpg",
-          "image_x": 20,
-          "image_y": 50,
-          "image_width": 150,
-          "image_height": 100
+          "image_x": "",
+          "image_y": "",
+          "image_width": "",
+          "image_height": ""
         }
       ],
       "tables": [
@@ -43,10 +43,10 @@
           "subtitle": "Section 2.1: Previous Studies",
           "content": "Historically, flood prediction relied heavily on ground data and early-warning systems. However, the advent of satellite technology has reshaped the dynamics of flood detection and prediction. Numerous studies have shed light on the efficacy of using satellites for this purpose, emphasizing faster response times and broader coverage. This section reviews existing literature, highlighting the advancements in satellite technology for flood detection, and how platforms like GeoServer are optimizing the use of this data.",
           "image_path": "istockphoto-820339338-612x612.jpg",
-          "image_x": 40,
-          "image_y": 80,
-          "image_width": 120,
-          "image_height": 90
+          "image_x": "",
+          "image_y": "",
+          "image_width": "",
+          "image_height": ""
         }
       ],
       "tables": [
