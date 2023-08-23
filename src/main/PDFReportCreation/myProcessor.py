@@ -5,6 +5,8 @@ from CustomPDF import CustomPDF
 
 def create_pdf(pdf_path, params):
     pdf = CustomPDF(params)
+    cover_page_dict = params.get('cover_page', {})  # Get the cover_page dictionary
+    image_path = cover_page_dict.get('template_image_path')  # Get the image path from cover_page
 
     wasdi.wasdiLog("Creating PDF...")
 
@@ -12,6 +14,8 @@ def create_pdf(pdf_path, params):
         wasdi.wasdiLog(f"{key}: {pdf.asParametersDict[key]}")
 
     pdf.set_author('Abdullah Al Foysal')
+    if image_path:
+        pdf.add_cover_page(cover_page_dict)  # Add cover page here
     pdf.add_page()
     pdf.add_index()  # Add the index before adding chapters
 
@@ -131,11 +135,7 @@ def run():
 
     # Reading the parameters
     try:
-
         aoParams = wasdi.getParametersDict()
-        # aoParams = sanitize_parameters(aoParams)
-        # aoParams = validate_parameters(aoParams)
-
         filename = f"{aoParams['filename']}.pdf"
         create_pdf(filename, aoParams)
     except Exception as oEx:
