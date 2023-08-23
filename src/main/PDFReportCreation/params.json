@@ -1,5 +1,10 @@
 {
   "filename": "report",
+  "cover_page": {
+    "template_image_path": "Coverpage 1.jpg",
+    "alignment": "center"
+  },
+  "start_content_from_page": 2,
   "header": {
     "title": "WASDI FINAL REPORT",
     "logo": "wasdi_logo.jpg",
