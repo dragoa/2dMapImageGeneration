@@ -12,6 +12,21 @@ class CustomPDF(FPDF):
         self.index_added = False  # Initialize index_added attribute to False
         self.style = self.asParametersDict.get("style")
 
+    def add_cover_page(self, cover_page_dict, header):
+        self.add_page()
+        self.set_xy(10, 10)
+
+        # Image (if applicable)
+        image_path = cover_page_dict.get("template_image_path", "")
+        if image_path and os.path.exists(image_path):
+            self.image(image_path, x=10, y=self.get_y(), w=190)  # Adjust 'w' for image width
+            self.ln(200)  # Move below the image, adjust as per image height
+        else:
+            # Title
+            self.set_font('Helvetica', 'B', 20)
+            self.cell(0, 20, header.get("title", "Cover Page"), ln=1, align='C')
+            self.ln(20)
+
     def header(self):
         header_params = self.asParametersDict["header"]
         title = header_params["title"]
@@ -149,48 +164,15 @@ class CustomPDF(FPDF):
                 self.cell(col_widths[i], 10, str(col), border=1)
             self.ln()
 
-    def add_cover_page(self):
-        print("Adding cover page")
-        cover_page_dict = self.asParametersDict.get("cover_page", {})
-        print("Cover page dict:", cover_page_dict)
-
-        title = cover_page_dict.get("title", "Cover Page")
-        subtitle = cover_page_dict.get("subtitle", "")
-        description = cover_page_dict.get("description", "")
-        image_path = cover_page_dict.get("image_path", "")
-
-        self.add_page()
-        self.set_xy(10, 10)
-
-        if image_path and os.path.exists(image_path):
-            self.image(image_path, x=10, y=self.get_y(), w=190)  # Adjust 'w' for image width
-            self.ln(200)  # Move below the image, adjust as per image height
-        else:
-            # Title
-            self.set_font('Helvetica', 'B', 20)
-            self.cell(0, 20, title, ln=1, align='C')
-            self.ln(20)
-
-            # Subtitle
-            self.set_font('Arial', 'I', 16)
-            self.cell(0, 20, subtitle, ln=1, align='C')
-            self.ln(20)
-
-            # Description
-            self.set_font('Arial', '', 12)
-            self.multi_cell(0, 10, description)
-            self.ln(20)
-
-        # Image (if applicable)
-        if image_path and os.path.exists(image_path):
-            self.image(image_path, x=10, y=self.get_y(), w=30)
-            self.ln(40 + self.h_pt)  # Move below the image with proper spacing
-
     def print_chapter(self, ch_num, ch_title, chapter_data):
-        if ch_num == 1 and "cover_page" in self.asParametersDict:
-            self.add_cover_page()
-            self.add_page()  # Add a blank page after the cover page
+        if ch_num == 1:
+            cover_page_dict = self.asParametersDict.get("cover_page", {})
+            header = self.asParametersDict.get("header", {})
+            self.add_cover_page(cover_page_dict, header)
+            self.add_page()
 
+        self.add_index()
+        self.add_page()
         self.chapter_title(ch_num, ch_title)
         self.chapter_body(chapter_data)
 
@@ -201,3 +183,4 @@ class CustomPDF(FPDF):
                 table_data = table['data']
                 col_widths = table['col_widths']
                 self.add_table(table_data, col_widths)
+
