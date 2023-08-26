@@ -14,7 +14,6 @@ class CustomPDF(FPDF):
         self.style = self.asParametersDict.get("style")
 
     # Add cover page
-    # Add cover page
     def add_cover_page(self, cover_page_dict, header):
         self.add_page()
         self.set_xy(10, 10)
