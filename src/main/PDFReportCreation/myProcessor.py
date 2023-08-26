@@ -13,8 +13,8 @@ def create_pdf(pdf_path, params):
 
     # pdf.set_author('Abdullah Al Foysal')
     # pdf.add_page()
-    # pdf.add_cover_page(params.get("cover_page"), params.get("header"))
-    # pdf.add_index()  # Add the index before adding chapters
+    pdf.add_cover_page(params.get("cover_page"), params.get("header"))
+    pdf.add_index()  # Add the index before adding chapters
 
     for i, chapter in enumerate(params['chapters'], start=1):
         pdf.print_chapter(i, chapter['title'], chapter)

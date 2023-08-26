@@ -17,7 +17,6 @@ class CustomPDF(FPDF):
     def add_cover_page(self, cover_page_dict, header):
         self.add_page()
         self.set_xy(10, 10)
-        self.cover_added = True  # Set cover_added to True
 
         # Image (if applicable)
         image_path = cover_page_dict.get("template_image_path", "")
@@ -29,9 +28,11 @@ class CustomPDF(FPDF):
             self.set_font('Helvetica', 'B', 20)
             self.cell(0, 20, header.get("title", "Cover Page"), ln=1, align='C')
             self.ln(20)
+        self.cover_added = True  # Set cover_added to True
+        self.add_page()
 
     def header(self):
-        if not self.cover_added:  # Check if this is the cover page
+        if self.cover_added:  # Check if this is the cover page
             header_params = self.asParametersDict["header"]
             title = header_params["title"]
             logo = header_params["logo"]
@@ -136,6 +137,8 @@ class CustomPDF(FPDF):
             self.multi_cell(0, 10, content)
             self.ln(10)
 
+            self.set_y(self.get_y() + 10)
+
             # Add image if specified
             if image_file and os.path.exists(image_file):
 
@@ -162,29 +165,48 @@ class CustomPDF(FPDF):
             else:
                 wasdi.wasdiLog(f"Image file not found: {image_file}")
 
-    def add_table(self, data, col_widths):
+    def add_table(self, data, col_widths, table_x=None, table_y=None, table_width=None, table_height=None):
+        count = 0
+
+        # If x and y positions are specified, set them
+        if table_x is not None and table_y is not None:
+            self.set_xy(table_x, table_y)
+
+        # Loop through the table data
         for row in data:
             for i, col in enumerate(row):
-                self.cell(col_widths[i], 10, str(col), border=1)
+                if table_width and table_height:
+                    self.cell(table_width / len(row), table_height / len(data), str(col), border=1)
+                else:
+                    self.cell(col_widths[i], 10, str(col), border=1)
             self.ln()
+            count += 1
+
+        if table_height:
+            self.set_y(self.get_y() + table_height)
+        else:
+            self.set_y(self.get_y() + 10 * count)
 
     def print_chapter(self, ch_num, ch_title, chapter_data):
-        if ch_num == 1:
-            cover_page_dict = self.asParametersDict.get("cover_page", {})
-            header = self.asParametersDict.get("header", {})
-            self.add_cover_page(cover_page_dict, header)
-            self.add_page()
-
-        self.add_index()
         self.add_page()
         self.chapter_title(ch_num, ch_title)
         self.chapter_body(chapter_data)
 
         # Print table(s) if present
+        # Print table(s) if present
         tables = chapter_data.get('tables', [])
         for table in tables:
             if 'data' in table and 'col_widths' in table:
+                self.ln()
+
+                # Capture the Y position before the table to make sure it doesn't overlap with text or image
+                y_position_before_table = self.get_y()
+
                 table_data = table['data']
                 col_widths = table['col_widths']
-                self.add_table(table_data, col_widths)
+                table_x = table.get('table_x', 20)  # Default is None if not set
+                table_y = table.get('table_y', y_position_before_table)  # Default is None if not set
+                table_width = table.get('table_width')  # Default is None if not set
+                table_height = table.get('table_height')  # Default is None if not set
 
+                self.add_table(table_data, col_widths, table_x, table_y, table_width, table_height)

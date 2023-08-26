@@ -1,7 +1,7 @@
 {
   "filename": "report",
   "cover_page": {
-    "template_image_path": "Coverpage 1.jpg",
+    "template_image_path": "Coverpage 2.jpg",
     "alignment": "center"
   },
   "start_content_from_page": 2,
@@ -24,8 +24,8 @@
           "subtitle": "Section 1.1: Overview",
           "content": "GeoServer has emerged as an instrumental tool in the geospatial domain, allowing professionals to share, process, and edit geospatial data. Its flexibility and interoperability have paved the way for a myriad of applications, one of the most pertinent being flood analysis. This report delves into the intricacies of how GeoServer, in conjunction with satellite data, is revolutionizing flood analysis.",
           "image_path": "img.png",
-          "image_x": 5,
-          "image_y": 10,
+          "image_x": 30,
+          "image_y": 1000,
           "image_width": 200,
           "image_height": 80
         }
@@ -37,7 +37,11 @@
             ["Data 1", "Data 2", "Data 3"],
             ["Data A", "Data B", "Data C"]
           ],
-          "col_widths": [40, 40, 40]
+          "col_widths": [40, 40, 40],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -48,10 +52,10 @@
           "subtitle": "Section 2.1: Previous Studies",
           "content": "Historically, flood prediction relied heavily on ground data and early-warning systems. However, the advent of satellite technology has reshaped the dynamics of flood detection and prediction. Numerous studies have shed light on the efficacy of using satellites for this purpose, emphasizing faster response times and broader coverage. This section reviews existing literature, highlighting the advancements in satellite technology for flood detection, and how platforms like GeoServer are optimizing the use of this data.",
           "image_path": "istockphoto-820339338-612x612.jpg",
-          "image_x": "",
-          "image_y": "",
-          "image_width": "",
-          "image_height": ""
+          "image_x": 80,
+          "image_y": 100,
+          "image_width": 60,
+          "image_height": 80
         }
       ],
       "tables": [
@@ -61,7 +65,11 @@
             ["Value 1", "Value 2"],
             ["Value X", "Value Y"]
           ],
-          "col_widths": [60, 60]
+          "col_widths": [60, 60],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -94,7 +102,11 @@
             ["Info A", "Info B"],
             ["Info X", "Info Y"]
           ],
-          "col_widths": [50, 50]
+          "col_widths": [50, 50],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -118,7 +130,11 @@
             ["Value A", "Value B"],
             ["Number 1", "Number 2"]
           ],
-          "col_widths": [50, 50]
+          "col_widths": [50, 50],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -142,7 +158,11 @@
             ["Result A", "Result B", "Result C"],
             ["Conclusion X", "Conclusion Y", "Conclusion Z"]
           ],
-          "col_widths": [40, 40, 40]
+          "col_widths": [40, 40, 40],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -166,7 +186,11 @@
             ["Summary X", "Summary Y"],
             ["Final Thoughts", "Remarks"]
           ],
-          "col_widths": [60, 60]
+          "col_widths": [60, 60],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -190,7 +214,11 @@
             ["Suggestion A", "Suggestion B", "Suggestion C"],
             ["Next Steps", "Exploration", "Prospects"]
           ],
-          "col_widths": [40, 40, 40]
+          "col_widths": [40, 40, 40],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     }
