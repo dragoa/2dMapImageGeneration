@@ -10,11 +10,15 @@ class CustomPDF(FPDF):
         super().__init__()
         self.asParametersDict = params
         self.index_added = False  # Initialize index_added attribute to False
+        self.cover_added = False  # Initialize cover_added attribute to False
         self.style = self.asParametersDict.get("style")
 
+    # Add cover page
+    # Add cover page
     def add_cover_page(self, cover_page_dict, header):
         self.add_page()
         self.set_xy(10, 10)
+        self.cover_added = True  # Set cover_added to True
 
         # Image (if applicable)
         image_path = cover_page_dict.get("template_image_path", "")
@@ -28,36 +32,37 @@ class CustomPDF(FPDF):
             self.ln(20)
 
     def header(self):
-        header_params = self.asParametersDict["header"]
-        title = header_params["title"]
-        logo = header_params["logo"]
-        name = header_params["name"]
-        company_name = header_params["company_name"]
-        address = header_params["address"]
-        website = header_params.get("website", "")  # Using get method to ensure backward compatibility
-        telephone = header_params.get("telephone", "")
+        if not self.cover_added:  # Check if this is the cover page
+            header_params = self.asParametersDict["header"]
+            title = header_params["title"]
+            logo = header_params["logo"]
+            name = header_params["name"]
+            company_name = header_params["company_name"]
+            address = header_params["address"]
+            website = header_params.get("website", "")  # Using get method to ensure backward compatibility
+            telephone = header_params.get("telephone", "")
 
-        # Set up the logo
-        self.image(logo, x=10, y=10, w=30)
+            # Set up the logo
+            self.image(logo, x=10, y=10, w=30)
 
-        # Set header title
-        self.set_font('Helvetica', 'B', 15)
-        self.cell(0, 10, title, border=0, ln=1, align='C')
+            # Set header title
+            self.set_font('Helvetica', 'B', 15)
+            self.cell(0, 10, title, border=0, ln=1, align='C')
 
-        # Set name and company
-        try:
-            self.set_font(self.style["family"], self.style["style"], self.style["size"])
-        except Exception as oEx:
-            self.set_font('Arial', '', 12)
-            wasdi.wasdiLog(f'An error occurred setting up the style: {repr(oEx)}')
+            # Set name and company
+            try:
+                self.set_font(self.style["family"], self.style["style"], self.style["size"])
+            except Exception as oEx:
+                self.set_font('Arial', '', 12)
+                wasdi.wasdiLog(f'An error occurred setting up the style: {repr(oEx)}')
 
-        self.cell(0, 5, '', ln=1, align='R')  # Empty cell for alignment
-        self.cell(0, 5, f'Author: {name}', ln=1, align='R')
-        self.cell(0, 5, f'Company: {company_name}', ln=1, align='R')
-        self.cell(0, 5, f'Address: {address}', ln=1, align='R')
-        self.cell(0, 5, f'Website: {website}', ln=1, align='R')
-        self.cell(0, 5, f'Telephone: {telephone}', ln=1, align='R')
-        self.ln(10)
+            self.cell(0, 5, '', ln=1, align='R')  # Empty cell for alignment
+            self.cell(0, 5, f'Author: {name}', ln=1, align='R')
+            self.cell(0, 5, f'Company: {company_name}', ln=1, align='R')
+            self.cell(0, 5, f'Address: {address}', ln=1, align='R')
+            self.cell(0, 5, f'Website: {website}', ln=1, align='R')
+            self.cell(0, 5, f'Telephone: {telephone}', ln=1, align='R')
+            self.ln(10)
 
     def add_index(self):
         if not self.index_added:
