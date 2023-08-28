@@ -8,8 +8,7 @@ def create_pdf(pdf_path, params):
 
     wasdi.wasdiLog("Creating PDF...")
 
-    for key, value in params.items():
-        wasdi.wasdiLog(f"{key}: {pdf.asParametersDict[key]}")
+    wasdi.wasdiLog(f"{pdf.asParametersDict}")
 
     # pdf.set_author('Abdullah Al Foysal')
     # pdf.add_page()
