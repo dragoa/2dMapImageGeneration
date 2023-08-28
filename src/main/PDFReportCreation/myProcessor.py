@@ -1,3 +1,5 @@
+import uuid
+
 import wasdi
 
 from CustomPDF import CustomPDF
@@ -8,8 +10,7 @@ def create_pdf(pdf_path, params):
 
     wasdi.wasdiLog("Creating PDF...")
 
-    for key, value in params.items():
-        wasdi.wasdiLog(f"{key}: {pdf.asParametersDict[key]}")
+    wasdi.wasdiLog(f"{pdf.asParametersDict}")
 
     # pdf.set_author('Abdullah Al Foysal')
     # pdf.add_page()
@@ -134,11 +135,17 @@ def run():
     try:
 
         aoParams = wasdi.getParametersDict()
-        # aoParams = sanitize_parameters(aoParams)
+        aoParams = sanitize_parameters(aoParams)
+        # TODO check validation method
         # aoParams = validate_parameters(aoParams)
+        sFileName = aoParams["filename"]
 
-        filename = f"{aoParams['filename']}.pdf"
-        create_pdf(filename, aoParams)
+        if sFileName == "":
+            sFileName = uuid.uuid4()
+            wasdi.wasdiLog(f"FileName is not set! Generating a random UUID one... {sFileName}")
+
+        sFileName = f"{sFileName}.pdf"
+        create_pdf(sFileName, aoParams)
     except Exception as oEx:
         wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
         wasdi.updateStatus("ERROR", 0)
