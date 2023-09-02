@@ -3,6 +3,7 @@ import urllib.request
 import os
 import glob
 import subprocess
+import osgeo_utils.gdal_merge as gm
 import shutil
 from tile_convert import bbox_to_xyz, tile_edges
 from osgeo import gdal
@@ -19,17 +20,17 @@ def fetch_tile(x, y, z, tile_source, temp_dir):
 
 
 def merge_tiles(input_pattern, output_path):
-    merge_command = ["python", 'gdal_merge.py', '-o', output_path]
 
+    params = ['', '-o', output_path]
     for name in glob.glob(input_pattern):
-        merge_command.append(name)
-
-    subprocess.call(merge_command)
+        params.append(name)
+    gm.gdal_merge(params)
 
 
 def georeference_raster_tile(x, y, z, path):
     bounds = tile_edges(x, y, z)
     filename, extension = os.path.splitext(path)
+    # Try with -r option
     gdal.Translate(filename + '.tif',
                    path,
                    outputSRS='EPSG:4326',
@@ -79,6 +80,7 @@ def run():
                 png_path = fetch_tile(x, y, zoom, tile_source, temp_dir)
                 wasdi.wasdiLog(f"{x},{y} fetched")
                 georeference_raster_tile(x, y, zoom, png_path)
+                # Add filename in a list
             except OSError:
                 wasdi.wasdiLog(f"{x},{y} missing")
                 pass
