@@ -1,48 +1,71 @@
-import wasdi
-import urllib.request
-import os
 import glob
-import subprocess
-import osgeo_utils.gdal_merge as gm
+import os
 import shutil
-from tile_convert import bbox_to_xyz, tile_edges
+import urllib.request
+
+import osgeo_utils.gdal_merge as gm
+import wasdi
 from osgeo import gdal
+
+from tile_convert import bbox_to_xyz, tile_edges
+
+import geotiler
 
 
 def fetch_tile(x, y, z, tile_source, temp_dir):
+    headers = {'User-Agent': 'Your-User-Agent-Name'}
     url = tile_source.replace(
         "{x}", str(x)).replace(
         "{y}", str(y)).replace(
-        "{z}", str(z))
+        "{z}", str(z)).replace(
+        "{ext}", "png").replace(
+        "{subdomain}", "a")
+
+    req = urllib.request.Request(url, headers=headers)
     path = f'{temp_dir}/{x}_{y}_{z}.png'
-    urllib.request.urlretrieve(url, path)
+
+    try:
+        with urllib.request.urlopen(req) as response, open(path, 'wb') as out_file:
+            data = response.read()
+            out_file.write(data)
+    except urllib.error.URLError as e:
+        print(f"Failed to retrieve tile at URL: {url}")
+        print(f"Error: {e}")
+        return None
+
     return path
 
 
 def merge_tiles(input_pattern, output_path):
-
     params = ['', '-o', output_path]
     for name in glob.glob(input_pattern):
         params.append(name)
     gm.gdal_merge(params)
 
 
-def georeference_raster_tile(x, y, z, path):
+def georeference_raster_tile(x, y, z, path, provider):
     bounds = tile_edges(x, y, z)
     filename, extension = os.path.splitext(path)
+
     # Try with -r option
-    gdal.Translate(filename + '.tif',
-                   path,
-                   outputSRS='EPSG:4326',
-                   outputBounds=bounds)
+    if provider == "osm":
+        gdal.Translate(filename + '.tif',
+                       path,
+                       outputSRS='EPSG:4326',
+                       outputBounds=bounds,
+                       options=["-ot", "Byte", "-expand", "rgb"])
+    else:
+        gdal.Translate(filename + '.tif',
+                       path,
+                       outputSRS='EPSG:4326',
+                       outputBounds=bounds)
 
 
 def run():
     wasdi.wasdiLog("Background tiles and overlapping of tifs v.1.1")
 
-    # Define a tile source. For now, we use mapbox
-    mapBoxToken = "pk.eyJ1Ijoicm9iZXJ0OTAyMCIsImEiOiJjbGx0cGJ2bzMwc2dsM2dueml3NmNyazdwIn0.fGV_gn9SWcLf3bghozVfEw"
-    tile_source = ("https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=" + mapBoxToken)
+    provider = "stamen-toner-lite"
+    tile_source = geotiler.find_provider(provider).url
 
     # TODO Read from params BBOX and zoom and CRS
     lon_min = 22.673583850264553
@@ -79,7 +102,7 @@ def run():
             try:
                 png_path = fetch_tile(x, y, zoom, tile_source, temp_dir)
                 wasdi.wasdiLog(f"{x},{y} fetched")
-                georeference_raster_tile(x, y, zoom, png_path)
+                georeference_raster_tile(x, y, zoom, png_path, provider)
                 # Add filename in a list
             except OSError:
                 wasdi.wasdiLog(f"{x},{y} missing")
@@ -91,8 +114,8 @@ def run():
     merge_tiles(temp_dir + '/*.tif', output_dir + '/merged.tif')
     wasdi.wasdiLog("Merge complete")
 
-    # shutil.rmtree(temp_dir)
-    # os.makedirs(temp_dir)
+    shutil.rmtree(temp_dir)
+    os.makedirs(temp_dir)
 
 
 if __name__ == "__main__":
