@@ -107,6 +107,24 @@ class CustomPDF(FPDF):
         self.cell(0, 10, f'Chapter {ch_num}: {ch_title}', ln=1, fill=True)
         self.ln()
 
+    def fit_image(self, img_path, x, y, w, h):
+        """Fit the image within the bounding box, keeping aspect ratio."""
+        with Image.open(img_path) as img:
+            aspect_ratio = img.width / img.height
+            if aspect_ratio > 1:
+                new_w = w
+                new_h = w / aspect_ratio
+                if new_h > h:
+                    new_h = h
+                    new_w = h * aspect_ratio
+            else:
+                new_h = h
+                new_w = h * aspect_ratio
+                if new_w > w:
+                    new_w = w
+                    new_h = w / aspect_ratio
+            self.image(img_path, x=x, y=y, w=new_w, h=new_h)
+
     def chapter_body(self, chapter_data):
         self.set_fill_color(255)  # Set fill color back to white
         self.set_text_color(0)  # Set text color back to black
@@ -115,64 +133,52 @@ class CustomPDF(FPDF):
             self.set_font(self.style["family"], self.style["style"], self.style["size"])
         except Exception as oEx:
             self.set_font('Arial', '', 12)
-            wasdi.wasdiLog(f'An error occurred setting up the style: {repr(oEx)}')
+            print(f'An error occurred setting up the style: {repr(oEx)}')  # Replace with your own logging mechanism
 
         chapter_sections = chapter_data.get('sections', [])
         for section in chapter_sections:
-            subtitle = section.get("subtitle")
-            content = section.get("content")
-            image_file = section.get("image_path")
-            image_x = section.get("image_x")
-            image_y = section.get("image_x")
-            image_width = section.get("image_width")
-            image_height = section.get("image_height")
+            subtitle = section.get("subtitle", "Default Subtitle")
+            content = section.get("content", "Default Content")
 
-            # Print subtitle
+            image_file = section.get("image_path", "")
+            image_x_raw = section.get("image_x")
+            image_y_raw = section.get("image_y")
+            image_width_raw = section.get("image_width")
+            image_height_raw = section.get("image_height")
+
+            image_x = 10 if not image_x_raw or image_x_raw in ["None", "none", ""] else float(image_x_raw)
+            image_y = self.get_y() if not image_y_raw or image_y_raw in ["None", "none", ""] else float(image_y_raw)
+            image_width = 100 if not image_width_raw or image_width_raw in ["None", "none", ""] else float(
+                image_width_raw)
+            image_height = 100 if not image_height_raw or image_height_raw in ["None", "none", ""] else float(
+                image_height_raw)
+
             self.set_font('Helvetica', 'B', 12)
             self.cell(0, 5, subtitle, ln=1, fill=True)
-            self.ln()
-
-            # Print content
-            self.set_font('Times', '', 12)
-            self.multi_cell(0, 10, content)
             self.ln(10)
 
+            self.set_font('Times', '', 12)
+            self.multi_cell(0, 10, content)
             self.set_y(self.get_y() + 10)
 
-            # Add image if specified
             if image_file and os.path.exists(image_file):
-
-                with Image.open(image_file) as image:
-
-                    if image_width == '' and image_height == '':
-                        image_width, image_height = image.size
-                        aspect_ratio = image_width / image_height
-
-                        if image_x == '' and image_y == '':
-                            # Calculate the position to center the image horizontally
-                            image_x = self.l_margin
-                            image_y = self.get_y()
-
-                            # Default values
-                            image_width = self.w - self.l_margin - self.r_margin
-                            image_height = 30 * self.k
-
-                    # Set the position for the image and print it
-                    self.image(image_file, x=image_x, y=image_y, w=image_width, h=image_height)
-                    # Update Y position for next content
+                try:
+                    self.fit_image(image_file, x=image_x, y=image_y, w=image_width, h=image_height)
                     self.set_y(image_y + image_height + 10)
-
+                except Exception as e:
+                    wasdi.wasdiLog(f"An error occurred while processing the image '{image_file}'. {str(e)}")
             else:
-                wasdi.wasdiLog(f"Image file not found: {image_file}")
+                wasdi.wasdiLog(f"Image file not found or not specified: {image_file}")
 
     def add_table(self, data, col_widths, table_x=None, table_y=None, table_width=None, table_height=None):
         count = 0
 
-        # If x and y positions are specified, set them
-        if table_x is not None and table_y is not None:
-            self.set_xy(table_x, table_y)
+        # If x and y positions are specified, set them, else set to default values
+        table_x = table_x if table_x is not None else 20
+        table_y = table_y if table_y is not None else self.get_y()
 
-        # Loop through the table data
+        self.set_xy(table_x, table_y)
+
         for row in data:
             for i, col in enumerate(row):
                 if table_width and table_height:
