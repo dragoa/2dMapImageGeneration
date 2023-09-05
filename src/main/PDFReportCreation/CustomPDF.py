@@ -141,23 +141,41 @@ class CustomPDF(FPDF):
         self.cell(0, 10, f'Chapter {ch_num}: {ch_title}', ln=1, fill=True)
         self.ln()
 
-    def fit_image(self, img_path, x, y, w, h):
-
+    def fit_image(self, img_path, x=None, y=None, w=None, h=None):
         """Fit the image within the bounding box, keeping aspect ratio."""
+
+        # If any parameter is None, set it to None, otherwise convert it to float
+        x = None if x is None else float(x)
+        y = None if y is None else float(y)
+        w = None if w is None else float(w)
+        h = None if h is None else float(h)
         with Image.open(img_path) as img:
             aspect_ratio = img.width / img.height
-            if aspect_ratio > 1:
-                new_w = w
-                new_h = w / aspect_ratio
-                if new_h > h:
-                    new_h = h
-                    new_w = h * aspect_ratio
-            else:
-                new_h = h
-                new_w = h * aspect_ratio
-                if new_w > w:
-                    new_w = w
-                    new_h = w / aspect_ratio
+            max_width = 190  # Set this according to your PDF dimensions
+            max_height = 200  # Set this according to your PDF dimensions
+
+            # If width and height are explicitly given, use them; otherwise, calculate
+            new_w = w if w else max_width
+            new_h = h if h else (new_w / aspect_ratio)
+
+            if not w and not h:
+                if aspect_ratio > 1:
+                    new_w = max_width
+                    new_h = new_w / aspect_ratio
+                    if new_h > max_height:
+                        new_h = max_height
+                        new_w = new_h * aspect_ratio
+                else:
+                    new_h = max_height
+                    new_w = new_h * aspect_ratio
+                    if new_w > max_width:
+                        new_w = max_width
+                        new_h = new_w / aspect_ratio
+
+            x = x if x is not None else (max_width - new_w) / 2
+            y = y if y is not None else self.get_y()
+
+            # Add the image to PDF
             self.image(img_path, x=x, y=y, w=new_w, h=new_h)
 
     def chapter_body(self, chapter_data):
@@ -197,10 +215,13 @@ class CustomPDF(FPDF):
             self.multi_cell(0, 10, content)
             self.set_y(self.get_y() + 10)
 
+            # Calculate Y position to start image
+            start_y = self.get_y() + 10  # Assuming 10 units below the current text
+
             if image_file and os.path.exists(image_file):
                 try:
-                    self.fit_image(image_file, x=image_x, y=image_y, w=image_width, h=image_height)
-                    self.set_y(image_y + image_height + 10)
+                    self.fit_image(image_file, y=start_y, w=image_width, h=image_height)
+                    self.set_y(start_y + image_height + 10)  # Move Y position below the image
                 except Exception as e:
                     wasdi.wasdiLog(f"An error occurred while processing the image '{image_file}'. {str(e)}")
             else:
