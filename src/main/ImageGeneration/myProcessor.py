@@ -1,6 +1,7 @@
 import uuid
 import wasdi
 from Layer import Layer
+from generateBackgroundTile import generateBackground
 
 
 def run():
@@ -10,6 +11,7 @@ def run():
     aoProducts = wasdi.getParameter("products")
     iBBoxOptions = wasdi.getParameter("bboxOptions")
     bStackLayers = wasdi.getParameter("stackLayers")
+    sBackgroundTileService = wasdi.getParameter("backgroundService")
 
     layers = []
     stack_orders = set()
@@ -92,6 +94,10 @@ def run():
 
         layers[0].process_layers(layers, iBBoxOptions)
 
+    # Check background tile service
+    if sBackgroundTileService != "":
+        generateBackground(sBackgroundTileService, layers[0])
+
     # Create the payload object
     aoPayload = {}
     # Save the inputs that we received
@@ -103,7 +109,7 @@ def run():
 
     # Close the process setting the status to DONE
     wasdi.updateStatus("DONE", 100)
-    
+
 
 if __name__ == "__main__":
     wasdi.init('./config.json')

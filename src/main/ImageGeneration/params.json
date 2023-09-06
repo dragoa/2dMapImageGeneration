@@ -1,27 +1,13 @@
 {
   "products": [
     {
-      "PRODUCT": "lulc_map.tif",
+      "PRODUCT": "ActiveFire_S3B_SL_1_RBT____20210816T081821_20210816T082121_20210817T184113_0179_056_021_2340_LN2_O_NT_004.tif",
       "BAND": "band_1",
       "BBOX": "",
       "CRS": "EPSG:4326",
       "WIDTH": "4079",
       "HEIGHT": "2955",
-      "FORMAT": "PNG",
-      "STYLE": "",
-      "FILENAME": "",
-      "GEOSERVER URL": "",
-      "LAYER ID": "",
-      "stack_order": 1
-    },
-    {
-      "PRODUCT": "PAK_2022-12-04_flood.tif",
-      "BAND": "band_1",
-      "BBOX": "",
-      "CRS": "EPSG:4326",
-      "WIDTH": "4079",
-      "HEIGHT": "2955",
-      "FORMAT": "PNG",
+      "FORMAT": "geotiff",
       "STYLE": "",
       "FILENAME": "",
       "GEOSERVER URL": "",
@@ -29,6 +15,7 @@
       "stack_order": 1
     }
     ],
-  "stackLayers": true,
+  "backgroundService" : "stamen-toner",
+  "stackLayers": false,
   "bboxOptions": 1
 }
