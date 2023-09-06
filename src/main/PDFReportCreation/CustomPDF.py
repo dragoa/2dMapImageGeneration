@@ -10,12 +10,11 @@ class CustomPDF(FPDF):
     Custom class for creating a PDF using fpdf library
     """
     def __init__(self, params):
-
         super().__init__()
         self.asParametersDict = params
         self.oCoverPage = params.get("cover_page")
         self.oHeader = params.get("header")
-        self.oStyle = self.asParametersDict.get("style")
+        self.oStyle = self.asParametersDict.get("style", {})  # Providing a default empty dict
         self.index_added = False  # No index present
         self.cover_added = False  # No coverpage present
 
@@ -141,45 +140,25 @@ class CustomPDF(FPDF):
         self.cell(0, 10, f'Chapter {ch_num}: {ch_title}', ln=1, fill=True)
         self.ln()
 
-    def fit_image(self, img_path, x=None, y=None, w=None, h=None):
+    def fit_image(self, img_path, x, y, w, h):
         """Fit the image within the bounding box, keeping aspect ratio."""
-
-        # If any parameter is None, set it to None, otherwise convert it to float
-        x = None if x is None else float(x)
-        y = None if y is None else float(y)
-        w = None if w is None else float(w)
-        h = None if h is None else float(h)
         with Image.open(img_path) as img:
             aspect_ratio = img.width / img.height
-            max_width = 190  # Set this according to your PDF dimensions
-            max_height = 200  # Set this according to your PDF dimensions
-
-            # If width and height are explicitly given, use them; otherwise, calculate
-            new_w = w if w else max_width
-            new_h = h if h else (new_w / aspect_ratio)
-
-            if not w and not h:
-                if aspect_ratio > 1:
-                    new_w = max_width
-                    new_h = new_w / aspect_ratio
-                    if new_h > max_height:
-                        new_h = max_height
-                        new_w = new_h * aspect_ratio
-                else:
-                    new_h = max_height
-                    new_w = new_h * aspect_ratio
-                    if new_w > max_width:
-                        new_w = max_width
-                        new_h = new_w / aspect_ratio
-
-            x = x if x is not None else (max_width - new_w) / 2
-            y = y if y is not None else self.get_y()
-
-            # Add the image to PDF
+            if aspect_ratio > 1:
+                new_w = w
+                new_h = w / aspect_ratio
+                if new_h > h:
+                    new_h = h
+                    new_w = h * aspect_ratio
+            else:
+                new_h = h
+                new_w = h * aspect_ratio
+                if new_w > w:
+                    new_w = w
+                    new_h = w / aspect_ratio
             self.image(img_path, x=x, y=y, w=new_w, h=new_h)
 
     def chapter_body(self, chapter_data):
-
         self.set_fill_color(255)  # Set fill color back to white
         self.set_text_color(0)  # Set text color back to black
 
@@ -194,18 +173,29 @@ class CustomPDF(FPDF):
             subtitle = section.get("subtitle", "Default Subtitle")
             content = section.get("content", "Default Content")
 
+            # Capture the Y position before the image to make sure it doesn't overlap with text or table
+            y_position_before_image = self.get_y()
+
             image_file = section.get("image_path", "")
             image_x_raw = section.get("image_x")
             image_y_raw = section.get("image_y")
-            image_width_raw = section.get("image_width")
-            image_height_raw = section.get("image_height")
+            image_width = float(section.get("image_width", 100))
+            image_height = float(section.get("image_height", 100))
 
-            image_x = 10 if not image_x_raw or image_x_raw in ["None", "none", ""] else float(image_x_raw)
-            image_y = self.get_y() if not image_y_raw or image_y_raw in ["None", "none", ""] else float(image_y_raw)
-            image_width = 100 if not image_width_raw or image_width_raw in ["None", "none", ""] else float(
-                image_width_raw)
-            image_height = 100 if not image_height_raw or image_height_raw in ["None", "none", ""] else float(
-                image_height_raw)
+            # If image_x and image_y are not specified, position the image in the middle
+            if image_x_raw and str(image_x_raw).lower() not in ["none", ""]:
+                image_x = float(image_x_raw)
+            else:
+                image_x = (210 - image_width) / 2  # Assuming A4 size paper (210x297 mm)
+
+            if image_y_raw and str(image_y_raw).lower() not in ["none", ""]:
+                image_y = float(image_y_raw)
+            else:
+                image_y = (297 - image_height) / 2  # Assuming A4 size paper (210x297 mm)
+
+                # Make sure that the image doesn't overlap with text or table
+                if image_y < y_position_before_image + 20:  # Provide some padding (e.g., 20)
+                    image_y = y_position_before_image + 20
 
             self.set_font('Helvetica', 'B', 12)
             self.cell(0, 5, subtitle, ln=1, fill=True)
@@ -215,13 +205,10 @@ class CustomPDF(FPDF):
             self.multi_cell(0, 10, content)
             self.set_y(self.get_y() + 10)
 
-            # Calculate Y position to start image
-            start_y = self.get_y() + 10  # Assuming 10 units below the current text
-
             if image_file and os.path.exists(image_file):
                 try:
-                    self.fit_image(image_file, y=start_y, w=image_width, h=image_height)
-                    self.set_y(start_y + image_height + 10)  # Move Y position below the image
+                    self.fit_image(image_file, x=image_x, y=image_y, w=image_width, h=image_height)
+                    self.set_y(image_y + image_height + 10)
                 except Exception as e:
                     wasdi.wasdiLog(f"An error occurred while processing the image '{image_file}'. {str(e)}")
             else:
