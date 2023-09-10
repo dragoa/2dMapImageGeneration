@@ -4,10 +4,8 @@
       "PRODUCT": "lulc_map.tif",
       "BAND": "band_1",
       "BBOX": "",
-      "CRS": "EPSG:4326",
-      "WIDTH": "4079",
-      "HEIGHT": "2955",
-      "FORMAT": "geotiff",
+      "WIDTH": 2900,
+      "HEIGHT": 700,
       "STYLE": "",
       "FILENAME": "",
       "GEOSERVER URL": "",
@@ -18,10 +16,9 @@
       "PRODUCT": "PAK_2022-12-04_flood.tif",
       "BAND": "band_1",
       "BBOX": "",
-      "CRS": "EPSG:4326",
-      "WIDTH": "4079",
-      "HEIGHT": "2955",
-      "FORMAT": "geotiff",
+      "CRS": "",
+      "WIDTH": 2900,
+      "HEIGHT": 700,
       "STYLE": "",
       "FILENAME": "",
       "GEOSERVER URL": "",
@@ -29,7 +26,8 @@
       "stack_order": 2
     }
     ],
-  "backgroundService" : "stamen-toner",
+  "outputFormat": "png",
+  "backgroundService" : "osm",
   "stackLayers": true,
   "bboxOptions": 1
 }

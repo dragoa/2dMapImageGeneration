@@ -1,5 +1,7 @@
 import uuid
 import wasdi
+from osgeo import gdal
+
 from Layer import Layer
 from generateBackgroundTile import generateBackground
 
@@ -9,9 +11,10 @@ def run():
 
     # Reading the parameters
     aoProducts = wasdi.getParameter("products")
-    iBBoxOptions = wasdi.getParameter("bboxOptions")
-    bStackLayers = wasdi.getParameter("stackLayers")
-    sBackgroundTileService = wasdi.getParameter("backgroundService")
+    iBBoxOptions = wasdi.getParameter("bboxOptions", 1)
+    bStackLayers = wasdi.getParameter("stackLayers", True)
+    sBackgroundTileService = wasdi.getParameter("backgroundService", "osm")
+    sOutputImageFormat = wasdi.getParameter("outputFormat", "png")
 
     layers = []
     stack_orders = set()
@@ -21,32 +24,36 @@ def run():
     for oProduct in aoProducts:
         # Read from params the bands we want to extract and the product
         sProduct = oProduct["PRODUCT"]
-        sBand = oProduct["BAND"]
-        sBBox = oProduct["BBOX"]
-        sCRS = oProduct["CRS"]
-        sWidth = oProduct["WIDTH"]
-        sHeight = oProduct["HEIGHT"]
-        sFormat = str.casefold(oProduct["FORMAT"])
-        sStyle = oProduct["STYLE"]
-        sFileName = oProduct["FILENAME"]
-        sGeoServerUrl = oProduct["GEOSERVER URL"]
-        sLayerId = oProduct["LAYER ID"]
+        sBand = oProduct.get("BAND", "band_1")
+        sBBox = oProduct.get("BBOX")
+        sCRS = oProduct.get("CRS")
+        sWidth = oProduct.get("WIDTH")
+        sHeight = oProduct.get("HEIGHT")
+        sStyle = oProduct.get("STYLE", "")
+        sFileName = oProduct.get("FILENAME", "")
+        sGeoServerUrl = oProduct.get("GEOSERVER URL", "")
+        sLayerId = oProduct.get("LAYER ID", "")
         iStackOrder = oProduct["stack_order"]
 
         # Check the Bounding Box: is needed
-        if sBBox != "":
+        if sBBox is not None:
             # Split the BBox: it is in the format: NORTH, WEST, SOUTH, EAST
             asBBox = sBBox.split(",")
             if len(asBBox) != 4:
                 wasdi.wasdiLog("BBOX Not valid. Please use LATN,LONW,LATS,LONE")
                 wasdi.wasdiLog("BBOX received:" + sBBox)
-                wasdi.wasdiLog("exit")
-                wasdi.updateStatus("ERROR", 0)
-                return None
+                sBBox = ""
 
         # Check the CRS: is needed
-        if sCRS == "":
+        if sCRS is None:
             wasdi.wasdiLog("CRS Parameter not set.")
+            sCRS = "EPSG:4326"
+
+        if sWidth is None:
+            sWidth = 2900
+
+        if sHeight is None:
+            sHeight = 700
 
         # If the filename is not set generate a random one
         if sFileName == "":
@@ -71,7 +78,6 @@ def run():
             sCRS,
             sWidth,
             sHeight,
-            sFormat,
             sStyle,
             sFileName,
             sGeoServerUrl,
@@ -95,8 +101,12 @@ def run():
         layers[0].process_layers(layers, iBBoxOptions)
 
     # Check background tile service
-    if sBackgroundTileService != "":
+    if sBackgroundTileService != "" or sBackgroundTileService is not None:
         generateBackground(sBackgroundTileService, layers[0])
+
+    gdal.Translate(str(sFileName) + f'.{sOutputImageFormat}',
+                   "mosaic.tif",
+                   options=["-of", sOutputImageFormat])
 
     # Create the payload object
     aoPayload = {}

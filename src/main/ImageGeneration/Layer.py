@@ -39,7 +39,7 @@ def calculate_bbox_union(box1, box2):
 
 
 class Layer:
-    def __init__(self, product, band, bbox, crs, width, height, img_format, style, sFileName,
+    def __init__(self, product, band, bbox, crs, width, height, style, sFileName,
                  geoserver_url, layer_id, iStackOrder):
         self.wms = None
         self.product = product
@@ -48,7 +48,7 @@ class Layer:
         self.crs = crs
         self.width = width
         self.height = height
-        self.format = img_format
+        self.format = "geotiff"
         self.style = style
         self.geoserver_url = geoserver_url
         self.layer_id = layer_id
