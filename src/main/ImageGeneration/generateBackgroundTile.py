@@ -29,8 +29,8 @@ def fetch_tile(x, y, z, tile_source, temp_dir):
             data = response.read()
             out_file.write(data)
     except urllib.error.URLError as e:
-        print(f"Failed to retrieve tile at URL: {url}")
-        print(f"Error: {e}")
+        wasdi.wasdiLog(f"Failed to retrieve tile at URL: {url}")
+        wasdi.wasdiLog(f"Error: {e}")
         return None
 
     return path
@@ -89,12 +89,12 @@ def generateBackground(provider, layer):
         # Create the new directory and any missing intermediate directories
         os.makedirs(temp_dir)
     else:
-        print(f"Directory '{temp_dir}' already exists.")
+        wasdi.wasdiLog(f"Directory '{temp_dir}' already exists.")
     if not os.path.exists(output_dir):
         # Create the new directory and any missing intermediate directories
         os.makedirs(output_dir)
     else:
-        print(f"Directory '{output_dir}' already exists.")
+        wasdi.wasdiLog(f"Directory '{output_dir}' already exists.")
 
     x_min, x_max, y_min, y_max = bbox_to_xyz(
         lon_min, lon_max, lat_min, lat_max, zoom)
@@ -146,9 +146,9 @@ def overlapTiles(layer, merged):
         # Execute the gdal_translate command
         try:
             subprocess.run(gdal_translate_command, check=True)
-            print("gdal_translate completed successfully.")
+            wasdi.wasdiLog("gdal_translate completed successfully.")
         except subprocess.CalledProcessError as e:
-            print(f"Error: gdal_translate command failed with exit code {e.returncode}")
+            wasdi.wasdiLog(f"Error: gdal_translate command failed with exit code {e.returncode}")
 
         onTopTrLayer = "layer_tr.tif"
         # Use gdal.Warp with dstNodata option

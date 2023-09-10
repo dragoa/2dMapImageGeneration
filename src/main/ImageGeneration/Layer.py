@@ -108,19 +108,10 @@ class Layer:
     def get_map_request(self, params):
 
         try:
-            # Construct the GetMap request URL
-            # url_params = "&".join([f"{key}={value}" for key, value in params.items()])
-            # getmap_url = f"{self.geoserver_url}?{url_params}"
-            # print(getmap_url)
-
             # Make the request and save the response as a file
             response = self.wms.getmap(**params)
             # Get the local base save path for a product
             folder_path = wasdi.getSavePath()
-
-            # # Create the folder if it doesn't exist
-            # if not os.path.exists(folder_path):
-            #     os.makedirs(folder_path)
 
             # Construct the file path
             file_path = os.path.join(folder_path, f"{self.filename}.{self.format}")
