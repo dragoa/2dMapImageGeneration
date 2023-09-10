@@ -37,12 +37,24 @@ def run():
 
         # Check the Bounding Box: is needed
         if sBBox is not None:
-            # Split the BBox: it is in the format: NORTH, WEST, SOUTH, EAST
-            asBBox = sBBox.split(",")
-            if len(asBBox) != 4:
-                wasdi.wasdiLog("BBOX Not valid. Please use LATN,LONW,LATS,LONE")
-                wasdi.wasdiLog("BBOX received:" + sBBox)
-                sBBox = ""
+            # Split the BBox: it is in the format: WEST, NORTH, EAST, SOUTH
+            if isinstance(sBBox, dict):
+                # Extract latitude and longitude values
+                north = sBBox.get("northEast", {}).get("lat", "")
+                west = sBBox.get("northEast", {}).get("lng", "")
+                south = sBBox.get("southWest", {}).get("lat", "")
+                east = sBBox.get("southWest", {}).get("lng", "")
+
+                # Format the values into the desired format
+                sBBox = f"{west}, {north}, {east}, {south}"
+            else:
+                asBBox = sBBox.split(",")
+                if len(asBBox) != 4:
+                    wasdi.wasdiLog("BBOX Not valid. Please use LATN,LONW,LATS,LONE")
+                    wasdi.wasdiLog("BBOX received:" + sBBox)
+                    sBBox = ""
+
+        wasdi.wasdiLog(wasdi.getProductBBOX(sProduct))
 
         # Check the CRS: is needed
         if sCRS is None:

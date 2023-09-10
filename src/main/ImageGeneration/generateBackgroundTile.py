@@ -69,6 +69,7 @@ def generateBackground(provider, layer):
 
     if layer.bbox != "":
         bbox = layer.bbox
+        bbox = [float(x) for x in bbox.split(",")]
     else:
         bbox = layer.get_bounding_box_list()
 
