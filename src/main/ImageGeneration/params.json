@@ -1,0 +1,33 @@
+{
+  "products": [
+    {
+      "PRODUCT": "lulc_map.tif",
+      "BAND": "band_1",
+      "BBOX": "",
+      "WIDTH": 2900,
+      "HEIGHT": 700,
+      "STYLE": "",
+      "FILENAME": "",
+      "GEOSERVER URL": "",
+      "LAYER ID": "",
+      "stack_order": 1
+    },
+    {
+      "PRODUCT": "PAK_2022-12-04_flood.tif",
+      "BAND": "band_1",
+      "BBOX": "",
+      "CRS": "",
+      "WIDTH": 2900,
+      "HEIGHT": 700,
+      "STYLE": "",
+      "FILENAME": "",
+      "GEOSERVER URL": "",
+      "LAYER ID": "",
+      "stack_order": 2
+    }
+    ],
+  "outputFormat": "png",
+  "backgroundService" : "osm",
+  "stackLayers": true,
+  "bboxOptions": 1
+}
