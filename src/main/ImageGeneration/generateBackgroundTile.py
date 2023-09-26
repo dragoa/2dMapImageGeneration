@@ -65,9 +65,13 @@ def generateBackground(provider, layer):
     wasdi.wasdiLog("Background tiles and overlapping of tifs v.1.1")
 
     provider = provider
-    tile_source = geotiler.find_provider(provider).url
 
-    # If is not found then osm is used as default
+    try:
+        tile_source = geotiler.find_provider(provider).url
+    except FileNotFoundError as oEx:
+        wasdi.wasdiLog("The selected tile provider is not supported. Using osm")
+        wasdi.wasdiLog({repr(oEx)})
+        tile_source = geotiler.find_provider("osm").url
 
     if layer.bbox != "":
         bbox = layer.bbox
