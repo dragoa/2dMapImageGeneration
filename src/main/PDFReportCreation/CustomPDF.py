@@ -176,25 +176,26 @@ class CustomPDF(FPDF):
             # Capture the Y position before the image to make sure it doesn't overlap with text or table
             y_position_before_image = self.get_y()
 
+            # Handle image placement
             image_file = section.get("image_path", "")
             image_x_raw = section.get("image_x")
             image_y_raw = section.get("image_y")
             image_width = float(section.get("image_width", 100))
             image_height = float(section.get("image_height", 100))
 
-            # If image_x and image_y are not specified, position the image in the middle
-            if image_x_raw and str(image_x_raw).lower() not in ["none", ""]:
+            # If image_x and image_y are specified, set them, else set to default values
+            if image_x_raw is not None and isinstance(image_x_raw, (float, int)):
                 image_x = float(image_x_raw)
             else:
-                image_x = (210 - image_width) / 2  # Assuming A4 size paper (210x297 mm)
+                image_x = 0  # Changed from '(210 - image_width) / 2'
 
-            if image_y_raw and str(image_y_raw).lower() not in ["none", ""]:
+            if image_y_raw is not None and isinstance(image_y_raw, (float, int)):
                 image_y = float(image_y_raw)
             else:
-                image_y = (297 - image_height) / 2  # Assuming A4 size paper (210x297 mm)
+                image_y = 0  # Changed from '(297 - image_height) / 2'
 
                 # Make sure that the image doesn't overlap with text or table
-                if image_y < y_position_before_image + 20:  # Provide some padding (e.g., 20)
+                if image_y < y_position_before_image + 20:
                     image_y = y_position_before_image + 20
 
             self.set_font('Helvetica', 'B', 12)
@@ -205,10 +206,11 @@ class CustomPDF(FPDF):
             self.multi_cell(0, 10, content)
             self.set_y(self.get_y() + 10)
 
+            # Add the image
             if image_file and os.path.exists(image_file):
                 try:
                     self.fit_image(image_file, x=image_x, y=image_y, w=image_width, h=image_height)
-                    self.set_y(image_y + image_height + 10)
+                    self.set_y(image_y + image_height + 10)  # Explicitly set Y position for the text below the image
                 except Exception as e:
                     wasdi.wasdiLog(f"An error occurred while processing the image '{image_file}'. {str(e)}")
             else:
@@ -216,8 +218,6 @@ class CustomPDF(FPDF):
 
     def add_table(self, data, col_widths, table_x=None, table_y=None, table_width=None, table_height=None):
         count = 0
-
-        # If x and y positions are specified, set them, else set to default values
         table_x = table_x if table_x is not None else 20
         table_y = table_y if table_y is not None else self.get_y()
 
@@ -242,21 +242,20 @@ class CustomPDF(FPDF):
         self.chapter_title(ch_num, ch_title)
         self.chapter_body(chapter_data)
 
-        # Print table(s) if present
-        # Print table(s) if present
         tables = chapter_data.get('tables', [])
         for table in tables:
             if 'data' in table and 'col_widths' in table:
                 self.ln()
 
-                # Capture the Y position before the table to make sure it doesn't overlap with text or image
                 y_position_before_table = self.get_y()
 
                 table_data = table['data']
                 col_widths = table['col_widths']
-                table_x = table.get('table_x', 20)  # Default is None if not set
-                table_y = table.get('table_y', y_position_before_table)  # Default is None if not set
-                table_width = table.get('table_width')  # Default is None if not set
-                table_height = table.get('table_height')  # Default is None if not set
+                table_x = table.get('table_x', 20)
+                table_y = table.get('table_y', y_position_before_table)
+                table_width = table.get('table_width')
+                table_height = table.get('table_height')
 
                 self.add_table(table_data, col_widths, table_x, table_y, table_width, table_height)
+
+

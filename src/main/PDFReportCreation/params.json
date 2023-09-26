@@ -24,9 +24,9 @@
           "subtitle": "Section 1.1: Overview",
           "content": "GeoServer has emerged as an instrumental tool in the geospatial domain, allowing professionals to share, process, and edit geospatial data. Its flexibility and interoperability have paved the way for a myriad of applications, one of the most pertinent being flood analysis. This report delves into the intricacies of how GeoServer, in conjunction with satellite data, is revolutionizing flood analysis.",
           "image_path": "img.png",
-          "image_x": "",
-          "image_y": "",
-          "image_width": 70,
+          "image_x":80,
+          "image_y":160,
+          "image_width": 100,
           "image_height": 80
         }
       ],
@@ -147,7 +147,7 @@
           "image_path": "img.png",
           "image_x": 40,
           "image_y": 70,
-          "image_width": 10,
+          "image_width": 100,
           "image_height": 90
         }
       ],
