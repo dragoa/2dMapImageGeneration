@@ -67,6 +67,8 @@ def generateBackground(provider, layer):
     provider = provider
     tile_source = geotiler.find_provider(provider).url
 
+    # If is not found then osm is used as default
+
     if layer.bbox != "":
         bbox = layer.bbox
         bbox = [float(x) for x in bbox.split(",")]
@@ -160,7 +162,7 @@ def overlapTiles(layer, merged):
     files_to_mosaic = [merged, onTopLayer]
 
     # Define the output file
-    output_file = "mosaic.tif"
+    output_file = wasdi.getSavePath()+"/mosaic.tif"
 
     # Merge the input files using gdal.Warp
     g = gdal.Warp(output_file, files_to_mosaic, format="GTiff", options=["COMPRESS=LZW", "TILED=YES"])

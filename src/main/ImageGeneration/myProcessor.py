@@ -11,6 +11,16 @@ def run():
 
     # Reading the parameters
     aoProducts = wasdi.getParameter("products")
+    if len(aoProducts) == 0:
+        wasdi.wasdiLog("No product selected in the workspace.")
+        wasdi.wasdiLog("exit")
+        wasdi.updateStatus("ERROR", 0)
+        return None
+
+    sCRS = wasdi.getParameter("CRS", "EPSG:4326")
+    sWidth = wasdi.getParameter("WIDTH", "")
+    sHeight = wasdi.getParameter("HEIGHT", "")
+
     iBBoxOptions = wasdi.getParameter("bboxOptions", 1)
     bStackLayers = wasdi.getParameter("stackLayers", True)
     sBackgroundTileService = wasdi.getParameter("backgroundService", "osm")
@@ -24,48 +34,26 @@ def run():
     for oProduct in aoProducts:
         # Read from params the bands we want to extract and the product
         sProduct = oProduct["PRODUCT"]
-        sBand = oProduct.get("BAND", "band_1")
+        sBand = oProduct.get("BAND")
         sBBox = oProduct.get("BBOX")
-        sCRS = oProduct.get("CRS")
-        sWidth = oProduct.get("WIDTH")
-        sHeight = oProduct.get("HEIGHT")
         sStyle = oProduct.get("STYLE", "")
         sFileName = oProduct.get("FILENAME", "")
         sGeoServerUrl = oProduct.get("GEOSERVER URL", "")
         sLayerId = oProduct.get("LAYER ID", "")
         iStackOrder = oProduct["stack_order"]
 
-        # Check the Bounding Box: is needed
-        if sBBox is not None:
-            # Split the BBox: it is in the format: WEST, NORTH, EAST, SOUTH
-            if isinstance(sBBox, dict):
-                # Extract latitude and longitude values
-                north = sBBox.get("northEast", {}).get("lat", "")
-                west = sBBox.get("northEast", {}).get("lng", "")
-                south = sBBox.get("southWest", {}).get("lat", "")
-                east = sBBox.get("southWest", {}).get("lng", "")
+        asGetProducts = wasdi.getProductsByActiveWorkspace()
 
-                # Format the values into the desired format
-                sBBox = f"{west}, {north}, {east}, {south}"
-            else:
-                asBBox = sBBox.split(",")
-                if len(asBBox) != 4:
-                    wasdi.wasdiLog("BBOX Not valid. Please use LATN,LONW,LATS,LONE")
-                    wasdi.wasdiLog("BBOX received:" + sBBox)
-                    sBBox = ""
+        if asGetProducts is not None:
+            wasdi.wasdiLog("Found " + str(len(aoProducts)) + " products")
 
-        wasdi.wasdiLog(wasdi.getProductBBOX(sProduct))
-
-        # Check the CRS: is needed
-        if sCRS is None:
-            wasdi.wasdiLog("CRS Parameter not set.")
-            sCRS = "EPSG:4326"
-
-        if sWidth is None:
-            sWidth = 2900
-
-        if sHeight is None:
-            sHeight = 700
+        # TODO check
+        if oProduct not in asGetProducts:
+            wasdi.wasdiLog("About to execute SNAP workflow")
+            sWorkFlow = "snap_workflow_name"
+            wasdi.executeWorkflow([aoProducts[len(aoProducts) - 1]], [oProduct], sWorkFlow)
+        else:
+            wasdi.wasdiLog("File exists, no need to run workflow")
 
         # If the filename is not set generate a random one
         if sFileName == "":
@@ -116,9 +104,11 @@ def run():
     if sBackgroundTileService != "" or sBackgroundTileService is not None:
         generateBackground(sBackgroundTileService, layers[0])
 
-    gdal.Translate(str(sFileName) + f'.{sOutputImageFormat}',
-                   "mosaic.tif",
+    gdal.Translate(wasdi.getSavePath()+str(sFileName) + f'.{sOutputImageFormat}',
+                   wasdi.getSavePath()+"/mosaic.tif",
                    options=["-of", sOutputImageFormat])
+
+    wasdi.addFileToWASDI(str(sFileName) + f'.{sOutputImageFormat}')
 
     # Create the payload object
     aoPayload = {}

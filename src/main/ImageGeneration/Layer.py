@@ -9,35 +9,6 @@ import wasdi
 from owslib.wms import WebMapService
 
 
-def calculate_bbox_intersection(bbox1, bbox2):
-    x1_min, y1_min, x1_max, y1_max, _ = bbox1
-    x2_min, y2_min, x2_max, y2_max, _ = bbox2
-
-    intersection_x_min = max(x1_min, x2_min)
-    intersection_y_min = max(y1_min, y2_min)
-    intersection_x_max = min(x1_max, x2_max)
-    intersection_y_max = min(y1_max, y2_max)
-
-    if intersection_x_max < intersection_x_min or intersection_y_max < intersection_y_min:
-        return None  # No overlap
-
-    intersection_bbox = (intersection_x_min, intersection_y_min, intersection_x_max, intersection_y_max)
-    return intersection_bbox
-
-
-def calculate_bbox_union(box1, box2):
-    x1_min, y1_min, x1_max, y1_max, _ = box1
-    x2_min, y2_min, x2_max, y2_max, _ = box2
-
-    union_x_min = min(x1_min, x2_min)
-    union_y_min = min(y1_min, y2_min)
-    union_x_max = max(x1_max, x2_max)
-    union_y_max = max(y1_max, y2_max)
-
-    union_bbox = (union_x_min, union_y_min, union_x_max, union_y_max)
-    return union_bbox
-
-
 class Layer:
     def __init__(self, product, band, bbox, crs, width, height, style, sFileName,
                  geoserver_url, layer_id, iStackOrder):
@@ -54,6 +25,44 @@ class Layer:
         self.layer_id = layer_id
         self.filename = sFileName
         self.stack = iStackOrder
+
+    def validate_params(self):
+        # Check if the band is correct band
+        band = wasdi.getProductBand(self.product)
+        if self.band != band:
+            self.band = band
+
+        # if the crs is not correct set a default one
+        if self.crs not in self.wms[self.layer_id].crsOptions:
+            wasdi.wasdiLog("The crs value is not correct. Setting EPSG:4326 as default")
+            self.crs = "EPSG:4326"
+
+        # check for the bbox
+        if self.bbox is not None:
+            # Split the BBox: it is in the format: WEST, NORTH, EAST, SOUTH
+            if isinstance(self.bbox, dict):
+                # Extract latitude and longitude values
+                west = self.bbox.get("northEast", {}).get("lng", "")
+                north = self.bbox.get("northEast", {}).get("lat", "")
+                east = self.bbox.get("southWest", {}).get("lng", "")
+                south = self.bbox.get("southWest", {}).get("lat", "")
+
+                # Format the values into the desired format
+                self.bbox = f"{west}, {north}, {east}, {south}"
+            else:
+                asBBox = self.bbox.split(",")
+                if len(asBBox) != 4:
+                    wasdi.wasdiLog("BBOX Not valid. Please use LATN,LONW,LATS,LONE")
+                    wasdi.wasdiLog("BBOX received:" + self.bbox)
+                    self.bbox = ""
+
+        if self.width == "":
+            self.set_size()
+            wasdi.wasdiLog(f"Width is not present. Computing default one... {self.width}")
+
+        if self.height == "":
+            wasdi.wasdiLog(f"Height is not present. Computing default one... {self.height}")
+            self.set_size()
 
     def create_web_map_service(self):
 
@@ -82,6 +91,14 @@ class Layer:
             wasdi.wasdiLog(f'An error occurred: {repr(ex)}')
             wasdi.updateStatus("ERROR", 0)
             return None
+
+    def set_size(self):
+
+        bbox = self.get_bounding_box_list()
+        width = bbox[2] - bbox[0]
+        height = bbox[3] - bbox[1]
+        self.width = int(width*100)
+        self.height = int(height*100)
 
     def create_query_wms(self, layers, styles, to_bounding_box_list):
 
@@ -119,7 +136,6 @@ class Layer:
             with open(file_path, "wb") as o:
                 o.write(response.read())
                 wasdi.wasdiLog('Map image saved successfully.')
-                # wasdi.addFileToWASDI("map.tiff", "")  # You can add this line if needed
 
         except requests.exceptions.ConnectionError:
             # Handle network errors
@@ -151,6 +167,7 @@ class Layer:
                     self.layer_id = f"wasdi:{data['layerId']}"
 
                 self.create_web_map_service()
+                self.validate_params()
 
             except Exception as ex:
                 wasdi.wasdiLog(f'An error occurred: {repr(ex)}')
@@ -171,6 +188,9 @@ class Layer:
                 self.get_map_request(parameters)
 
     def process_layers(self, layers, iBBoxOptions):
+
+        print(self.width)
+        print(self.height)
 
         wasdi.wasdiLog("You are now stacking layers!")
         to_bounding_box_list = []
@@ -223,3 +243,32 @@ class Layer:
         # Create a query to the WMS
         parameters = self.create_query_wms(layer_ids, styles, to_bounding_box_list[:4])
         self.get_map_request(parameters)
+
+
+def calculate_bbox_intersection(bbox1, bbox2):
+    x1_min, y1_min, x1_max, y1_max, _ = bbox1
+    x2_min, y2_min, x2_max, y2_max, _ = bbox2
+
+    intersection_x_min = max(x1_min, x2_min)
+    intersection_y_min = max(y1_min, y2_min)
+    intersection_x_max = min(x1_max, x2_max)
+    intersection_y_max = min(y1_max, y2_max)
+
+    if intersection_x_max < intersection_x_min or intersection_y_max < intersection_y_min:
+        return None  # No overlap
+
+    intersection_bbox = (intersection_x_min, intersection_y_min, intersection_x_max, intersection_y_max)
+    return intersection_bbox
+
+
+def calculate_bbox_union(box1, box2):
+    x1_min, y1_min, x1_max, y1_max, _ = box1
+    x2_min, y2_min, x2_max, y2_max, _ = box2
+
+    union_x_min = min(x1_min, x2_min)
+    union_y_min = min(y1_min, y2_min)
+    union_x_max = max(x1_max, x2_max)
+    union_y_max = max(y1_max, y2_max)
+
+    union_bbox = (union_x_min, union_y_min, union_x_max, union_y_max)
+    return union_bbox
