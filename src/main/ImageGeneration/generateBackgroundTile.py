@@ -13,7 +13,17 @@ import geotiler
 
 
 def fetch_tile(x, y, z, tile_source, temp_dir):
+    """
+    Create a request to a map service provider
+    :param x: int longitude
+    :param y: int altitude
+    :param z: int latitude
+    :param tile_source: str preferred tile source for the map
+    :param temp_dir: str temporary directory for saving tiles
+    :return: str path for fetched tiles
+    """
     headers = {'User-Agent': 'Your-User-Agent-Name'}
+    # Creating the url
     url = tile_source.replace(
         "{x}", str(x)).replace(
         "{y}", str(y)).replace(
@@ -21,12 +31,14 @@ def fetch_tile(x, y, z, tile_source, temp_dir):
         "{ext}", "png").replace(
         "{subdomain}", "a")
 
+    # Making the request
     req = urllib.request.Request(url, headers=headers)
     path = f'{temp_dir}/{x}_{y}_{z}.png'
 
     try:
         with urllib.request.urlopen(req) as response, open(path, 'wb') as out_file:
             data = response.read()
+            # Write the response
             out_file.write(data)
     except urllib.error.URLError as e:
         wasdi.wasdiLog(f"Failed to retrieve tile at URL: {url}")
@@ -37,18 +49,36 @@ def fetch_tile(x, y, z, tile_source, temp_dir):
 
 
 def merge_tiles(input_pattern, output_path):
+    """
+    Merge every tile to create only a single one
+    :param input_pattern: str temporary directory of all the fetched tile
+    :param output_path: output directory for saving final tile
+    :return: a single tile from all the fetched ones
+    """
+    # create the param string for gdal merge
     params = ['', '-o', output_path]
     for name in glob.glob(input_pattern):
         params.append(name)
+    # gdal command to merge tiles
     gm.gdal_merge(params)
 
 
 def georeference_raster_tile(x, y, z, path, provider):
+    """
+    Georeferenciate each tile
+    :param x: longitude
+    :param y: altitude
+    :param z: latitude
+    :param path: str path for fetched tiles
+    :param provider: str map service provider
+    :return:
+    """
     bounds = tile_edges(x, y, z)
     filename, extension = os.path.splitext(path)
 
     # Try with -r option
     if provider == "osm":
+        # georeferenciate tile
         gdal.Translate(filename + '.tif',
                        path,
                        outputSRS='EPSG:4326',
@@ -62,10 +92,17 @@ def georeference_raster_tile(x, y, z, path, provider):
 
 
 def generateBackground(provider, layer):
+    """
+    Method for generating background tile
+    :param provider: str map service provider
+    :param layer: Layer base layer for creating a background
+    :return:
+    """
     wasdi.wasdiLog("Background tiles and overlapping of tifs v.1.1")
 
     provider = provider
 
+    # check if the tile provider is correct
     try:
         tile_source = geotiler.find_provider(provider).url
     except FileNotFoundError as oEx:
@@ -73,21 +110,23 @@ def generateBackground(provider, layer):
         wasdi.wasdiLog({repr(oEx)})
         tile_source = geotiler.find_provider("osm").url
 
+    # getting the bbox
     if layer.bbox != "":
         bbox = layer.bbox
         bbox = [float(x) for x in bbox.split(",")]
     else:
         bbox = layer.get_bounding_box_list()
 
+    # computing latitude and longitude and zoom level
     lon_min = bbox[0]
     lon_max = bbox[2]
     lat_min = bbox[1]
     lat_max = bbox[3]
     zoom = 8
 
-    # Local path of wasdi
+    # local path of wasdi
     sWASDIsavePath = wasdi.getSavePath()
-    # Create two directories
+    # create two directories
     temp_dir = os.path.join(sWASDIsavePath, "temp")
     output_dir = os.path.join(sWASDIsavePath, "output")
 
@@ -103,6 +142,7 @@ def generateBackground(provider, layer):
     else:
         wasdi.wasdiLog(f"Directory '{output_dir}' already exists.")
 
+    # get the range of tiles for a specified rectangular area/bounding box
     x_min, x_max, y_min, y_max = bbox_to_xyz(
         lon_min, lon_max, lat_min, lat_max, zoom)
 
@@ -122,16 +162,25 @@ def generateBackground(provider, layer):
     wasdi.wasdiLog("Fetching of tiles complete")
 
     wasdi.wasdiLog("Merging tiles")
+    # merge tiles
     merge_tiles(temp_dir + '/*.tif', output_dir + '/merged.tif')
     wasdi.wasdiLog("Merge complete")
 
+    # removing data in the temp directory
     shutil.rmtree(temp_dir)
     os.makedirs(temp_dir)
 
+    # final overlapping
     overlapTiles(layer, output_dir + '/merged.tif')
 
 
 def overlapTiles(layer, merged):
+    """
+    Method for overlapping the stacked layers on top of the background tile
+    :param layer: Layer created layer
+    :param merged: str directory for merged tiles
+    :return:
+    """
 
     filename_path = wasdi.getSavePath() + str(layer.filename) + "." + layer.format
     onTopLayer = filename_path

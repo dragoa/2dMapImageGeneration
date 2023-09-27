@@ -10,6 +10,35 @@ from owslib.wms import WebMapService
 
 
 class Layer:
+    """
+    Custom representation of a Layer
+
+    Attributes
+    ----------
+    product : str
+        Identifier for a product inside the WASDI workspace
+    band : str
+        Identifier for the band of the product
+    bbox : str
+        Bbox options used for selecting an area in the world
+    crs : str
+        Coordinate Reference System used
+    width : int
+        Width of the image
+    height : int
+        Height of the image
+    style : str
+        Name of a sld style file present on a WASDI workspace
+    sFileName : str
+        Name of the output image
+    geoserver_url : str
+        Link for a custom geoserver url
+    layer_id : str
+        Identifier of a layer in a Geoserver workspace
+    iStackOrder : int
+        Order on which we want to stack layers
+    """
+
     def __init__(self, product, band, bbox, crs, width, height, style, sFileName,
                  geoserver_url, layer_id, iStackOrder):
         self.wms = None
@@ -27,17 +56,20 @@ class Layer:
         self.stack = iStackOrder
 
     def validate_params(self):
-        # Check if the band is correct band
+        """
+        Validate arguments for a Layer
+        """
+        # Check if the band is the correct band
         band = wasdi.getProductBand(self.product)
         if self.band != band:
             self.band = band
 
-        # if the crs is not correct set a default one
+        # If the crs is not correct set a default one
         if self.crs not in self.wms[self.layer_id].crsOptions:
             wasdi.wasdiLog("The crs value is not correct. Setting EPSG:4326 as default")
             self.crs = "EPSG:4326"
 
-        # check for the bbox
+        # Check for the bbox
         if self.bbox is not None:
             # Split the BBox: it is in the format: WEST, NORTH, EAST, SOUTH
             if isinstance(self.bbox, dict):
@@ -65,7 +97,10 @@ class Layer:
             self.set_size()
 
     def create_web_map_service(self):
-
+        """
+        Create a WebMapService object
+        :return: None or a WebMapService object
+        """
         try:
             self.wms = WebMapService(self.geoserver_url, version='1.3.0')
 
@@ -75,6 +110,10 @@ class Layer:
             return None
 
     def get_bounding_box_list(self):
+        """
+        Calculate the best bbox if it is not present
+        :return: list of coordinates and in the last element the crs option
+        """
 
         try:
             if self.bbox == "":
@@ -93,14 +132,25 @@ class Layer:
             return None
 
     def set_size(self):
+        """
+        Set the sizes for the output image if the user didn't provide them
+        :return: int size of the output image
+        """
 
         bbox = self.get_bounding_box_list()
         width = bbox[2] - bbox[0]
         height = bbox[3] - bbox[1]
-        self.width = int(width*100)
-        self.height = int(height*100)
+        self.width = int(width * 100)
+        self.height = int(height * 100)
 
     def create_query_wms(self, layers, styles, to_bounding_box_list):
+        """
+        Creates the query for retrieving a map from geoserver
+        :param layers: list of layers
+        :param styles: str name of the style file on WASDI
+        :param to_bounding_box_list: list of bboxes
+        :return:
+        """
 
         # Create a query to the WMS
         parameters = {
@@ -123,6 +173,11 @@ class Layer:
         return parameters
 
     def get_map_request(self, params):
+        """
+        Compute a get map request
+        :param params: query params
+        :return: True if the request is successful, False otherwise
+        """
 
         try:
             # Make the request and save the response as a file
@@ -136,20 +191,28 @@ class Layer:
             with open(file_path, "wb") as o:
                 o.write(response.read())
                 wasdi.wasdiLog('Map image saved successfully.')
+                return True  # Return True to indicate success
 
         except requests.exceptions.ConnectionError:
             # Handle network errors
             wasdi.wasdiLog('Could not connect to the WMS server.')
+            return False  # Return False to indicate failure
         except owslib.util.ServiceException as oEx:
             # Handle server errors
             wasdi.wasdiLog(f'The WMS server returned an error: {repr(oEx)}')
+            return False  # Return False to indicate failure
         except Exception as oEx:
             # Handle any other error
             wasdi.wasdiLog(f'An unknown error occurred: {repr(oEx)}')
             wasdi.updateStatus("ERROR", 0)
-            return None
+            return False  # Return False to indicate failure
 
     def process_layer(self, b_stack_layers):
+        """
+        Process each layer
+        :param b_stack_layers: bool if we are stacking layers or not (True) by default
+        :return: Either calls the process_layers() or the get_map_request()
+        """
 
         if self.wms is None:
 
@@ -185,12 +248,18 @@ class Layer:
             else:
                 # Create the query and then get the map
                 parameters = self.create_query_wms([self.layer_id], [self.style], to_bounding_box_list)
-                self.get_map_request(parameters)
+                # Return the result of get_map_request
+                return self.get_map_request(parameters)
+
+        return True  # Return True to indicate success
 
     def process_layers(self, layers, iBBoxOptions):
-
-        print(self.width)
-        print(self.height)
+        """
+        Stacking layers
+        :param layers: list of layers to stack
+        :param iBBoxOptions: which bbox we want to choose when stacking
+        :return: calls a get_map_request()
+        """
 
         wasdi.wasdiLog("You are now stacking layers!")
         to_bounding_box_list = []
@@ -242,10 +311,16 @@ class Layer:
 
         # Create a query to the WMS
         parameters = self.create_query_wms(layer_ids, styles, to_bounding_box_list[:4])
-        self.get_map_request(parameters)
+        return self.get_map_request(parameters)
 
 
 def calculate_bbox_intersection(bbox1, bbox2):
+    """
+    Calculate the intersection of bboxes
+    :param bbox1: bbox of the first layer
+    :param bbox2: bbox of the second layer
+    :return: intersection of bboxes
+    """
     x1_min, y1_min, x1_max, y1_max, _ = bbox1
     x2_min, y2_min, x2_max, y2_max, _ = bbox2
 
@@ -261,9 +336,15 @@ def calculate_bbox_intersection(bbox1, bbox2):
     return intersection_bbox
 
 
-def calculate_bbox_union(box1, box2):
-    x1_min, y1_min, x1_max, y1_max, _ = box1
-    x2_min, y2_min, x2_max, y2_max, _ = box2
+def calculate_bbox_union(bbox1, bbox2):
+    """
+        Calculate the union of bboxes
+        :param bbox1: bbox of the first layer
+        :param bbox2: bbox of the second layer
+        :return: union of bboxes
+        """
+    x1_min, y1_min, x1_max, y1_max, _ = bbox1
+    x2_min, y2_min, x2_max, y2_max, _ = bbox2
 
     union_x_min = min(x1_min, x2_min)
     union_y_min = min(y1_min, y2_min)
