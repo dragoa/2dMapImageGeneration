@@ -23,7 +23,7 @@
   "FILENAME": "",
   "WIDTH": "",
   "HEIGHT": 700,
-  "outputFormat": "gif",
+  "outputFormat": "png",
   "backgroundService" : "osm",
   "stackLayers": true,
   "bboxOptions": 1

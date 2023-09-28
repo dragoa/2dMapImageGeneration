@@ -1,14 +1,16 @@
 import uuid
 import wasdi
 from osgeo import gdal
+from PIL import Image, ImageSequence
 
 from Layer import Layer
 from generateBackgroundTile import generateBackground
 
-from PIL import Image, ImageSequence
 
 def run():
     wasdi.wasdiLog("WMS client tutorial v.1.3")
+    # Define the constant save path
+    SAVE_PATH = wasdi.getSavePath()
 
     # Reading the parameters
     aoProducts = wasdi.getParameter("products")
@@ -55,12 +57,12 @@ def run():
         count = 0
         # If the filename is not set generate a random one
         if sFileName == "":
-            sFileName = uuid.uuid4()
+            sFileName = str(uuid.uuid4())
             wasdi.wasdiLog(f"FileName is not set! Generating a random UUID one... {sFileName}")
         else:
-            sFileName = str(sFileName) + "_" + str(count)
+            sFileName = f"{sFileName}_{count}"
 
-        # Check on the stacking order
+        # Check stacking order validity
         if iStackOrder not in valid_range:
             valid = False
             wasdi.wasdiLog(f"Invalid stack order for the product: {sProduct}")
@@ -85,7 +87,7 @@ def run():
             iStackOrder
         )
 
-        # Tracking all the layers
+        # Track all the layers
         layers.append(layer)
 
         # Process each layer alone if I'm not stacking (True by default)
@@ -99,13 +101,13 @@ def run():
         wasdi.wasdiLog("[ERROR] no selected product in the workspace")
         return None
 
-    if sOutputImageFormat == "gif" or sOutputImageFormat == "GIF":
+    if sOutputImageFormat.lower() == "gif":
         for layer in layers:
-            gdal.Translate(wasdi.getSavePath() + str(layer.filename) + ".png",
-                           wasdi.getSavePath() + str(layer.filename) + ".geotiff",
+            gdal.Translate(f"{SAVE_PATH}{layer.filename}.png",
+                           f"{SAVE_PATH}{layer.filename}.geotiff",
                            options=["-of", "png"])
 
-    # if I am stacking layers
+    # If stacking layers
     if bStackLayers:
 
         if valid:
@@ -118,9 +120,9 @@ def run():
     if sBackgroundTileService != "" or sBackgroundTileService is not None:
         generateBackground(sBackgroundTileService, layers[0])
 
-    if sOutputImageFormat == "gif" or sOutputImageFormat == "GIF":
-        gdal.Translate(wasdi.getSavePath() + "/mosaic.png",
-                       wasdi.getSavePath() + "/mosaic.tif",
+    if sOutputImageFormat.lower() == "gif":
+        gdal.Translate(f"{SAVE_PATH}/mosaic.png",
+                       f"{SAVE_PATH}/mosaic.tif",
                        options=["-of", "png"])
 
         frames = []
@@ -129,7 +131,7 @@ def run():
         common_width, common_height = None, None
 
         for layer in layers:
-            img_path = wasdi.getSavePath() + str(layer.filename) + ".png"
+            img_path = f"{SAVE_PATH}{layer.filename}.png"
             img = Image.open(img_path)
 
             # Check if common dimensions are initialized
@@ -147,7 +149,7 @@ def run():
             frames.append(img)
 
         # Open the mosaic image
-        mosaic_path = wasdi.getSavePath() + "/mosaic.png"
+        mosaic_path = f"{SAVE_PATH}/mosaic.png"
         mosaic_img = Image.open(mosaic_path)
 
         # Resize the mosaic image if it has different dimensions
@@ -156,7 +158,7 @@ def run():
 
         frames.append(mosaic_img)
 
-        filepath = wasdi.getSavePath()+'/my_animation.gif'
+        filepath = f"{SAVE_PATH}/my_animation.gif"
 
         # Set the duration for each frame in milliseconds (500 milliseconds = 0.5 seconds)
         frame_duration = 500
@@ -172,20 +174,21 @@ def run():
 
         # Save the GIF
         gif.save(filepath, save_all=True, append_images=gif_frames, duration=frame_duration, loop=0)
+        sFileName = "my_animation"
 
     else:
-        gdal.Translate(wasdi.getSavePath() + str(sFileName) + "1" + f'.{sOutputImageFormat}',
-                       wasdi.getSavePath() + "/mosaic.tif",
+        gdal.Translate(SAVE_PATH + sFileName + f"1.{sOutputImageFormat}",
+                       f"{SAVE_PATH}/mosaic.tif",
                        options=["-of", sOutputImageFormat])
+        sFileName += "1"
 
-    wasdi.addFileToWASDI(str(sFileName) + f'.{sOutputImageFormat}')
+    wasdi.addFileToWASDI(sFileName + f'.{sOutputImageFormat}')
 
     # Create the payload object
-    aoPayload = {}
-    # Save the inputs that we received
-    aoPayload["inputs"] = wasdi.getParametersDict()
-    # Save the output we created
-    aoPayload["output"] = sFileName
+    aoPayload = {
+        "inputs": wasdi.getParametersDict(),
+        "output": sFileName
+    }
     # Save the payload
     wasdi.setPayload(aoPayload)
 
