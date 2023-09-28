@@ -189,28 +189,6 @@ def overlapTiles(layer, merged):
 
     src_ds = gdal.Open(filename_path)
 
-    if src_ds.RasterCount == 1:
-        onTopLayer = "layer_rgb.tif"
-        # Define the gdal_translate command as a list of strings
-        gdal_translate_command = [
-            'gdal_translate',  # Command name
-            '-expand', 'rgb',  # Arguments
-            filename_path,
-            onTopLayer
-        ]
-
-        # Execute the gdal_translate command
-        try:
-            subprocess.run(gdal_translate_command, check=True)
-            wasdi.wasdiLog("gdal_translate completed successfully.")
-        except subprocess.CalledProcessError as e:
-            wasdi.wasdiLog(f"Error: gdal_translate command failed with exit code {e.returncode}")
-
-        onTopTrLayer = "layer_tr.tif"
-        # Use gdal.Warp with dstNodata option
-        g = gdal.Warp(onTopTrLayer, onTopLayer, dstNodata="51, 51, 51")
-        onTopLayer = onTopTrLayer
-
     # Define the input files
     files_to_mosaic = [merged, onTopLayer]
 
