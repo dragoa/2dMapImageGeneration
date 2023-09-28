@@ -47,7 +47,7 @@ def sanitize_parameters(params):
 
 def validate_parameters(aoParams):
     """
-    
+
     """
     # validation of the parameters
     sFileName = aoParams.get("filename", "")

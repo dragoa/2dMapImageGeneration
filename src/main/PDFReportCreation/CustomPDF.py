@@ -217,25 +217,24 @@ class CustomPDF(FPDF):
                 wasdi.wasdiLog(f"Image file not found or not specified: {image_file}")
 
     def add_table(self, data, col_widths, table_x=None, table_y=None, table_width=None, table_height=None):
-        count = 0
-        table_x = table_x if table_x is not None else 20
-        table_y = table_y if table_y is not None else self.get_y()
+        # Calculate the number of columns in the table
+        num_cols = len(col_widths)
 
-        self.set_xy(table_x, table_y)
+        # Set up the cell height (adjust as needed)
+        cell_height = 10
+
+        # Set the font for the table cells (adjust as needed)
+        self.set_font('Arial', '', 12)
 
         for row in data:
             for i, col in enumerate(row):
-                if table_width and table_height:
-                    self.cell(table_width / len(row), table_height / len(data), str(col), border=1)
-                else:
-                    self.cell(col_widths[i], 10, str(col), border=1)
-            self.ln()
-            count += 1
+                # Set the width and height for the cell
+                cell_width = col_widths[i]
+                self.cell(cell_width, cell_height, str(col), border=1)
+            self.ln()  # Move to the next row
 
-        if table_height:
-            self.set_y(self.get_y() + table_height)
-        else:
-            self.set_y(self.get_y() + 10 * count)
+        # Add any desired spacing after the table
+        self.ln()
 
     def print_chapter(self, ch_num, ch_title, chapter_data):
         self.add_page()
