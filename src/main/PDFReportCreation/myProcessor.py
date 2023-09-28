@@ -1,9 +1,18 @@
-import os
 import uuid
+
 import wasdi
+
 from CustomPDF import CustomPDF
 
+
 def create_pdf(pdf_path, params):
+    """
+    Function for creating a custom PDF
+    Attributes
+    ----------
+    pdf_path: str path into which save the pdf
+    params: list of parameters for creating a custom pdf
+    """
     pdf = CustomPDF(params)
     wasdi.wasdiLog("Creating PDF...")
 
@@ -20,7 +29,11 @@ def create_pdf(pdf_path, params):
 
     wasdi.wasdiLog("PDF created successfully")
 
+
 def sanitize_parameters(params):
+    """
+
+    """
     # Recursive function that removes leading/trailing whitespace
     if isinstance(params, str):
         return params.strip()
@@ -31,12 +44,19 @@ def sanitize_parameters(params):
     else:
         return params
 
+
 def validate_parameters(aoParams):
+    """
+    
+    """
     # validation of the parameters
     sFileName = aoParams.get("filename", "")
-    if not sFileName or not sFileName.endswith('.pdf'):
-        sFileName = str(uuid.uuid4()) + "report.pdf"  # Include ".pdf" extension
-        wasdi.wasdiLog(f"FileName is not set or doesn't have the correct format! Generating a random UUID one... {sFileName}")
+    if sFileName == "":
+        sFileName = str(uuid.uuid4())
+        wasdi.wasdiLog(
+            f"FileName is not set or doesn't have the correct format! Generating a random UUID one... {sFileName}")
+    if not sFileName.endswith('.pdf'):
+        sFileName += ".pdf"
     aoParams["filename"] = sFileName
 
     # Validate cover_page
@@ -61,6 +81,7 @@ def validate_parameters(aoParams):
 
     return sFileName
 
+
 def run():
     wasdi.wasdiLog("PDF tutorial v.1.4")
     aoParams = wasdi.getParametersDict()
@@ -68,7 +89,7 @@ def run():
     sFileName = validate_parameters(aoParams)
     create_pdf(sFileName, aoParams)
 
+
 if __name__ == '__main__':
     wasdi.init("./config.json")
     run()
-
