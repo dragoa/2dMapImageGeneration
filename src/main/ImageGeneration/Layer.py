@@ -82,10 +82,16 @@ class Layer:
                 # Format the values into the desired format
                 self.bbox = f"{west}, {north}, {east}, {south}"
             else:
-                asBBox = self.bbox.split(",")
-                if len(asBBox) != 4:
-                    wasdi.wasdiLog("BBOX Not valid. Please use LATN,LONW,LATS,LONE")
-                    wasdi.wasdiLog("BBOX received:" + self.bbox)
+                try:
+                    asBBox = [float(x) for x in self.bbox.split(",")]
+                    if len(asBBox) != 4:
+                        wasdi.wasdiLog("BBOX Not valid. Please use LATN,LONW,LATS,LONE")
+                        wasdi.wasdiLog("BBOX received:" + self.bbox)
+                        self.bbox = ""
+                    else:
+                        self.bbox = asBBox
+                except ValueError as oEx:
+                    wasdi.wasdiLog(f"BBox not valid. {repr(oEx)}. Computing one")
                     self.bbox = ""
 
         if self.width == "":
@@ -122,7 +128,7 @@ class Layer:
                 wasdi.wasdiLog(f"Finding the correct BBox... used {to_bounding_box_list} for {self.product}")
             else:
                 # Using bbox provided by the user
-                to_bounding_box_list = [float(x) for x in self.bbox.split(",")]
+                to_bounding_box_list = self.bbox
                 to_bounding_box_list.append(self.crs)
             return to_bounding_box_list
 
@@ -302,6 +308,8 @@ class Layer:
 
         else:
             to_bounding_box_list = self.get_bounding_box_list()
+
+        self.bbox = to_bounding_box_list
 
         layer_ids = []
         styles = []

@@ -77,18 +77,11 @@ def georeference_raster_tile(x, y, z, path, provider):
     filename, extension = os.path.splitext(path)
 
     # Try with -r option
-    if provider == "osm":
-        # georeferenciate tile
-        gdal.Translate(filename + '.tif',
-                       path,
-                       outputSRS='EPSG:4326',
-                       outputBounds=bounds,
-                       options=["-ot", "Byte", "-expand", "rgb"])
-    else:
-        gdal.Translate(filename + '.tif',
-                       path,
-                       outputSRS='EPSG:4326',
-                       outputBounds=bounds)
+    gdal.Translate(filename + '.tif',
+                   path,
+                   outputSRS='EPSG:4326',
+                   outputBounds=bounds,
+                   options=["-ot", "Byte", "-expand", "rgb"])
 
 
 def generateBackground(provider, layer):
@@ -106,14 +99,17 @@ def generateBackground(provider, layer):
     try:
         tile_source = geotiler.find_provider(provider).url
     except FileNotFoundError as oEx:
-        wasdi.wasdiLog("The selected tile provider is not supported. Using osm")
+        wasdi.wasdiLog("[ERROR] the selected tile provider is not supported. Using osm")
+        wasdi.wasdiLog({repr(oEx)})
+        tile_source = geotiler.find_provider("osm").url
+    except Exception as oEx:
+        wasdi.wasdiLog("[ERROR] occurred when contacting the server provider. Using osm")
         wasdi.wasdiLog({repr(oEx)})
         tile_source = geotiler.find_provider("osm").url
 
     # getting the bbox
     if layer.bbox != "":
         bbox = layer.bbox
-        bbox = [float(x) for x in bbox.split(",")]
     else:
         bbox = layer.get_bounding_box_list()
 
@@ -158,6 +154,10 @@ def generateBackground(provider, layer):
             except OSError:
                 wasdi.wasdiLog(f"{x},{y} missing")
                 pass
+            except Exception as oEx:
+                wasdi.wasdiLog(f"[ERROR] {repr(oEx)}")
+                wasdi.wasdiLog("Check API key for provider or try to use osm")
+                return None
 
     wasdi.wasdiLog("Fetching of tiles complete")
 
@@ -215,7 +215,7 @@ def overlapTiles(layer, merged):
     files_to_mosaic = [merged, onTopLayer]
 
     # Define the output file
-    output_file = wasdi.getSavePath()+"/mosaic.tif"
+    output_file = wasdi.getSavePath() + "/mosaic.tif"
 
     # Merge the input files using gdal.Warp
     g = gdal.Warp(output_file, files_to_mosaic, format="GTiff", options=["COMPRESS=LZW", "TILED=YES"])

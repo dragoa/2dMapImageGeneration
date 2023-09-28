@@ -47,13 +47,9 @@ def run():
         if asGetProducts is not None:
             wasdi.wasdiLog("Found " + str(len(aoProducts)) + " products")
 
-        # TODO check
-        if oProduct not in asGetProducts:
-            wasdi.wasdiLog("About to execute SNAP workflow")
-            sWorkFlow = "snap_workflow_name"
-            wasdi.executeWorkflow([aoProducts[len(aoProducts) - 1]], [oProduct], sWorkFlow)
-        else:
-            wasdi.wasdiLog("File exists, no need to run workflow")
+        if sProduct not in asGetProducts:
+            wasdi.wasdiLog("The selected product is not in the workspace")
+            continue
 
         # If the filename is not set generate a random one
         if sFileName == "":
@@ -92,6 +88,12 @@ def run():
         for layer in layers:
             layer.process_layer(bStackLayers)
 
+    # if there is no product in the workspace, then stop the processor
+    if len(layers) == 0:
+        wasdi.wasdiLog("[ERROR] no selected product in the workspace")
+        return None
+
+    # if I am stacking layers
     if bStackLayers:
 
         if valid:
