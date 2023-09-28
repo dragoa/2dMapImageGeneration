@@ -1,14 +1,10 @@
 import os
 import uuid
-
 import wasdi
-
 from CustomPDF import CustomPDF
-
 
 def create_pdf(pdf_path, params):
     pdf = CustomPDF(params)
-
     wasdi.wasdiLog("Creating PDF...")
 
     # Add the coverpage before adding chapters
@@ -24,7 +20,6 @@ def create_pdf(pdf_path, params):
 
     wasdi.wasdiLog("PDF created successfully")
 
-
 def sanitize_parameters(params):
     # Recursive function that removes leading/trailing whitespace
     if isinstance(params, str):
@@ -36,16 +31,13 @@ def sanitize_parameters(params):
     else:
         return params
 
-
 def validate_parameters(aoParams):
     # validation of the parameters
     sFileName = aoParams.get("filename", "")
-    if sFileName == "":
-        sFileName = str(uuid.uuid4()) + "report"
-        wasdi.wasdiLog(f"FileName is not set! Generating a random UUID one... {sFileName}")
-        aoParams["filename"] = sFileName  # Updating aoParams with the new filename
-
-    sFileName = f"{sFileName}.pdf" if not sFileName.endswith('.pdf') else sFileName
+    if not sFileName or not sFileName.endswith('.pdf'):
+        sFileName = str(uuid.uuid4()) + "report.pdf"  # Include ".pdf" extension
+        wasdi.wasdiLog(f"FileName is not set or doesn't have the correct format! Generating a random UUID one... {sFileName}")
+    aoParams["filename"] = sFileName
 
     # Validate cover_page
     cover_page = aoParams.get("cover_page", {})
@@ -69,38 +61,14 @@ def validate_parameters(aoParams):
 
     return sFileName
 
-
 def run():
-    wasdi.wasdiLog("PDF tutorial v.1.4")
-
-    # Reading the parameters
-    # try:
-    #
-    #     aoParams = wasdi.getParametersDict()
-    #     aoParams = sanitize_parameters(aoParams)
-    #     # TODO check validation method
-    #
-    #     sFileName = aoParams["filename"]
-    #
-    #     if sFileName == "":
-    #         sFileName = uuid.uuid4()
-    #         wasdi.wasdiLog(f"FileName is not set! Generating a random UUID one... {sFileName}")
-    #
-    #     sFileName = f"{sFileName}.pdf"
-    #     create_pdf(sFileName, aoParams)
-    # except Exception as oEx:
-    #     wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
-    #     wasdi.updateStatus("ERROR", 0)
-    #     return
-
     wasdi.wasdiLog("PDF tutorial v.1.4")
     aoParams = wasdi.getParametersDict()
     aoParams = sanitize_parameters(aoParams)
     sFileName = validate_parameters(aoParams)
-
     create_pdf(sFileName, aoParams)
-
 
 if __name__ == '__main__':
     wasdi.init("./config.json")
     run()
+
