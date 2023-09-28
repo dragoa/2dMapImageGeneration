@@ -5,7 +5,6 @@
       "BAND": "band_1",
       "BBOX": "",
       "STYLE": "",
-      "FILENAME": "",
       "GEOSERVER URL": "",
       "LAYER ID": "",
       "stack_order": 1
@@ -15,16 +14,16 @@
       "BAND": "band_1",
       "BBOX": "",
       "STYLE": "",
-      "FILENAME": "",
       "GEOSERVER URL": "",
       "LAYER ID": "",
       "stack_order": 2
     }
   ],
   "CRS": "",
+  "FILENAME": "",
   "WIDTH": "",
   "HEIGHT": 700,
-  "outputFormat": "jpeg",
+  "outputFormat": "gif",
   "backgroundService" : "osm",
   "stackLayers": true,
   "bboxOptions": 1

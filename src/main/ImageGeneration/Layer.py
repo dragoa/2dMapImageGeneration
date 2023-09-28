@@ -251,11 +251,11 @@ class Layer:
             if b_stack_layers:
                 layers_to_stack.append([self])
                 pass
-            else:
-                # Create the query and then get the map
-                parameters = self.create_query_wms([self.layer_id], [self.style], to_bounding_box_list)
-                # Return the result of get_map_request
-                return self.get_map_request(parameters)
+
+            # Create the query and then get the map
+            parameters = self.create_query_wms([self.layer_id], [self.style], to_bounding_box_list)
+            # Return the result of get_map_request
+            return self.get_map_request(parameters)
 
         return True  # Return True to indicate success
 

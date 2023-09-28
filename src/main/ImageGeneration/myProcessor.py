@@ -5,6 +5,7 @@ from osgeo import gdal
 from Layer import Layer
 from generateBackgroundTile import generateBackground
 
+from PIL import Image, ImageSequence
 
 def run():
     wasdi.wasdiLog("WMS client tutorial v.1.3")
@@ -37,10 +38,10 @@ def run():
         sBand = oProduct.get("BAND")
         sBBox = oProduct.get("BBOX")
         sStyle = oProduct.get("STYLE", "")
-        sFileName = oProduct.get("FILENAME", "")
         sGeoServerUrl = oProduct.get("GEOSERVER URL", "")
         sLayerId = oProduct.get("LAYER ID", "")
         iStackOrder = oProduct["stack_order"]
+        sFileName = wasdi.getParameter("FILENAME", "")
 
         asGetProducts = wasdi.getProductsByActiveWorkspace()
 
@@ -51,10 +52,13 @@ def run():
             wasdi.wasdiLog("The selected product is not in the workspace")
             continue
 
+        count = 0
         # If the filename is not set generate a random one
         if sFileName == "":
             sFileName = uuid.uuid4()
             wasdi.wasdiLog(f"FileName is not set! Generating a random UUID one... {sFileName}")
+        else:
+            sFileName = str(sFileName) + "_" + str(count)
 
         # Check on the stacking order
         if iStackOrder not in valid_range:
@@ -88,10 +92,18 @@ def run():
         for layer in layers:
             layer.process_layer(bStackLayers)
 
+        count += 1
+
     # if there is no product in the workspace, then stop the processor
     if len(layers) == 0:
         wasdi.wasdiLog("[ERROR] no selected product in the workspace")
         return None
+
+    if sOutputImageFormat == "gif" or sOutputImageFormat == "GIF":
+        for layer in layers:
+            gdal.Translate(wasdi.getSavePath() + str(layer.filename) + ".png",
+                           wasdi.getSavePath() + str(layer.filename) + ".geotiff",
+                           options=["-of", "png"])
 
     # if I am stacking layers
     if bStackLayers:
@@ -106,9 +118,65 @@ def run():
     if sBackgroundTileService != "" or sBackgroundTileService is not None:
         generateBackground(sBackgroundTileService, layers[0])
 
-    gdal.Translate(wasdi.getSavePath()+str(sFileName) + f'.{sOutputImageFormat}',
-                   wasdi.getSavePath()+"/mosaic.tif",
-                   options=["-of", sOutputImageFormat])
+    if sOutputImageFormat == "gif" or sOutputImageFormat == "GIF":
+        gdal.Translate(wasdi.getSavePath() + "/mosaic.png",
+                       wasdi.getSavePath() + "/mosaic.tif",
+                       options=["-of", "png"])
+
+        frames = []
+
+        # Determine the common dimensions for all frames
+        common_width, common_height = None, None
+
+        for layer in layers:
+            img_path = wasdi.getSavePath() + str(layer.filename) + ".png"
+            img = Image.open(img_path)
+
+            # Check if common dimensions are initialized
+            if common_width is None and common_height is None:
+                common_width, common_height = img.size
+
+            # Resize the image if it has different dimensions
+            if img.size != (common_width, common_height):
+                img = img.resize((common_width, common_height))
+
+            # Convert the image to RGB format if it has a different number of bands
+            if img.mode != "RGB":
+                img = img.convert("RGB")
+
+            frames.append(img)
+
+        # Open the mosaic image
+        mosaic_path = wasdi.getSavePath() + "/mosaic.png"
+        mosaic_img = Image.open(mosaic_path)
+
+        # Resize the mosaic image if it has different dimensions
+        if mosaic_img.size != (common_width, common_height):
+            mosaic_img = mosaic_img.resize((common_width, common_height))
+
+        frames.append(mosaic_img)
+
+        filepath = wasdi.getSavePath()+'/my_animation.gif'
+
+        # Set the duration for each frame in milliseconds (500 milliseconds = 0.5 seconds)
+        frame_duration = 500
+
+        # Create a new image with the same dimensions as the frames
+        gif = Image.new("RGB", frames[0].size)
+
+        # Create a list of frames with the specified duration
+        gif_frames = []
+
+        for frame in frames:
+            gif_frames.append(frame.copy())
+
+        # Save the GIF
+        gif.save(filepath, save_all=True, append_images=gif_frames, duration=frame_duration, loop=0)
+
+    else:
+        gdal.Translate(wasdi.getSavePath() + str(sFileName) + "1" + f'.{sOutputImageFormat}',
+                       wasdi.getSavePath() + "/mosaic.tif",
+                       options=["-of", sOutputImageFormat])
 
     wasdi.addFileToWASDI(str(sFileName) + f'.{sOutputImageFormat}')
 
