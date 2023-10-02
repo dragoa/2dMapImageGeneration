@@ -1,14 +1,13 @@
 import os
-
 import wasdi
 from PIL import Image
 from fpdf import FPDF
 
-
 class CustomPDF(FPDF):
     """
-    Custom class for creating a PDF using fpdf library
+    Custom class for creating a PDF using the fpdf library
     """
+
     def __init__(self, params):
         super().__init__()
         self.asParametersDict = params
@@ -16,11 +15,13 @@ class CustomPDF(FPDF):
         self.oHeader = params.get("header")
         self.oStyle = self.asParametersDict.get("style", {})  # Providing a default empty dict
         self.index_added = False  # No index present
-        self.cover_added = False  # No coverpage present
+        self.cover_added = False  # No cover page present
 
     # Add cover page method
     def add_cover_page(self):
-
+        """
+        Add a cover page to the PDF.
+        """
         self.add_page()
         self.set_xy(10, 10)
 
@@ -38,22 +39,20 @@ class CustomPDF(FPDF):
         self.add_page()
 
     def header(self):
-
-        if self.cover_added:  # Check if this is the cover page
+        """
+        Define the PDF header.
+        """
+        if self.cover_added:
             title = self.oHeader["title"]
-            logo = self.oHeader["logo"]
-            author_name = self.oHeader["author_name"]
-            company_name = self.oHeader["company_name"]
-            address = self.oHeader.get("address", "")
-            website = self.oHeader.get("website", "")
-            telephone = self.oHeader.get("telephone", "")
+            logo = self.oHeader.get("logo", "")  # Get the logo filename
 
-            # Set up the logo
-            self.image(logo, x=10, y=10, w=30)
-
-            # Set header title
+            # Set up the header title
             self.set_font("Helvetica", "B", 15)
             self.cell(0, 10, title, border=0, ln=1, align="C")
+
+            if logo and os.path.exists(logo):  # Check if the logo file exists
+                # Set up the logo
+                self.image(logo, x=10, y=10, w=30)
 
             # Set name and company
             try:
@@ -63,15 +62,17 @@ class CustomPDF(FPDF):
                 wasdi.wasdiLog(f"An error occurred setting up the style: {repr(oEx)}")
 
             self.cell(0, 5, "", ln=1, align="R")  # Empty cell for alignment
-            self.cell(0, 5, f"Author: {author_name}", ln=1, align="R")
-            self.cell(0, 5, f"Company: {company_name}", ln=1, align="R")
-            self.cell(0, 5, f"Address: {address}", ln=1, align="R")
-            self.cell(0, 5, f"Website: {website}", ln=1, align="R")
-            self.cell(0, 5, f"Telephone: {telephone}", ln=1, align="R")
+            self.cell(0, 5, f"Author: {self.oHeader.get('author_name', '')}", ln=1, align="R")
+            self.cell(0, 5, f"Company: {self.oHeader.get('company_name', '')}", ln=1, align="R")
+            self.cell(0, 5, f"Address: {self.oHeader.get('address', '')}", ln=1, align="R")
+            self.cell(0, 5, f"Website: {self.oHeader.get('website', '')}", ln=1, align="R")
+            self.cell(0, 5, f"Telephone: {self.oHeader.get('telephone', '')}", ln=1, align="R")
             self.ln(10)
 
     def add_index(self):
-
+        """
+        Add an index to the PDF.
+        """
         if not self.index_added:
             # Extract the title_background color from the style dictionary.
             # If it is not found, use black (#000000) as the default color.
@@ -99,14 +100,18 @@ class CustomPDF(FPDF):
             self.ln(10)
 
     def generate_index(self):
-
+        """
+        Generate the index content for the PDF.
+        """
         index_text = ""
         for i, chapter in enumerate(self.asParametersDict["chapters"], start=1):
             index_text += f'Chapter {i}: {chapter["title"]}\n'
         return index_text
 
     def footer(self):
-
+        """
+        Define the PDF footer.
+        """
         self.set_y(-15)  # Position at 1.5 cm from bottom
         self.set_font("Arial", "I", 10)
         page_number_alignment = self.asParametersDict.get("footer_page_number_alignment", "C")
@@ -124,7 +129,9 @@ class CustomPDF(FPDF):
             self.set_text_color(0, 0, 0)
 
     def chapter_title(self, ch_num, ch_title):
-
+        """
+        Define the title for a chapter in the PDF.
+        """
         # Extract the title_background color from the style dictionary.
         # If it is not found, use black (#000000) as the default color.
         title_background = self.oStyle.get("title_background", "#000000")
@@ -141,7 +148,9 @@ class CustomPDF(FPDF):
         self.ln()
 
     def fit_image(self, img_path, x, y, w, h):
-        """Fit the image within the bounding box, keeping aspect ratio."""
+        """
+        Fit an image within a bounding box, keeping aspect ratio.
+        """
         with Image.open(img_path) as img:
             aspect_ratio = img.width / img.height
             if aspect_ratio > 1:
@@ -159,6 +168,9 @@ class CustomPDF(FPDF):
             self.image(img_path, x=x, y=y, w=new_w, h=new_h)
 
     def chapter_body(self, chapter_data):
+        """
+        Define the body content for a chapter in the PDF.
+        """
         self.set_fill_color(255)  # Set fill color back to white
         self.set_text_color(0)  # Set text color back to black
 
@@ -216,46 +228,37 @@ class CustomPDF(FPDF):
             else:
                 wasdi.wasdiLog(f"Image file not found or not specified: {image_file}")
 
-    def add_table(self, data, col_widths, table_x=None, table_y=None, table_width=None, table_height=None):
-        count = 0
-        table_x = table_x if table_x is not None else 20
-        table_y = table_y if table_y is not None else self.get_y()
-
-        self.set_xy(table_x, table_y)
+    def add_table(self, data, col_widths, x=None, y=None):
+        """
+        Add a table to the PDF.
+        """
+        if x is not None and y is not None:
+            self.set_xy(x, y)
 
         for row in data:
             for i, col in enumerate(row):
-                if table_width and table_height:
-                    self.cell(table_width / len(row), table_height / len(data), str(col), border=1)
-                else:
-                    self.cell(col_widths[i], 10, str(col), border=1)
+                self.cell(col_widths[i], 10, str(col), border=1)
             self.ln()
-            count += 1
-
-        if table_height:
-            self.set_y(self.get_y() + table_height)
-        else:
-            self.set_y(self.get_y() + 10 * count)
 
     def print_chapter(self, ch_num, ch_title, chapter_data):
+        """
+        Print a chapter in the PDF.
+        """
         self.add_page()
         self.chapter_title(ch_num, ch_title)
         self.chapter_body(chapter_data)
 
+        # Print table(s) if present
         tables = chapter_data.get('tables', [])
         for table in tables:
             if 'data' in table and 'col_widths' in table:
-                self.ln()
-
-                y_position_before_table = self.get_y()
-
                 table_data = table['data']
                 col_widths = table['col_widths']
-                table_x = table.get('table_x', 20)
-                table_y = table.get('table_y', y_position_before_table)
-                table_width = table.get('table_width')
-                table_height = table.get('table_height')
 
-                self.add_table(table_data, col_widths, table_x, table_y, table_width, table_height)
+                # Extract the position and dimensions from the JSON data
+                x_position = table.get('table_x', 0)  # Default to 0 if not specified
+                y_position = table.get('table_y', 0)  # Default to 0 if not specified
+                table_width = table.get('table_width', 100)  # Default to 100 if not specified
+                table_height = table.get('table_height', 100)  # Default to 100 if not specified
 
-
+                self.add_table(table_data, col_widths, x=x_position, y=y_position)
