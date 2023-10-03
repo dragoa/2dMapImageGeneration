@@ -315,7 +315,7 @@ class Layer:
         styles = []
         for layer in layers:
             layer_ids.append(layer.layer_id)
-            styles.append(layer.oStyle)
+            styles.append(layer.style)
 
         # Create a query to the WMS
         parameters = self.create_query_wms(layer_ids, styles, to_bounding_box_list[:4])
