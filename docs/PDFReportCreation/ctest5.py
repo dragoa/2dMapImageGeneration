@@ -41,13 +41,13 @@ def test_footer(pdf_instance):
         page = pdf_document.load_page(page_num)
         pdf_text += page.get_text()
 
-    # Assert: Check if the "Wasdi" link is added to the PDF footer
+    #  if the "Wasdi" link is added to the PDF footer
     expected_link = "Wasdi"
     assert expected_link in pdf_text
 
 
 def test_chapter_title(pdf_instance):
-    # Act: Call the add_page method to create a page
+    #  Call the add_page method to create a page
     pdf_instance.add_page()
 
     # Define test chapter number and title
