@@ -38,10 +38,10 @@
             ["Data A", "Data B", "Data C"]
           ],
           "col_widths": [40, 40, 40],
-          "table_x": null,
-          "table_y": null,
-          "table_width": null,
-          "table_height": null
+          "table_x": 10,
+          "table_y": 20,
+          "table_width": 70,
+          "table_height": 70
         }
       ]
     },
