@@ -64,31 +64,36 @@ def validate_parameters(aoParams):
     str: The validated or default filename for the PDF.
     """
     sFileName = aoParams.get("filename", "")
-    if sFileName == "" or not sFileName.endswith(".pdf"):
-        sFileName = (
-            str(uuid.uuid4()) + "report.pdf"
-        )  # Generate a random UUID filename with ".pdf" extension
+    if sFileName == "":
+        sFileName = (str(uuid.uuid4()) + ".pdf")  # Generate a random UUID filename with ".pdf" extension
         wasdi.wasdiLog(
             f"FileName is not set or doesn't have the correct format! Generating a random UUID one... {sFileName}"
         )
+    if not sFileName.endswith(".pdf"):
+        sFileName = sFileName + ".pdf"
     aoParams["filename"] = sFileName
 
     # Validate cover_page
     cover_page = aoParams.get("cover_page", {})
     if not cover_page.get("template_image_filename"):
         wasdi.wasdiLog("Cover page template_image_filename is missing.")
+        aoParams['cover_page'] = {}
 
     # Validate header
     header = aoParams.get("header", {})
     if not all(header.get(k) for k in ["title", "logo", "author_name", "company_name"]):
         wasdi.wasdiLog(
-            "Header is missing one or more required fields (title, logo, author_name, company_name)."
-        )
+            "Header is missing one or more required fields (title, logo, author_name, company_name).")
+        aoParams['header'] = {}
 
     # Validate chapters
     chapters = aoParams.get("chapters", [])
     if len(chapters) == 0:
         wasdi.wasdiLog("Chapters are empty")
+        aoParams['chapters'] = []
+    for chapter in chapters:
+        if chapter.get("title") is None:
+            chapter["title"] = "Default Title"
 
     # Validate footer
     footer = aoParams.get("footer", {})
@@ -101,6 +106,7 @@ def validate_parameters(aoParams):
         ]
     ):
         wasdi.wasdiLog("Footer is missing one or more required fields.")
+        aoParams['footer'] = {}
 
     return sFileName
 

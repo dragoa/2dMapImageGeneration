@@ -43,7 +43,7 @@ class CustomPDF(FPDF):
         Define the PDF header.
         """
         if self.cover_added:
-            title = self.oHeader["title"]
+            title = self.oHeader.get("title", "")
             logo = self.oHeader.get("logo", "")  # Get the logo filename
 
             # Set up the header title
@@ -235,10 +235,14 @@ class CustomPDF(FPDF):
         if x is not None and y is not None:
             self.set_xy(x, y)
 
+        row_height = 10  # Adjust this value as needed for the desired row height
+
         for row in data:
             for i, col in enumerate(row):
-                self.cell(col_widths[i], 10, str(col), border=1)
-            self.ln()
+                self.cell(col_widths[i], row_height, str(col), border=1)
+            self.ln()  # Move to the next line (row)
+            y += row_height  # Update the y position for the next row
+            self.set_xy(x, y)  # Set the position for the next row
 
     def print_chapter(self, ch_num, ch_title, chapter_data):
         """
@@ -258,7 +262,5 @@ class CustomPDF(FPDF):
                 # Extract the position and dimensions from the JSON data
                 x_position = table.get('table_x', 0)  # Default to 0 if not specified
                 y_position = table.get('table_y', 0)  # Default to 0 if not specified
-                table_width = table.get('table_width', 100)  # Default to 100 if not specified
-                table_height = table.get('table_height', 100)  # Default to 100 if not specified
 
                 self.add_table(table_data, col_widths, x=x_position, y=y_position)

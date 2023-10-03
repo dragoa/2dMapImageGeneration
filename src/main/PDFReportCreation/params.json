@@ -39,9 +39,7 @@
           ],
           "col_widths": [40, 40, 40],
           "table_x": 10,
-          "table_y": 20,
-          "table_width": 70,
-          "table_height": 70
+          "table_y": 20
         }
       ]
     },
