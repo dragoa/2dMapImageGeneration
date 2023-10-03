@@ -4,7 +4,6 @@ import wasdi
 
 # Import the Layer class from your module
 from src.main.ImageGeneration import Layer
-from unittest.mock import Mock
 
 
 class TestLayer(unittest.TestCase):
@@ -97,6 +96,20 @@ class TestLayer(unittest.TestCase):
 
         result = self.layer.create_query_wms(layers, styles, bounding_box)
         self.assertEqual(result, expected_parameters)
+
+    def test_set_size(self):
+        # Create a Layer object with a known bounding box
+        layer = Layer.Layer("lulc_map.tif", "band_1", "", "", "", "", "", "", "", "", 1)
+
+        # Mock the get_bounding_box_list method to return a known bounding box
+        layer.get_bounding_box_list = lambda: [0, 0, 10, 10]  # Replace with your actual bounding box values
+
+        # Call the set_size method
+        layer.set_size()
+
+        # Check if width and height have been set correctly
+        self.assertEqual(layer.width, 1000)  # Width should be 10 * 100
+        self.assertEqual(layer.height, 1000)  # Height should be 10 * 100
 
     def test_calculate_bbox_intersection(self):
         # Create test data for bbox intersections
