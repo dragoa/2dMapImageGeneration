@@ -65,9 +65,7 @@
           ],
           "col_widths": [60, 60],
           "table_x": null,
-          "table_y": null,
-          "table_width": null,
-          "table_height": null
+          "table_y": null
         }
       ]
     },
@@ -102,9 +100,7 @@
           ],
           "col_widths": [50, 50],
           "table_x": null,
-          "table_y": null,
-          "table_width": null,
-          "table_height": null
+          "table_y": null
         }
       ]
     },
@@ -130,9 +126,7 @@
           ],
           "col_widths": [50, 50],
           "table_x": null,
-          "table_y": null,
-          "table_width": null,
-          "table_height": null
+          "table_y": null
         }
       ]
     },
@@ -158,9 +152,7 @@
           ],
           "col_widths": [40, 40, 40],
           "table_x": null,
-          "table_y": null,
-          "table_width": null,
-          "table_height": null
+          "table_y": null
         }
       ]
     },
@@ -186,9 +178,7 @@
           ],
           "col_widths": [60, 60],
           "table_x": null,
-          "table_y": null,
-          "table_width": null,
-          "table_height": null
+          "table_y": null
         }
       ]
     },
@@ -214,9 +204,7 @@
           ],
           "col_widths": [40, 40, 40],
           "table_x": null,
-          "table_y": null,
-          "table_width": null,
-          "table_height": null
+          "table_y": null
         }
       ]
     }
