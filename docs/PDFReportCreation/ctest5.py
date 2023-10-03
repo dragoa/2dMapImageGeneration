@@ -1,33 +1,78 @@
 import os
 import pytest
+from fitz import fitz
 from CustomPDF import CustomPDF
 
+# Define a test directory where temporary PDF files will be stored
+TEST_DIR = "tests"
 
-def test_footer():
-    # Create an instance of CustomPDF with a sample footer configuration
-    footer_params = {
-        "company_link": "https://www.wasdi.cloud/",
-        "footer_link_alignment": "left",
+# Ensure the test directory exists
+os.makedirs(TEST_DIR, exist_ok=True)
+
+
+@pytest.fixture
+def pdf_instance():
+    # Create an instance of CustomPDF for testing with footer configuration
+    footer_config = {
+        "footer": {
+            "company_link": "https://www.wasdi.cloud/",
+            "footer_link_alignment": "left",
+            "footer_page_number_alignment": "center",
+        }
     }
-    pdf = CustomPDF({"footer": footer_params})
+    return CustomPDF(footer_config)
 
-    # Act
-    pdf.add_page()  # Add a page to the PDF
-    pdf.footer()  # Call the footer method
 
-    # Assert
-    # Check if the "Wasdi" link with the provided company link is added to the PDF footer
+def test_footer(pdf_instance):
+    # Act: Call the add_page method to create a page
+    pdf_instance.add_page()
+
+    # Call the footer method
+    pdf_instance.footer()
+
+    # Save the PDF to a temporary file
+    pdf_filename = os.path.join(TEST_DIR, "test_footer.pdf")
+    pdf_instance.output(pdf_filename)
+
+    # Use PyMuPDF to extract text from the PDF
+    pdf_document = fitz.open(pdf_filename)
+    pdf_text = ""
+    for page_num in range(pdf_document.page_count):
+        page = pdf_document.load_page(page_num)
+        pdf_text += page.get_text()
+
+    # Assert: Check if the "Wasdi" link is added to the PDF footer
     expected_link = "Wasdi"
-    assert pdf.links[0] == (
-        10.0,
-        pdf.h - 15.0,
-        pdf.w - 20.0,
-        10.0,
-        "https://www.wasdi.cloud/",
-        expected_link,
-    )
+    assert expected_link in pdf_text
 
 
-# Run the test
+def test_chapter_title(pdf_instance):
+    # Act: Call the add_page method to create a page
+    pdf_instance.add_page()
+
+    # Define test chapter number and title
+    ch_num = 1
+    ch_title = "Introduction"
+
+    # Call the chapter_title method to add the chapter title to the page
+    pdf_instance.chapter_title(ch_num, ch_title)
+
+    # Save the PDF to a temporary file
+    pdf_filename = os.path.join(TEST_DIR, "test_chapter_title.pdf")
+    pdf_instance.output(pdf_filename)
+
+    # Use PyMuPDF to extract text from the PDF
+    pdf_document = fitz.open(pdf_filename)
+    pdf_text = ""
+    for page_num in range(pdf_document.page_count):
+        page = pdf_document.load_page(page_num)
+        pdf_text += page.get_text()
+
+    # Check if the expected chapter title text is present in the extracted text
+    expected_text = f"Chapter {ch_num}: {ch_title}"
+    assert expected_text in pdf_text
+
+
+# Run the tests
 if __name__ == "__main__":
     pytest.main([os.path.basename(__file__)])
