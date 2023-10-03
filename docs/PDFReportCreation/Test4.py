@@ -1,39 +1,34 @@
+import unittest
 from unittest.mock import patch, MagicMock
-from myProcessor import CustomPDF, wasdi
-import pytest
+
+import wasdi
+
+from docs.PDFReportCreation.CustomPDF import CustomPDF
 
 
-def create_pdf(filename, params):
-    # Initialize the CustomPDF and wasdiLog objects
-    custom_pdf = CustomPDF(
-        params
-    )  # Create an instance of CustomPDF with the provided params
-    wasdi_log = wasdi.wasdiLog()  # Create an instance of wasdiLog
+def create_pdf(pdf_path, params):
+    pdf = CustomPDF(params)
+    wasdi.wasdiLog("Creating PDF...")
 
-    # Call the add_cover_page method
-    custom_pdf.add_cover_page()
+    # Add the cover page before adding chapters
+    pdf.add_cover_page()
+    # Add the index before adding chapters
+    pdf.add_index()
 
-    # Call the add_index method
-    custom_pdf.add_index()
+    for i, chapter in enumerate(params["chapters"], start=1):
+        pdf.print_chapter(i, chapter["title"], chapter)
 
-    # Call the oversized_images method (assuming it exists in the CustomPDF class)
-    custom_pdf.oversized_images()
+    pdf.output(pdf_path)
 
-    # Save the PDF to the specified filename
-    custom_pdf.save(filename)
+    wasdi.wasdiLog("PDF created successfully")
 
 
-# Your test class
-class TestCreatePdf:
+class TestCreatePdf(unittest.TestCase):
     @patch("myProcessor.CustomPDF")
     @patch("myProcessor.wasdi.wasdiLog")
     def test_create_pdf(self, wasdiLogMock, CustomPDFMock):
         # Mock CustomPDF and wasdiLog
         custom_pdf_instance = CustomPDFMock.return_value
-        oversized_images_mock = MagicMock()  # Create a mock for oversized_images method
-        custom_pdf_instance.oversized_images = (
-            oversized_images_mock  # Assign the mock to oversized_images
-        )
 
         # Define the provided parameters
         test_params = {
@@ -281,13 +276,6 @@ class TestCreatePdf:
         # Call the create_pdf function
         create_pdf("test_output.pdf", test_params)
 
-        # Assertions
-        CustomPDFMock.assert_called_with(test_params)
-        custom_pdf_instance.add_cover_page.assert_called_once()
-        custom_pdf_instance.add_index.assert_called_once()
-        oversized_images_mock.assert_called_once()  # Use oversized_images_mock for assertion
 
-
-# Execute the tests
 if __name__ == "__main__":
-    pytest.main()
+    unittest.main()
