@@ -1,16 +1,18 @@
 {
-  "pdf_path": "WASDI_FINAL_REPORT.pdf",
+  "filename": "report",
+  "cover_page": {
+    "template_image_filename": "cover23.jpg",
+    "alignment": "center"
+  },
+  "start_content_from_page": 2,
   "header": {
     "title": "WASDI FINAL REPORT",
     "logo": "wasdi_logo.jpg",
-    "name": "Abdullah Al Foysal",
+    "author_name": "Abdullah Al Foysal",
     "company_name": "UNIGE",
     "address": "16126, Genova, Italy",
     "website": "https://www.unige.it",
     "telephone": "+39 010 209XXXX",
-    "company_link": "https://www.wasdi.cloud/",
-    "footer_link_alignment": "center",
-    "footer_page_number_alignment": "center",
     "company_address": "Company Address Here",
     "company_phone": "+1 123-456-7890"
   },
@@ -21,11 +23,11 @@
         {
           "subtitle": "Section 1.1: Overview",
           "content": "GeoServer has emerged as an instrumental tool in the geospatial domain, allowing professionals to share, process, and edit geospatial data. Its flexibility and interoperability have paved the way for a myriad of applications, one of the most pertinent being flood analysis. This report delves into the intricacies of how GeoServer, in conjunction with satellite data, is revolutionizing flood analysis.",
-          "image_path": "geography-vector-4752149.jpg",
-          "image_x": 20,
-          "image_y": 50,
-          "image_width": 150,
-          "image_height": 100
+          "image_path": "img.png",
+          "image_x":80,
+          "image_y":160,
+          "image_width": 100,
+          "image_height": 80
         }
       ],
       "tables": [
@@ -35,7 +37,11 @@
             ["Data 1", "Data 2", "Data 3"],
             ["Data A", "Data B", "Data C"]
           ],
-          "col_widths": [40, 40, 40]
+          "col_widths": [40, 40, 40],
+          "table_x": 10,
+          "table_y": 20,
+          "table_width": 70,
+          "table_height": 70
         }
       ]
     },
@@ -46,10 +52,10 @@
           "subtitle": "Section 2.1: Previous Studies",
           "content": "Historically, flood prediction relied heavily on ground data and early-warning systems. However, the advent of satellite technology has reshaped the dynamics of flood detection and prediction. Numerous studies have shed light on the efficacy of using satellites for this purpose, emphasizing faster response times and broader coverage. This section reviews existing literature, highlighting the advancements in satellite technology for flood detection, and how platforms like GeoServer are optimizing the use of this data.",
           "image_path": "istockphoto-820339338-612x612.jpg",
-          "image_x": 40,
-          "image_y": 80,
-          "image_width": 120,
-          "image_height": 90
+          "image_x": 80,
+          "image_y": 100,
+          "image_width": 60,
+          "image_height": 80
         }
       ],
       "tables": [
@@ -59,7 +65,11 @@
             ["Value 1", "Value 2"],
             ["Value X", "Value Y"]
           ],
-          "col_widths": [60, 60]
+          "col_widths": [60, 60],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -92,7 +102,11 @@
             ["Info A", "Info B"],
             ["Info X", "Info Y"]
           ],
-          "col_widths": [50, 50]
+          "col_widths": [50, 50],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -116,7 +130,11 @@
             ["Value A", "Value B"],
             ["Number 1", "Number 2"]
           ],
-          "col_widths": [50, 50]
+          "col_widths": [50, 50],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -129,7 +147,7 @@
           "image_path": "img.png",
           "image_x": 40,
           "image_y": 70,
-          "image_width": 140,
+          "image_width": 100,
           "image_height": 90
         }
       ],
@@ -140,7 +158,11 @@
             ["Result A", "Result B", "Result C"],
             ["Conclusion X", "Conclusion Y", "Conclusion Z"]
           ],
-          "col_widths": [40, 40, 40]
+          "col_widths": [40, 40, 40],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -164,7 +186,11 @@
             ["Summary X", "Summary Y"],
             ["Final Thoughts", "Remarks"]
           ],
-          "col_widths": [60, 60]
+          "col_widths": [60, 60],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     },
@@ -188,9 +214,24 @@
             ["Suggestion A", "Suggestion B", "Suggestion C"],
             ["Next Steps", "Exploration", "Prospects"]
           ],
-          "col_widths": [40, 40, 40]
+          "col_widths": [40, 40, 40],
+          "table_x": null,
+          "table_y": null,
+          "table_width": null,
+          "table_height": null
         }
       ]
     }
-  ]
+  ],
+  "footer": {
+    "company_link": "https://www.wasdi.cloud/",
+    "footer_link_alignment": "left",
+    "footer_page_number_alignment": "center"
+  },
+  "style": {
+    "font_size": 13,
+    "font_family": "Arial",
+    "font_style": "I",
+    "title_background": "#008000"
+  }
 }
