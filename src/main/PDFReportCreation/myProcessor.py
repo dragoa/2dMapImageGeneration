@@ -1,9 +1,6 @@
 import uuid
-
 import wasdi
-
 from src.main.PDFReportCreation.CustomPDF import CustomPDF
-
 
 # Define a function to create a PDF
 def create_pdf(pdf_path, params):
@@ -30,6 +27,27 @@ def create_pdf(pdf_path, params):
 
     wasdi.wasdiLog("PDF created successfully")
 
+# Define a function to create a blank PDF
+def create_blank_pdf(pdf_path):
+    """
+    Create a blank PDF document with no content.
+
+    Parameters:
+    pdf_path (str): The path to save the generated blank PDF.
+    """
+    pdf = CustomPDF({})  # Create a CustomPDF object with empty parameters
+    wasdi.wasdiLog("Creating blank PDF...")
+
+    # Remove the header section
+    pdf.asParametersDict["header"] = {}
+
+    # Check if "footer" section exists in the parameters
+    if "footer" not in pdf.asParametersDict:
+        pdf.asParametersDict["footer"] = {}  # Add an empty "footer" section if not present
+
+    pdf.add_page()
+    pdf.output(pdf_path)
+    wasdi.wasdiLog("Blank PDF created successfully")
 
 # Define a function to sanitize parameters by removing leading/trailing whitespace
 def sanitize_parameters(params):
@@ -50,7 +68,6 @@ def sanitize_parameters(params):
         return {key: sanitize_parameters(value) for key, value in params.items()}
     else:
         return params
-
 
 # Define a function to validate parameters
 def validate_parameters(aoParams):
@@ -98,19 +115,19 @@ def validate_parameters(aoParams):
     # Validate footer
     footer = aoParams.get("footer", {})
     if not all(
-        footer.get(k)
-        for k in [
-            "company_link",
-            "footer_link_alignment",
-            "footer_page_number_alignment",
-        ]
+            footer.get(k)
+            for k in [
+                "company_link",
+                "footer_link_alignment",
+                "footer_page_number_alignment",
+            ]
     ):
         wasdi.wasdiLog("Footer is missing one or more required fields.")
         aoParams['footer'] = {}
 
     return sFileName
 
-
+# Define the main function to run the PDF creation process
 # Define the main function to run the PDF creation process
 def run():
     """
@@ -120,9 +137,32 @@ def run():
     aoParams = wasdi.getParametersDict()
     aoParams = sanitize_parameters(aoParams)
     sFileName = validate_parameters(aoParams)
-    create_pdf(sFileName, aoParams)
+
+    # Check if the parameters are empty, and if so, create a blank PDF
+    if not aoParams or not aoParams["chapters"]:
+        create_blank_pdf(sFileName)
+    else:
+        # Get the page number from the config.json file
+        start_page = aoParams.get("start_content_from_page", 1)
+
+        pdf = CustomPDF(aoParams)
+        pdf.add_cover_page()
+        pdf.add_index()
+
+        # Add blank pages to reach the desired starting page
+        for _ in range(start_page - 1):
+            pdf.add_page()
+
+        for i, chapter in enumerate(aoParams["chapters"], start=1):
+            pdf.print_chapter(i, chapter["title"], chapter)
+
+        pdf.oversized_images = "WARN"
+        pdf.output(sFileName)
+
+        wasdi.wasdiLog("PDF created successfully")
 
 
+# Initialize WASDI
 if __name__ == "__main__":
     wasdi.init("./config.json")
     run()
