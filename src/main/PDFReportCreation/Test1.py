@@ -2,15 +2,6 @@ import unittest
 
 
 def sanitize_parameters(params):
-    """
-    Recursively remove leading/trailing whitespace from parameters.
-
-    Parameters:
-    params (str, list, dict): The input parameter(s) to sanitize.
-
-    Returns:
-    str, list, dict: The sanitized parameter(s).
-    """
     if isinstance(params, str):
         return params.strip()
     elif isinstance(params, list):
