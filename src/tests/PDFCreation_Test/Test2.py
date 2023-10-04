@@ -2,6 +2,8 @@ import unittest
 import json
 from io import StringIO
 import sys
+import wasdi
+from PIL import Image
 
 # Import the functions from your main script
 from src.main.PDFReportCreation.myProcessor import sanitize_parameters, validate_parameters
