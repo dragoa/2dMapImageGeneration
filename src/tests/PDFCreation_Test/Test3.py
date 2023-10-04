@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 
 # Import the functions and classes you need to test
-from myProcessor import run, create_pdf
+from src.main.PDFReportCreation.myProcessor import run, create_pdf
 
 
 class TestRunFunction(unittest.TestCase):

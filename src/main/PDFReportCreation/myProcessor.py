@@ -2,7 +2,7 @@ import uuid
 
 import wasdi
 
-from CustomPDF import CustomPDF
+from src.main.PDFReportCreation.CustomPDF import CustomPDF
 
 
 # Define a function to create a PDF
