@@ -1,13 +1,11 @@
 import unittest
 import json
-from io import StringIO
 import sys
-import wasdi
-from PIL import Image
+from io import StringIO
+
 
 # Import the functions from your main script
 from src.main.PDFReportCreation.myProcessor import sanitize_parameters, validate_parameters
-
 
 class TestParameterValidation(unittest.TestCase):
     def setUp(self):
@@ -29,7 +27,6 @@ class TestParameterValidation(unittest.TestCase):
 
         # Assert that the filename is valid (matches the expected pattern)
         self.assertTrue(validated_filename.endswith(".pdf"))
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -64,8 +64,8 @@
             ["Value X", "Value Y"]
           ],
           "col_widths": [60, 60],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -99,8 +99,8 @@
             ["Info X", "Info Y"]
           ],
           "col_widths": [50, 50],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -125,8 +125,8 @@
             ["Number 1", "Number 2"]
           ],
           "col_widths": [50, 50],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -151,8 +151,8 @@
             ["Conclusion X", "Conclusion Y", "Conclusion Z"]
           ],
           "col_widths": [40, 40, 40],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -177,8 +177,8 @@
             ["Final Thoughts", "Remarks"]
           ],
           "col_widths": [60, 60],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -203,8 +203,8 @@
             ["Next Steps", "Exploration", "Prospects"]
           ],
           "col_widths": [40, 40, 40],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     }
