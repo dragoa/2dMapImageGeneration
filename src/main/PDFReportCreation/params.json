@@ -1,7 +1,7 @@
 {
   "filename": "report",
   "cover_page": {
-    "template_image_filename": "cover23.jpg",
+    "template_image_filename": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/coverpage 2.png",
     "alignment": "center"
   },
   "start_content_from_page": 2,
@@ -23,7 +23,7 @@
         {
           "subtitle": "Section 1.1: Overview",
           "content": "GeoServer has emerged as an instrumental tool in the geospatial domain, allowing professionals to share, process, and edit geospatial data. Its flexibility and interoperability have paved the way for a myriad of applications, one of the most pertinent being flood analysis. This report delves into the intricacies of how GeoServer, in conjunction with satellite data, is revolutionizing flood analysis.",
-          "image_path": "img.png",
+          "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/img.png",
           "image_x":80,
           "image_y":160,
           "image_width": 100,
@@ -49,7 +49,7 @@
         {
           "subtitle": "Section 2.1: Previous Studies",
           "content": "Historically, flood prediction relied heavily on ground data and early-warning systems. However, the advent of satellite technology has reshaped the dynamics of flood detection and prediction. Numerous studies have shed light on the efficacy of using satellites for this purpose, emphasizing faster response times and broader coverage. This section reviews existing literature, highlighting the advancements in satellite technology for flood detection, and how platforms like GeoServer are optimizing the use of this data.",
-          "image_path": "istockphoto-820339338-612x612.jpg",
+          "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/istockphoto-820339338-612x612.jpg",
           "image_x": 80,
           "image_y": 100,
           "image_width": 60,
@@ -64,8 +64,8 @@
             ["Value X", "Value Y"]
           ],
           "col_widths": [60, 60],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -84,7 +84,7 @@
         {
           "subtitle": "Section 3.2: Data Collection",
           "content": "Satellite data was procured from various sources, primarily focusing on high-resolution imagery capable of detecting minute changes in water levels. Synthetic Aperture Radar (SAR) imagery, known for its cloud-penetrating capabilities, was especially valuable. Once collated, the data was integrated into GeoServer for detailed analysis and visualization.",
-          "image_path": "geo.jpg",
+          "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/geo.jpg",
           "image_x": 60,
           "image_y": 90,
           "image_width": 110,
@@ -99,8 +99,8 @@
             ["Info X", "Info Y"]
           ],
           "col_widths": [50, 50],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -110,7 +110,7 @@
         {
           "subtitle": "Section 4.1: Data Analysis",
           "content": "Our analysis revealed that satellite imagery, when integrated into platforms like GeoServer, can significantly enhance flood prediction and monitoring. The high-resolution imagery allowed for precise demarcation of flooded areas, while GeoServer's rendering capabilities provided clear, actionable visuals. We also noted a marked reduction in response time, enabling quicker disaster management actions.",
-          "image_path": "rainfall in each month.png",
+          "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/rainfall in each month.png",
           "image_x": 50,
           "image_y": 60,
           "image_width": 130,
@@ -125,8 +125,8 @@
             ["Number 1", "Number 2"]
           ],
           "col_widths": [50, 50],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -136,7 +136,7 @@
         {
           "subtitle": "Section 5.1: Findings",
           "content": "The confluence of satellite data and GeoServer has undeniably bolstered flood analysis capabilities. The granularity of satellite data ensures meticulous analysis, while GeoServer's robust platform allows for comprehensive data visualization. However, challenges like satellite revisit times and data latency remain. Addressing these can further optimize flood response mechanisms.",
-          "image_path": "img.png",
+          "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/img.png",
           "image_x": 40,
           "image_y": 70,
           "image_width": 100,
@@ -151,8 +151,8 @@
             ["Conclusion X", "Conclusion Y", "Conclusion Z"]
           ],
           "col_widths": [40, 40, 40],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -162,7 +162,7 @@
         {
           "subtitle": "Section 6.1: Summary",
           "content": "GeoServer, when augmented with satellite data, presents a formidable solution to the challenges of flood detection and monitoring. The synergy of these technologies holds promise for future advancements in disaster management. While there's potential for improvement, the current trajectory is undeniably progressive.",
-          "image_path": "GeoServer-service-and-geospatial-datasets-Satellite-dections-smoke-areas-and-red-flag.png",
+          "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/GeoServer-service-and-geospatial-datasets-Satellite-dections-smoke-areas-and-red-flag.png",
           "image_x": 30,
           "image_y": 50,
           "image_width": 160,
@@ -177,8 +177,8 @@
             ["Final Thoughts", "Remarks"]
           ],
           "col_widths": [60, 60],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     },
@@ -188,7 +188,7 @@
         {
           "subtitle": "Section 7.1: Recommendations",
           "content": "Future research can delve deeper into optimizing the integration of real-time satellite data with GeoServer. Exploring partnerships with satellite providers for quicker data feeds, enhancing GeoServer's processing capabilities for vast datasets, and expanding the application to other natural disasters are potential avenues for exploration.",
-          "image_path": "iQe86.png",
+          "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/iQe86.png",
           "image_x": 20,
           "image_y": 40,
           "image_width": 170,
@@ -203,8 +203,8 @@
             ["Next Steps", "Exploration", "Prospects"]
           ],
           "col_widths": [40, 40, 40],
-          "table_x": null,
-          "table_y": null
+          "table_x": 10,
+          "table_y": 20
         }
       ]
     }
