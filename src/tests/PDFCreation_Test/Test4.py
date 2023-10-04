@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 
 import wasdi
 
-from docs.PDFReportCreation.CustomPDF import CustomPDF
+from src.main.PDFReportCreation.CustomPDF import CustomPDF
 
 
 def create_pdf(pdf_path, params):

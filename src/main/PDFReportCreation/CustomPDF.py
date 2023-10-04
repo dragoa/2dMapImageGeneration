@@ -3,6 +3,7 @@ import wasdi
 from PIL import Image
 from fpdf import FPDF
 
+
 class CustomPDF(FPDF):
     """
     Custom class for creating a PDF using the fpdf library

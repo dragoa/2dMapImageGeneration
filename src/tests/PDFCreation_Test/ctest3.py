@@ -1,5 +1,5 @@
 import pytest
-from CustomPDF import CustomPDF  # Import your CustomPDF class from your codebase
+from src.main.PDFReportCreation.CustomPDF import CustomPDF  # Import your CustomPDF class from your codebase
 
 
 # Define a test function for the header method

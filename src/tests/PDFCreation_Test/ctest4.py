@@ -1,6 +1,6 @@
 import json
 import pytest
-from CustomPDF import CustomPDF  # Import your CustomPDF class from your codebase
+from src.main.PDFReportCreation.CustomPDF import CustomPDF  # Import your CustomPDF class from your codebase
 
 # Read the JSON data from the file
 with open("params.json", "r") as json_file:

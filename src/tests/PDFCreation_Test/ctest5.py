@@ -1,7 +1,7 @@
 import os
 import pytest
 from fitz import fitz
-from CustomPDF import CustomPDF
+from src.main.PDFReportCreation.CustomPDF import CustomPDF
 
 # Define a test directory where temporary PDF files will be stored
 TEST_DIR = "tests"
