@@ -1,7 +1,7 @@
 import uuid
 
 import wasdi
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from osgeo import gdal
 
 from Layer import Layer
@@ -29,6 +29,7 @@ def run():
     bStackLayers = wasdi.getParameter("stackLayers", True)
     sBackgroundTileService = wasdi.getParameter("backgroundService", "osm")
     sOutputImageFormat = wasdi.getParameter("outputFormat", "png")
+    sImageText = wasdi.getParameter("text", "")
 
     layers = []
     stack_orders = set()
@@ -182,6 +183,23 @@ def run():
                        f"{SAVE_PATH}/mosaic.tif",
                        options=["-of", sOutputImageFormat])
         sFileName += "1"
+
+        # Load the image
+        image = Image.open(SAVE_PATH + sFileName + f".{sOutputImageFormat}")
+
+        # Create a drawing context
+        draw = ImageDraw.Draw(image)
+
+        # Specify text, font, color, and position
+        font = ImageFont.truetype("arial.ttf", 36)
+        text_color = (255, 255, 255)
+        position = (20, 20)
+
+        # Draw the text on the image
+        draw.text(position, sImageText, fill=text_color, font=font)
+
+        # Save the modified image
+        image.save(SAVE_PATH + sFileName + f".{sOutputImageFormat}")
 
     wasdi.addFileToWASDI(sFileName + f'.{sOutputImageFormat}')
 
