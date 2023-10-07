@@ -1,7 +1,8 @@
 import uuid
+
 import wasdi
+from PIL import Image
 from osgeo import gdal
-from PIL import Image, ImageSequence
 
 from Layer import Layer
 from generateBackgroundTile import generateBackground
@@ -108,7 +109,7 @@ def run():
                            options=["-of", "png"])
 
     # If stacking layers
-    if bStackLayers:
+    if bStackLayers and len(layers) > 1:
 
         if valid:
             # Sort layers based on stack_order
