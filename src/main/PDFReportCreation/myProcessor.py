@@ -19,8 +19,8 @@ def create_pdf(pdf_path, params):
     # Add the index before adding chapters
     pdf.add_index()
 
-    for i, chapter in enumerate(params["chapters"], start=1):
-        pdf.print_chapter(i, chapter["title"], chapter)
+    for i, chapter in enumerate(params.get("chapters", []), start=1):
+        pdf.print_chapter(i, chapter.get("title", "Untitled"), chapter)
 
     pdf.oversized_images = "WARN"
     pdf.output(pdf_path)
@@ -94,14 +94,12 @@ def validate_parameters(aoParams):
     cover_page = aoParams.get("cover_page", {})
     if not cover_page.get("template_image_filename"):
         wasdi.wasdiLog("Cover page template_image_filename is missing.")
-        aoParams['cover_page'] = {}
 
     # Validate header
     header = aoParams.get("header", {})
     if not all(header.get(k) for k in ["title", "logo", "author_name", "company_name"]):
         wasdi.wasdiLog(
             "Header is missing one or more required fields (title, logo, author_name, company_name).")
-        aoParams['header'] = {}
 
     # Validate chapters
     chapters = aoParams.get("chapters", [])
@@ -127,39 +125,64 @@ def validate_parameters(aoParams):
 
     return sFileName
 
+
 # Define the main function to run the PDF creation process
-# Define the main function to run the PDF creation process
+
 def run():
     """
     Main function to run the PDF generation process.
     """
     wasdi.wasdiLog("PDF tutorial v.1.4")
     aoParams = wasdi.getParametersDict()
+
+    # Check if the JSON parameters are empty (only a single bracket)
+    if not aoParams:
+        # Create a blank PDF and exit
+        create_blank_pdf("blank.pdf")
+        wasdi.wasdiLog("Blank PDF created successfully")
+        return
+
     aoParams = sanitize_parameters(aoParams)
     sFileName = validate_parameters(aoParams)
 
-    # Check if the parameters are empty, and if so, create a blank PDF
-    if not aoParams or not aoParams["chapters"]:
-        create_blank_pdf(sFileName)
-    else:
-        # Get the page number from the config.json file
-        start_page = aoParams.get("start_content_from_page", 1)
+    pdf = CustomPDF(aoParams)
+    pdf.add_cover_page()
 
-        pdf = CustomPDF(aoParams)
-        pdf.add_cover_page()
+    # Add a page before adding an index
+    pdf.add_page()
+
+    # Get the page number from the config.json file
+    start_page = aoParams.get("start_content_from_page", 1)
+
+    # Add blank pages to reach the desired starting page
+    for _ in range(start_page - 2):
+        pdf.add_page()
+
+    # Check if there are any chapters with data
+    chapters = aoParams.get("chapters", [])
+    chapter_has_content = any(len(chapter.get("sections", [])) > 0 for chapter in chapters)
+
+    if chapter_has_content:
+        # If there is content in the chapters, add the index
         pdf.add_index()
 
-        # Add blank pages to reach the desired starting page
-        for _ in range(start_page - 1):
-            pdf.add_page()
+    if not chapters or all(len(chapter.get("sections", [])) == 0 for chapter in chapters):
+        # If no chapters with data or chapters are empty, display a message
+        pdf.set_font("Helvetica", "B", 16)
+        pdf.cell(0, 10, "No Data Found in Chapters", ln=1, align="C")
+        pdf.set_font("Times", "", 12)
+        pdf.multi_cell(0, 10, "There is no data provided for the chapters. "
+                              "You can add content to the chapters in the JSON parameters.", align="C")
+    else:
+        for i, chapter in enumerate(chapters, start=1):
+            if len(chapter.get("sections", [])) > 0:
+                # Only print chapters with content
+                pdf.print_chapter(i, chapter.get("title", "Untitled"), chapter)
 
-        for i, chapter in enumerate(aoParams["chapters"], start=1):
-            pdf.print_chapter(i, chapter["title"], chapter)
+    pdf.oversized_images = "WARN"
+    pdf.output(sFileName)
 
-        pdf.oversized_images = "WARN"
-        pdf.output(sFileName)
-
-        wasdi.wasdiLog("PDF created successfully")
+    wasdi.wasdiLog("PDF created successfully")
 
 
 # Initialize WASDI
