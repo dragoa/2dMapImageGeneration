@@ -221,7 +221,7 @@ class Layer:
                 # try to connect to the provided Geoserver url
                 if self.geoserver_url == "":
                     # Check if the band is the correct band
-                    bands = wasdi.getProductBand(self.product)
+                    bands = wasdi.getProductBandNames(self.product)
                     if self.band not in bands:
                         self.band = bands[0]
 
