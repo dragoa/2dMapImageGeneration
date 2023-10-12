@@ -3,7 +3,6 @@ import os
 import shutil
 import urllib.request
 
-import osgeo_utils.gdal_merge as gm
 import wasdi
 from osgeo import gdal
 
@@ -56,11 +55,11 @@ def merge_tiles(input_pattern, output_path):
     :return: a single tile from all the fetched ones
     """
     # create the param string for gdal merge
-    params = ['', '-o', output_path]
+    params = ['/usr/bin/gdal_merge.py', '-o', output_path]
     for name in glob.glob(input_pattern):
         params.append(name)
     # gdal command to merge tiles
-    gm.gdal_merge(params)
+    os.system(' '.join(params))
 
 
 def georeference_raster_tile(x, y, z, path, provider):

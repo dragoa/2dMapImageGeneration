@@ -59,11 +59,6 @@ class Layer:
         """
         Validate arguments for a Layer
         """
-        # Check if the band is the correct band
-        band = wasdi.getProductBand(self.product)
-        if self.band != band:
-            self.band = band
-
         # If the crs is not correct set a default one
         if self.crs not in self.wms[self.layer_id].crsOptions:
             wasdi.wasdiLog("The crs value is not correct. Setting EPSG:4326 as default")
@@ -225,6 +220,11 @@ class Layer:
             try:
                 # try to connect to the provided Geoserver url
                 if self.geoserver_url == "":
+                    # Check if the band is the correct band
+                    bands = wasdi.getProductBandNames(self.product)
+                    if self.band not in bands:
+                        self.band = bands[0]
+
                     # Starts a publish band process and wait for the result to be available
                     s_json_result = wasdi.getlayerWMS(self.product, self.band)
                     # Convert the string to a Python object

@@ -26,5 +26,6 @@
   "outputFormat": "png",
   "backgroundService" : "osm",
   "stackLayers": true,
-  "bboxOptions": 1
+  "bboxOptions": 1,
+  "text": "Hello World"
 }
