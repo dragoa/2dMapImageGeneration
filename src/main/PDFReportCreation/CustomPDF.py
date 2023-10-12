@@ -2,7 +2,7 @@ import os
 import wasdi
 from PIL import Image
 from fpdf import FPDF
-
+import webcolors  # You may need to install this library
 
 class CustomPDF(FPDF):
     """
@@ -51,23 +51,27 @@ class CustomPDF(FPDF):
 
                 # Extract title information
                 title_info = header_params.get("title", {})
-                title_text = title_info.get("text", "")
+                title_text = title_info.get("text", "Sample PDF")
                 title_style = title_info.get("style", {})
-                title_font_size = title_style.get("font_size", 12)
+                title_font_size = title_style.get("font_size", 18)
                 title_font_family = title_style.get("font_family", "Arial")
-                title_font_style = title_style.get("font_style", "")
-                title_text_color = title_style.get("text_color", [0, 0, 0])
+                title_font_style = title_style.get("font_style", "B")
+                title_text_color = title_style.get("text_color", "black")  # Default to black
                 title_text_alignment = title_style.get("text_alignment", "C")
+
+                if title_font_style not in ["", "I", "B", "U"]:
+                    title_font_style = "B"
 
                 # Apply style to title
                 self.set_font(title_font_family, title_font_style, title_font_size)
-                self.set_text_color(*title_text_color)
+                title_text_color_rgb = self.get_rgb_color(title_text_color)
+                self.set_text_color(*title_text_color_rgb)
                 self.cell(0, 10, title_text, border=0, ln=1, align=title_text_alignment)
 
                 # Extract logo information and position
                 logo_info = header_params.get("logo", {})
                 logo_filename = logo_info.get("image_filename", "")
-                logo_position = logo_info.get("position", {})
+                logo_position = logo_info.get("position", {"x": 10, "y": 10, "w": 30})
                 logo_x = logo_position.get("x", 10)
                 logo_y = logo_position.get("y", 10)
                 logo_width = logo_position.get("w", 30)
@@ -85,11 +89,12 @@ class CustomPDF(FPDF):
                 author_font_size = author_style.get("font_size", 12)
                 author_font_family = author_style.get("font_family", "Arial")
                 author_font_style = author_style.get("font_style", "")
-                author_text_color = author_style.get("text_color", [0, 0, 0])
+                author_text_color = author_style.get("text_color", "black")  # Default to black
                 author_text_alignment = author_style.get("text_alignment", "C")
 
                 self.set_font(author_font_family, author_font_style, author_font_size)
-                self.set_text_color(*author_text_color)
+                author_text_color_rgb = self.get_rgb_color(author_text_color)
+                self.set_text_color(*author_text_color_rgb)
 
                 self.cell(0, 5, f"Author: {header_params.get('author_name', '')}", ln=1, align=author_text_alignment)
                 self.cell(0, 5, f"Company: {header_params.get('company_name', '')}", ln=1, align=author_text_alignment)
@@ -292,3 +297,12 @@ class CustomPDF(FPDF):
                 y_position = table.get('table_y', 0)  # Default to 0 if not specified
 
                 self.add_table(table_data, col_widths, x=x_position, y=y_position)
+
+    def get_rgb_color(self, color_string):
+        """
+        Convert a color string (e.g., "#RRGGBB") to an RGB tuple.
+        """
+        if color_string.startswith('#'):
+            color_string = color_string[1:]
+        return tuple(int(color_string[i:i + 2], 16) for i in (0, 2, 4))
+

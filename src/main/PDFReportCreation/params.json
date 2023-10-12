@@ -12,7 +12,7 @@
         "font_size": 14,
         "font_family": "Arial",
         "font_style": "B",
-        "text_color": [0, 0, 0],
+        "text_color": "#008000",
         "text_alignment": "C"
       }
     },

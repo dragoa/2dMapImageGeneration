@@ -1,18 +1,18 @@
 {
-  "filename": "type",
+  "filename": "any",
   "cover_page": {
-    "template_image_filename": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/coverpage 2.png",
+    "template_image_filename": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/Coverpage 3.png",
     "alignment": "center"
   },
-  "start_content_from_page": 2,
+  "start_content_from_page": 1,
   "header": {
     "title": {
       "text": "WASDI FINAL REPORT",
       "style": {
         "font_size": 14,
         "font_family": "Arial",
-        "font_style": "B",
-        "text_color": [0, 0, 0],
+        "font_style": "",
+        "text_color": "#000000",
         "text_alignment": "C"
       }
     },
@@ -35,7 +35,7 @@
       "font_size": 12,
       "font_family": "Arial",
       "font_style": "",
-      "text_color": [0, 0, 0],
+      "text_color": "#FF0000",
       "text_alignment": "R"
     }
   },
@@ -76,6 +76,6 @@
     "font_size": 10,
     "font_family": "Arial",
     "font_style": "B",
-    "title_background": "#008000"
+    "title_background": "#000000"
   }
 }

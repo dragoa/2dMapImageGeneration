@@ -2,6 +2,7 @@ import uuid
 import wasdi
 from src.main.PDFReportCreation.CustomPDF import CustomPDF
 
+
 # Define a function to create a PDF
 def create_pdf(pdf_path, params):
     """
@@ -27,6 +28,7 @@ def create_pdf(pdf_path, params):
 
     wasdi.wasdiLog("PDF created successfully")
 
+
 # Define a function to create a blank PDF
 def create_blank_pdf(pdf_path):
     """
@@ -49,6 +51,7 @@ def create_blank_pdf(pdf_path):
     pdf.output(pdf_path)
     wasdi.wasdiLog("Blank PDF created successfully")
 
+
 # Define a function to sanitize parameters by removing leading/trailing whitespace
 def sanitize_parameters(params):
     """
@@ -68,6 +71,7 @@ def sanitize_parameters(params):
         return {key: sanitize_parameters(value) for key, value in params.items()}
     else:
         return params
+
 
 # Define a function to validate parameters
 def validate_parameters(aoParams):
