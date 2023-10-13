@@ -1,10 +1,10 @@
 {
-  "filename": "any",
+  "filename": "Wasdi",
   "cover_page": {
     "template_image_filename": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/Coverpage 3.png",
     "alignment": "center"
   },
-  "start_content_from_page": 1,
+  "start_content_from_page": 0,
   "header": {
     "title": {
       "text": "WASDI FINAL REPORT",
@@ -35,37 +35,12 @@
       "font_size": 12,
       "font_family": "Arial",
       "font_style": "",
-      "text_color": "#FF0000",
+      "text_color": "#000000",
       "text_alignment": "R"
     }
   },
   "chapters": [
-    {
-      "title": "Introduction",
-      "sections": [
-        {
-          "subtitle": "Section 1.1: Overview",
-          "content": "GeoServer has emerged as an instrumental tool in the geospatial domain, allowing professionals to share, process, and edit geospatial data. Its flexibility and interoperability have paved the way for a myriad of applications, one of the most pertinent being flood analysis. This report delves into the intricacies of how GeoServer, in conjunction with satellite data, is revolutionizing flood analysis.",
-          "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/img.png",
-          "image_x": "",
-          "image_y": "",
-          "image_width": 160,
-          "image_height": 170
-        }
-      ],
-      "tables": [
-        {
-          "data": [
-            ["Column 1", "Column 2", "Column 3"],
-            ["Data 1", "Data 2", "Data 3"],
-            ["Data A", "Data B", "Data C"]
-          ],
-          "col_widths": [40, 40, 40],
-          "table_x": 85,
-          "table_y": 80
-        }
-      ]
-    }
+
   ],
   "footer": {
     "company_link": "https://www.wasdi.cloud/",
