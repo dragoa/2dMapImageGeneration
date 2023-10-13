@@ -2,7 +2,7 @@ import os
 import pytest
 from fitz import fitz
 from PIL import Image
-from CustomPDF import CustomPDF
+from src.main.PDFReportCreation.CustomPDF import CustomPDF
 
 # Define a test directory where temporary PDF files will be stored
 TEST_DIR = "tests"
@@ -29,7 +29,7 @@ def test_fit_image(pdf_instance):
     pdf_instance.add_page()
 
     # Define image path and coordinates
-    img_path = "geo.jpg"
+    img_path = "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/geo.jpg"
     x = 10
     y = 10
     w = 100
@@ -57,7 +57,7 @@ def test_chapter_body(pdf_instance):
             {
                 "subtitle": "Section 1",
                 "content": "This is the content of section 1.",
-                "image_path": "geo.jpg",
+                "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/geo.jpg",
                 "image_x": 10,
                 "image_y": 10,
                 "image_width": 100,
@@ -66,7 +66,7 @@ def test_chapter_body(pdf_instance):
             {
                 "subtitle": "Section 2",
                 "content": "This is the content of section 2.",
-                "image_path": "geo.jpg",
+                "image_path": "/Users/abdullahalfoysal/Documents/GitHub/se23-p08/src/main/PDFReportCreation/img/geo.jpg",
                 "image_x": 20,
                 "image_y": 20,
                 "image_width": 80,

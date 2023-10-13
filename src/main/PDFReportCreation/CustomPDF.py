@@ -2,6 +2,7 @@ import os
 import wasdi
 from PIL import Image
 from fpdf import FPDF
+import webcolors  # You may need to install this library
 
 class CustomPDF(FPDF):
     """
@@ -20,54 +21,88 @@ class CustomPDF(FPDF):
     # Add cover page method
     def add_cover_page(self):
         """
-        Add a cover page to the PDF.
+        Add a cover page to the PDF if it exists in the parameters.
         """
-        self.add_page()
-        self.set_xy(10, 10)
+        if "cover_page" in self.asParametersDict:
+            self.add_page()
+            self.set_xy(10, 10)
 
-        # Image (if applicable)
-        coverpageFilename = self.oCoverPage.get("template_image_filename", "")
-        if coverpageFilename and os.path.exists(coverpageFilename):
-            self.image(coverpageFilename, x=10, y=self.get_y(), w=190)
-            self.ln(200)  # Move below the image, adjust as per image height
-        else:
-            # Title
-            self.set_font('Helvetica', 'B', 20)
-            self.cell(0, 20, self.oHeader.get("title", "Cover Page"), ln=1, align='C')
-            self.ln(20)
-        self.cover_added = True  # Set cover_added to True
-        self.add_page()
+            # Check if cover_page section has the template_image_filename attribute
+            if "template_image_filename" in self.oCoverPage:
+                coverpageFilename = self.oCoverPage["template_image_filename"]
+                if os.path.exists(coverpageFilename):
+                    self.image(coverpageFilename, x=10, y=self.get_y(), w=190)
+                    self.ln(200)  # Move below the image, adjust as per image height
+            else:
+                # No cover page provided, do nothing
+                pass
 
+            self.cover_added = True  # Set cover_added to True
+            self.add_page()
+
+    # Modify the header function
     def header(self):
         """
-        Define the PDF header.
+        Define the PDF header with style based on JSON parameters.
         """
-        if self.cover_added:
-            title = self.oHeader["title"]
-            logo = self.oHeader.get("logo", "")  # Get the logo filename
+        if "header" in self.asParametersDict:
+            if self.cover_added:
+                header_params = self.asParametersDict["header"]
 
-            # Set up the header title
-            self.set_font("Helvetica", "B", 15)
-            self.cell(0, 10, title, border=0, ln=1, align="C")
+                # Extract title information
+                title_info = header_params.get("title", {})
+                title_text = title_info.get("text", "Sample PDF")
+                title_style = title_info.get("style", {})
+                title_font_size = title_style.get("font_size", 18)
+                title_font_family = title_style.get("font_family", "Arial")
+                title_font_style = title_style.get("font_style", "B")
+                title_text_color = title_style.get("text_color", "black")  # Default to black
+                title_text_alignment = title_style.get("text_alignment", "C")
 
-            if logo and os.path.exists(logo):  # Check if the logo file exists
-                # Set up the logo
-                self.image(logo, x=10, y=10, w=30)
+                if title_font_style not in ["", "I", "B", "U"]:
+                    title_font_style = "B"
 
-            # Set name and company
-            try:
-                self.set_font(self.oStyle["font_family"], self.oStyle["font_style"], self.oStyle["font_size"])
-            except Exception as oEx:
+                # Apply style to title
+                self.set_font(title_font_family, title_font_style, title_font_size)
+                title_text_color_rgb = self.get_rgb_color(title_text_color)
+                self.set_text_color(*title_text_color_rgb)
+                self.cell(0, 10, title_text, border=0, ln=1, align=title_text_alignment)
+
+                # Extract logo information and position
+                logo_info = header_params.get("logo", {})
+                logo_filename = logo_info.get("image_filename", "")
+                logo_position = logo_info.get("position", {"x": 10, "y": 10, "w": 30})
+                logo_x = logo_position.get("x", 10)
+                logo_y = logo_position.get("y", 10)
+                logo_width = logo_position.get("w", 30)
+
+                # Insert logo at specified position
+                if logo_filename and os.path.exists(logo_filename):
+                    self.image(logo_filename, x=logo_x, y=logo_y, w=logo_width)
+
+                # Extract and display other header information
                 self.set_font("Arial", "", 12)
-                wasdi.wasdiLog(f"An error occurred setting up the style: {repr(oEx)}")
+                self.set_text_color(0, 0, 0)
 
-            self.cell(0, 5, "", ln=1, align="R")  # Empty cell for alignment
-            self.cell(0, 5, f"Author: {self.oHeader.get('author_name', '')}", ln=1, align="R")
-            self.cell(0, 5, f"Company: {self.oHeader.get('company_name', '')}", ln=1, align="R")
-            self.cell(0, 5, f"Address: {self.oHeader.get('address', '')}", ln=1, align="R")
-            self.cell(0, 5, f"Website: {self.oHeader.get('website', '')}", ln=1, align="R")
-            self.cell(0, 5, f"Telephone: {self.oHeader.get('telephone', '')}", ln=1, align="R")
-            self.ln(10)
+                # Apply style for author information
+                author_style = header_params.get("style", {})
+                author_font_size = author_style.get("font_size", 12)
+                author_font_family = author_style.get("font_family", "Arial")
+                author_font_style = author_style.get("font_style", "")
+                author_text_color = author_style.get("text_color", "black")  # Default to black
+                author_text_alignment = author_style.get("text_alignment", "C")
+
+                self.set_font(author_font_family, author_font_style, author_font_size)
+                author_text_color_rgb = self.get_rgb_color(author_text_color)
+                self.set_text_color(*author_text_color_rgb)
+
+                self.cell(0, 5, f"Author: {header_params.get('author_name', '')}", ln=1, align=author_text_alignment)
+                self.cell(0, 5, f"Company: {header_params.get('company_name', '')}", ln=1, align=author_text_alignment)
+                self.cell(0, 5, f"Address: {header_params.get('address', '')}", ln=1, align=author_text_alignment)
+                self.cell(0, 5, f"Website: {header_params.get('website', '')}", ln=1, align=author_text_alignment)
+                self.cell(0, 5, f"Telephone: {header_params.get('telephone', '')}", ln=1, align=author_text_alignment)
+
+                self.ln(10)
 
     def add_index(self):
         """
@@ -149,7 +184,7 @@ class CustomPDF(FPDF):
 
     def fit_image(self, img_path, x, y, w, h):
         """
-        Fit an image within a bounding box, keeping aspect ratio.
+        Fit an image within a bounding box, keeping aspect ratio and centering it.
         """
         with Image.open(img_path) as img:
             aspect_ratio = img.width / img.height
@@ -165,7 +200,12 @@ class CustomPDF(FPDF):
                 if new_w > w:
                     new_w = w
                     new_h = w / aspect_ratio
-            self.image(img_path, x=x, y=y, w=new_w, h=new_h)
+
+            # Calculate the centered x and y positions
+            x_centered = (w - new_w) / 2
+            y_centered = (h - new_h) / 2
+
+            self.image(img_path, x=x + x_centered, y=y + y_centered, w=new_w, h=new_h)
 
     def chapter_body(self, chapter_data):
         """
@@ -195,20 +235,13 @@ class CustomPDF(FPDF):
             image_width = float(section.get("image_width", 100))
             image_height = float(section.get("image_height", 100))
 
-            # If image_x and image_y are specified, set them, else set to default values
-            if image_x_raw is not None and isinstance(image_x_raw, (float, int)):
-                image_x = float(image_x_raw)
+            # If image_x and image_y are empty or not specified, set them to center the image
+            if not image_x_raw and not image_y_raw:
+                image_x = (self.w - image_width) / 2  # Center horizontally
+                image_y = (self.h - image_height) / 2  # Center vertically
             else:
-                image_x = 0  # Changed from '(210 - image_width) / 2'
-
-            if image_y_raw is not None and isinstance(image_y_raw, (float, int)):
-                image_y = float(image_y_raw)
-            else:
-                image_y = 0  # Changed from '(297 - image_height) / 2'
-
-                # Make sure that the image doesn't overlap with text or table
-                if image_y < y_position_before_image + 20:
-                    image_y = y_position_before_image + 20
+                image_x = float(image_x_raw) if image_x_raw else 0
+                image_y = float(image_y_raw) if image_y_raw else 0
 
             self.set_font('Helvetica', 'B', 12)
             self.cell(0, 5, subtitle, ln=1, fill=True)
@@ -235,10 +268,14 @@ class CustomPDF(FPDF):
         if x is not None and y is not None:
             self.set_xy(x, y)
 
+        row_height = 10  # Adjust this value as needed for the desired row height
+
         for row in data:
             for i, col in enumerate(row):
-                self.cell(col_widths[i], 10, str(col), border=1)
-            self.ln()
+                self.cell(col_widths[i], row_height, str(col), border=1)
+            self.ln()  # Move to the next line (row)
+            y += row_height  # Update the y position for the next row
+            self.set_xy(x, y)  # Set the position for the next row
 
     def print_chapter(self, ch_num, ch_title, chapter_data):
         """
@@ -258,7 +295,14 @@ class CustomPDF(FPDF):
                 # Extract the position and dimensions from the JSON data
                 x_position = table.get('table_x', 0)  # Default to 0 if not specified
                 y_position = table.get('table_y', 0)  # Default to 0 if not specified
-                table_width = table.get('table_width', 100)  # Default to 100 if not specified
-                table_height = table.get('table_height', 100)  # Default to 100 if not specified
 
                 self.add_table(table_data, col_widths, x=x_position, y=y_position)
+
+    def get_rgb_color(self, color_string):
+        """
+        Convert a color string (e.g., "#RRGGBB") to an RGB tuple.
+        """
+        if color_string.startswith('#'):
+            color_string = color_string[1:]
+        return tuple(int(color_string[i:i + 2], 16) for i in (0, 2, 4))
+

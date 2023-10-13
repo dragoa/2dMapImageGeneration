@@ -1,5 +1,5 @@
 import unittest
-from CustomPDF import CustomPDF  # Replace with your actual module import
+from src.main.PDFReportCreation.CustomPDF import CustomPDF # Replace with your actual module import
 
 
 class TestCustomPDFInit(unittest.TestCase):

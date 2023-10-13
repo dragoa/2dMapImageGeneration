@@ -1,5 +1,5 @@
 import unittest
-from CustomPDF import CustomPDF
+from src.main.PDFReportCreation.CustomPDF import CustomPDF
 import os
 
 
