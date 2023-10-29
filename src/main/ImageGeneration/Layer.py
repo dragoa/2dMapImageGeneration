@@ -60,8 +60,10 @@ class Layer:
         Validate arguments for a Layer
         """
         # If the crs is not correct set a default one
-        if self.crs not in self.wms[self.layer_id].crsOptions:
+        if self.wms is not None and self.crs not in self.wms[self.layer_id].crsOptions:
             wasdi.wasdiLog("The crs value is not correct. Setting EPSG:4326 as default")
+            self.crs = "EPSG:4326"
+        else:
             self.crs = "EPSG:4326"
 
         # Check for the bbox
@@ -256,8 +258,6 @@ class Layer:
             parameters = self.create_query_wms([self.layer_id], [self.style], to_bounding_box_list)
             # Return the result of get_map_request
             return self.get_map_request(parameters)
-
-        return True  # Return True to indicate success
 
     def process_layers(self, layers, iBBoxOptions):
         """
