@@ -15,6 +15,7 @@ Version | Data | Author(s)| Notes
 2 | 05/22/23 | Alessandro Drago | Added System Architecture and refined some parts.
 3 | 06/08/23 | Alessandro Drago | Refined some parts.
 4 | 07/08/23 | Abdullah Al Foysal, Alessandro Drago | Added some parts.
+5 | 10/30/23 | Alessandro Drago | Fixes.
 
 ## Table of Content
 
@@ -53,6 +54,7 @@ Version | Data | Author(s)| Notes
     <summary> The goal of this is to create a full report of the analysis done by the reaserchers on WASDI.
     </summary>
     <p>The project involves the developement of a platform that helps Earth Observation (EO) experts process satellite imagery on the cloud. The team at WASDI is working on developing new software tools that can extract images and data from the results of the analytics tools present on the platform, in order to help communicate the results of the analyses to the stakeholders involved. The project aims to ease the communication of the results of the applications so that decision makers can better understand the phenomena they are dealing with.</p>
+    <p>Moreover, we would like to take the different layers in a workspace and overlay them in various ways by selecting the final bounding box from different options such as union, intersection or the bbox of a specific layer. After that we would like to generate this image in different formats such as PNG, JPG or GIF. The generated images should then be inserted into the report.</p>
 </details>
 
 ### <a name="def"></a> 1.2 Definitions
@@ -61,12 +63,18 @@ Version | Data | Author(s)| Notes
 | ------------------------------------- | ----------- | 
 | SE23                                 | Software Engineering course, 2023 at university of Genoa |
 | SE-80154							   | Software Engineering course, 2023 at university of Genoa, 80154 is its ID number |
-| WASDI								   | Web Advanced Space Developer Interface |
 | FadeOut Software					   | Company holder of WASDI |
-| EO					   			   | Earth Observation |
-| TIFF					   			   | Stands for Tag Image File Format. It is a file format used to store raster graphics and image information. |
-| GeoServer					   		   | Open source server for sharing geospatial data |
+| WASDI								   | Web Advanced Space Developer Interface |
 | Workspace							   | Space on WASDI where a user can store and manipulate satellitar images |
+| EO					   			   | Earth Observation |
+| GeoServer					   		   | Open source server for sharing geospatial data |
+| TIFF					   			   | Stands for Tag Image File Format. It is a file format used to store raster graphics and image information. |
+| GIF					   			   | Stands for Graphics Interchange Format. It's an image file format that can be used to create still images or animated images |
+| Band					   			   | Range of frequencies along the electromagnetic spectrum that the satellite measures |
+| Bounding-Box						   | Imaginary rectangle that outlines an object in an image |
+| CRS					   			   | Stands for Coordinate Reference System. Defines how georeferenced spatial data relates to real locations on the Earth’s surface |
+| EPSG					   			   | Stands for European Petroleum Survey Group. It's a unique identifier for a coordinate system or a projection. |
+| SLD					   			   | Stands for Styled Layer Descriptor. It's an XML file used for styling TIFF images  |
 
 ### <a name="biblio"></a> 1.4 Bibliography
 <details> 
@@ -74,6 +82,8 @@ Version | Data | Author(s)| Notes
     </summary>
     <p>https://wasdi.readthedocs.io/en/latest/index.html (WASDI documentation)</p>
     <p>https://docs.geoserver.org/ (GeoServer documentation)</p>
+    <p>https://gdal.org/index.html (GDAL documentation)</p>
+    <p>https://wrobell.dcmod.org/geotiler/usage.html (GeoTiler documentation)</p>
 </details>
 
 ## <a name="description"></a> 2 Project Description
@@ -219,13 +229,14 @@ In summary, the code utilizes object-oriented programming and modular design pri
     <summary> Put a summary of the section
     </summary>
     <img src="imgs/class.png" alt="Class diagram" style="width: 600px;" />
+    <img src="imgs/class1.png" alt="Class diagram" style="width: 1000px;" />
 </details>
 
 ##### <a name="cd-description"></a>  4.1.1.1 Class Description
 <details> 
     <summary> This class diagram represents the structure and relationships of the CustomPDF class and its methods based on the provided code
     </summary>
-    <p>The class CustomPDF represents a customized version of the FPDF class for PDF generation.</p>
+    <p>The class <b>CustomPDF</b> represents a customized version of the FPDF class for PDF generation.</p>
     <p>Attributes: </p>
     <ul> 
         <li> asParametersDict: a private attribute to hold the parameters dictionary.</li>
@@ -237,6 +248,46 @@ In summary, the code utilizes object-oriented programming and modular design pri
         <li> chapter_title(ch_num, ch_title): generates the chapter title section of the PDF.</li>
         <li> chapter_body(chapter_data): generates the chapter body section of the PDF.</li>
         <li> print_chapter(ch_num, ch_title, chapter_data): prints a chapter, combining the title and body sections.</li>
+    </ul>
+    <br>
+    <p>The class <b>Layer</b> is a custom representation of a Layer.</p>
+    <p>Attributes: </p>
+    <ul> 
+        <li> product : str Identifier for a product inside the WASDI workspace</li>
+        <li> band : str Identifier for the band of the product</li>
+        <li> bbox : str Bbox options used for selecting an area in the world</li>
+        <li> crs : str Coordinate Reference System used</li>
+        <li> width : int Width of the image</li>
+        <li> height : int Height of the image</li>
+        <li> style : str Name of a sld style file present on a WASDI workspace</li>
+        <li> sFileName : str Name of the output image</li>
+        <li> geoserver_url : str Link for a custom geoserver url</li>
+        <li> layer_id : str Identifier of a layer in a Geoserver workspace</li>
+        <li> iStackOrder : int Order on which we want to stack layers</li>
+    </ul>
+    <p>Methods: </p>
+    <ul>
+        <li> validate_params(): Validate arguments for a Layer.</li>
+        <li> create_web_map_service(): Create a WebMapService object.</li>
+        <li> get_bounding_box_list(): Calculate the best bbox if it is not present.</li>
+        <li> set_size(): Set the sizes for the output image if the user didn't provide them.</li>
+        <li> create_query_wms(): Creates the query for retrieving a map from geoserver.</li>
+        <li> get_map_request(): Compute a get map request.</li>
+        <li> process_layer(b_stack_layers): Process each layer.</li>
+        <li> process_layers(layers, iBBoxOptions): Processing of the layers to stack.</li>
+        <li> calculate_bbox_intersection(bbox1, bbox2): Calculate the intersection of bboxes.</li>
+        <li> calculate_bbox_union(bbox1, bbox2): Calculate the union of bboxes.</li>
+    </ul>
+    <br>
+    <p>The class <b>GenerateBack</b> is a class for generating the correct background of a Layer.</p>
+    <p>Attributes: </p>
+    <p>Methods: </p>
+    <ul>
+        <li> fetch_tile(): Create a request to a map service provider.</li>
+        <li> merge_tiles(): Merge every tile to create only a single one.</li>
+        <li> georeference_raster_tile(): Georeferenciate each tile.</li>
+        <li> generateBackground(): Method for generating background tile.</li>
+        <li> overlapTiles(): Method for overlapping the stacked layers on top of the background.</li>
     </ul>
 </details>
 

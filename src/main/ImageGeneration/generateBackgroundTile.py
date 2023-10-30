@@ -3,12 +3,11 @@ import os
 import shutil
 import urllib.request
 
+import geotiler
 import wasdi
 from osgeo import gdal
 
-from tileConvert import bbox_to_xyz, tile_edges
-
-import geotiler
+from src.main.ImageGeneration.tileConvert import bbox_to_xyz, tile_edges
 
 
 def fetch_tile(x, y, z, tile_source, temp_dir):
@@ -62,14 +61,13 @@ def merge_tiles(input_pattern, output_path):
     os.system(' '.join(params))
 
 
-def georeference_raster_tile(x, y, z, path, provider):
+def georeference_raster_tile(x, y, z, path):
     """
     Georeferenciate each tile
     :param x: longitude
     :param y: altitude
     :param z: latitude
     :param path: str path for fetched tiles
-    :param provider: str map service provider
     :return:
     """
     bounds = tile_edges(x, y, z)
@@ -148,7 +146,7 @@ def generateBackground(provider, layer):
             try:
                 png_path = fetch_tile(x, y, zoom, tile_source, temp_dir)
                 wasdi.wasdiLog(f"{x},{y} fetched")
-                georeference_raster_tile(x, y, zoom, png_path, provider)
+                georeference_raster_tile(x, y, zoom, png_path)
                 # Add filename in a list
             except OSError:
                 wasdi.wasdiLog(f"{x},{y} missing")
@@ -183,10 +181,6 @@ def overlapTiles(layer, merged):
 
     filename_path = wasdi.getSavePath() + str(layer.filename) + "." + layer.format
     onTopLayer = filename_path
-
-    import subprocess
-
-    src_ds = gdal.Open(filename_path)
 
     # Define the input files
     files_to_mosaic = [merged, onTopLayer]

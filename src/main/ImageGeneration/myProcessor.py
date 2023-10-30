@@ -192,9 +192,9 @@ def run():
 
         # Specify text, font, color, and position
         # On linux
-        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 36)
+        # font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 36)
         # On windows
-        # font = ImageFont.truetype("arial.ttf", 36)
+        font = ImageFont.truetype("arial.ttf", 36)
         text_color = (255, 255, 255)
         position = (20, 20)
 

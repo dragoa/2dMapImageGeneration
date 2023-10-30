@@ -51,7 +51,28 @@ class TestLayer(unittest.TestCase):
         self.assertNotEqual(to_bounding_box_list, "")
         self.assertTrue(result, "Processing was successful")
 
-    def test_process_layers(self):
+    def test_process_layers1(self):
+        layer1 = Layer.Layer("PAK_2022-12-04_flood (1).tif",
+                             "band_1",
+                             "",
+                             "",
+                             "",
+                             "",
+                             "",
+                             "",
+                             "",
+                             "",
+                             1)
+        self.layer.process_layer(b_stack_layers=True)
+        layer1.process_layer(b_stack_layers=True)
+
+        layers = [self.layer, layer1]
+        # computing the union of bboxes
+        result = layers[0].process_layers(layers, 0)
+
+        self.assertTrue(result, "Stacking of layers was successful")
+
+    def test_process_layers2(self):
         layer1 = Layer.Layer("PAK_2022-12-04_flood (1).tif",
                              "band_1",
                              "",
@@ -69,6 +90,29 @@ class TestLayer(unittest.TestCase):
         layers = [self.layer, layer1]
         # computing the union of bboxes
         result = layers[0].process_layers(layers, 1)
+
+        self.assertTrue(result, "Stacking of layers was successful")
+
+    def test_process_layers3(self):
+        # band = "" so default one is assigned
+        # using bbox provided by user
+        layer1 = Layer.Layer("PAK_2022-12-04_flood (1).tif",
+                             "",
+                             "65.99983333333333, 23.750083333333336, 73.99983333333333, 37.750166666666665",
+                             "",
+                             "",
+                             "",
+                             "",
+                             "",
+                             "",
+                             "",
+                             1)
+        self.layer.process_layer(b_stack_layers=True)
+        layer1.process_layer(b_stack_layers=True)
+
+        layers = [self.layer, layer1]
+        # computing the union of bboxes
+        result = layers[0].process_layers(layers, 2)
 
         self.assertTrue(result, "Stacking of layers was successful")
 
@@ -96,6 +140,41 @@ class TestLayer(unittest.TestCase):
 
         result = self.layer.create_query_wms(layers, styles, bounding_box)
         self.assertEqual(result, expected_parameters)
+
+    def test_validate_params_with_invalid_crs(self):
+        # Create a Layer object with an invalid CRS
+        layer = Layer.Layer("lulc_map.tif", "band_1", "", "", "InvalidCRS", "600", "600", "", "", "", 1)
+
+        # Call the validate_params method
+        layer.validate_params()
+
+        # Assert that the CRS is set to the default value "EPSG:4326"
+        self.assertEqual(layer.crs, "EPSG:4326")
+
+    def test_validate_params_with_valid_bbox_dict(self):
+        # Create a Layer object with a valid bbox in dictionary format
+        bbox_dict = {
+            "northEast": {"lat": 20, "lng": 10},
+            "southWest": {"lat": 15, "lng": 5}
+        }
+        layer = Layer.Layer("lulc_map.tif", "band_1", bbox_dict, "EPSG:4326", "600", "600", "", "", "", "", 1)
+
+        # Call the validate_params method
+        layer.validate_params()
+
+        # Assert that the bbox is correctly formatted
+        self.assertEqual(layer.bbox, "10, 20, 5, 15")
+
+    def test_validate_params_with_invalid_bbox_format(self):
+        # Create a Layer object with an invalid bbox format
+        invalid_bbox = "10,20,30"  # Missing one coordinate
+        layer = Layer.Layer("lulc_map.tif", "band_1", invalid_bbox, "", "600", "600", "", "", "", "", 1)
+
+        # Call the validate_params method
+        layer.validate_params()
+
+        # Assert that the bbox is set to an empty string
+        self.assertEqual(layer.bbox, "")
 
     def test_set_size(self):
         # Create a Layer object with a known bounding box
