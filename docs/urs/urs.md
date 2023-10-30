@@ -19,6 +19,7 @@ Alessandro Drago
 | 1.3 | 21/05/2023 | Alessandro Drago, Abdullah Al Foysal | Requirements are now refined. |
 | 1.4 | 27/05/2023 | Alessandro Drago | Updated the requirements. |
 | 1.5 | 17/06/2023 | Abdullah Al Foysal | Added the issues. |
+| 1.5 | 30/10/2023 | Alessandro Drago | Fixes. |
 
 
 # Table of Contents
@@ -97,7 +98,8 @@ Through workspaces and applications in the marketplace, researchers are able to 
 The document shall have a predefined template in which various information such as date, name, and logo of the company, images that were processed, and explanatory paragraphs of text are present.
 The images found in WASDI's workspace are in TIFF format and therefore before they are inserted into the document, they must be processed. 
 On the various servers in which these images are stored an instance of GeoServer is present. 
-So the idea is to take the images from the WASDI workspace, process them with GeoServer by, for example, selecting a certain area of that image, or applying a style, and return this image in a desirable format (PNG or GIF). 
+So the idea is to take the images from the WASDI workspace, process them with GeoServer by, for example, selecting a certain area of that image, or applying a style, and return this image in a desirable format (PNG or GIF). <br>
+Moreover, we would like to take the different layers in a workspace and overlay them in various ways by selecting the final bounding box from different options such as union, intersection or the bbox of a specific layer. After that we would like to generate this image in different formats such as PNG, JPG or GIF. The generated images should then be inserted into the report.
 
 <a name="p3"></a>
 
@@ -133,6 +135,7 @@ WASDI
 | 10.0 | The system should use the inputs to generate a list of images to add to the report. |M|
 | 11.0 | The report should display the logo of the company. |M|
 | 12.0 | The system should generate a GIF file from the set of satellite images. |D|
+| 13.0 | All the inputs of the should be validated to make the life easier to the user. |M|
 
 <a name="sp3.3"></a>
 ### 3.2 Non-Functional Requirements 
