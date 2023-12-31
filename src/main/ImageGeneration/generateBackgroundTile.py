@@ -5,6 +5,7 @@ import urllib.request
 
 import geotiler
 import wasdi
+
 from osgeo import gdal
 
 from src.main.ImageGeneration.tileConvert import bbox_to_xyz, tile_edges
@@ -54,11 +55,17 @@ def merge_tiles(input_pattern, output_path):
     :return: a single tile from all the fetched ones
     """
     # create the param string for gdal merge
-    params = ['/usr/bin/gdal_merge.py', '-o', output_path]
-    for name in glob.glob(input_pattern):
-        params.append(name)
-    # gdal command to merge tiles
-    os.system(' '.join(params))
+    # params = ['/usr/bin/gdal_merge.py', '-o', output_path]
+    # for name in glob.glob(input_pattern):
+    #     params.append(name)
+    # # gdal command to merge tiles
+    # os.system(' '.join(params))
+
+    # create the list of files to mosaic
+    files_to_mosaic = glob.glob(input_pattern)
+
+    # use gdal.Warp to mosaic the files
+    gdal.Warp(output_path, files_to_mosaic, format="GTiff", options=['COMPRESS=LZW', 'TILED=YES'])
 
 
 def georeference_raster_tile(x, y, z, path):
