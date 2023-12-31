@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 import owslib.util
 import requests
@@ -110,7 +111,7 @@ class Layer:
         except Exception as oEx:
             wasdi.wasdiLog(f'An error occurred: {repr(oEx)}')
             wasdi.updateStatus("ERROR", 0)
-            return None
+            sys.exit()
 
     def get_bounding_box_list(self):
         """
@@ -131,7 +132,6 @@ class Layer:
 
         except Exception as ex:
             wasdi.wasdiLog(f'An error occurred: {repr(ex)}')
-            wasdi.updateStatus("ERROR", 0)
             return None
 
     def set_size(self):
@@ -208,7 +208,7 @@ class Layer:
             # Handle any other error
             wasdi.wasdiLog(f'An unknown error occurred: {repr(oEx)}')
             wasdi.updateStatus("ERROR", 0)
-            return False  # Return False to indicate failure
+            sys.exit()
 
     def process_layer(self, b_stack_layers):
         """
@@ -243,7 +243,7 @@ class Layer:
             except Exception as ex:
                 wasdi.wasdiLog(f'An error occurred: {repr(ex)}')
                 wasdi.updateStatus("ERROR", 0)
-                return None
+                sys.exit()
 
             # Getting the bbox for each layer
             to_bounding_box_list = self.get_bounding_box_list()
