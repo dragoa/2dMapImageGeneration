@@ -1,3 +1,11 @@
-**TODO : Please modify this file according to the following**
+# Authors
 
-Fill the document with the authors and the contact references
+## Author 1
+
+- **Name:** Alessandro Drago
+- **GitHub:** [dragoa](https://github.com/dragoa)
+
+## Author 2
+
+- **Name:** Abdullah Al Foysal
+- **GitHub:** [Foysal440](https://github.com/Foysal440)
