@@ -1,0 +1,6 @@
+{
+    "USER": "YOUR USERNAME",
+    "PASSWORD": "YOUR PASSWORD",
+    "PARAMETERSFILEPATH": "./params.json",
+    "WORKSPACE": "WORKSPACE NAME"
+}

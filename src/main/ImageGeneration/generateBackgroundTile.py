@@ -54,13 +54,6 @@ def merge_tiles(input_pattern, output_path):
     :param output_path: output directory for saving final tile
     :return: a single tile from all the fetched ones
     """
-    # create the param string for gdal merge
-    # params = ['/usr/bin/gdal_merge.py', '-o', output_path]
-    # for name in glob.glob(input_pattern):
-    #     params.append(name)
-    # # gdal command to merge tiles
-    # os.system(' '.join(params))
-
     # create the list of files to mosaic
     files_to_mosaic = glob.glob(input_pattern)
 
