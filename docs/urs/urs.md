@@ -51,7 +51,6 @@ This paper introduces the Requirements Analysis for the Software Engineering cou
 
 ### 1.2 Definitios and Acronym
 
-
 | Acronym				| Definition | 
 | ------------------------------------- | ----------- | 
 | SE23                                 | Software Engineering course, 2023 at university of Genoa |
@@ -84,7 +83,9 @@ This paper introduces the Requirements Analysis for the Software Engineering cou
 ## 2. System Description
 <a name="sp2.15"></a>
 WASDI is an online platform that offers services to develop and deploy online applications that use satellite data. 
-The project involves the development of a platform that helps Earth Observation (EO) experts process satellite imagery on the cloud. The team is working on developing new software tools that can extract images and data from the results of the analytics tools present on the platform, in order to help communicate the results of the analyses to the stakeholders involved. The project aims to ease the communication of the results of the applications so that decision makers can better understand the phenomena they are dealing with and respond quickly to questions such as flood size, building count, and wildfire location.
+The project involves the development of a platform that helps Earth Observation (EO) experts process satellite imagery on the cloud. <br>
+The company would like a new software that can extract images and data from the results of the analytics tools present on the platform, in order to help communicate the results of the analyses to the stakeholders involved. <br> 
+The project aims to ease the communication of the results of the applications so that decision makers can better understand the phenomena they are dealing with and respond quickly to questions such as flood size, building count, and wildfire location.
 
 ### 2.1 Context and Motivation
 
@@ -97,7 +98,7 @@ There are also several applications in the Marketplace that are used to process 
 Through workspaces and applications in the marketplace, researchers are able to collect satellite data and run algorithms on them. Once this phase is finished, a required feature is the ability to create a report in PDF containing all the information from the processing. This report will then be given by the researchers to those less experienced users or stakeholders. 
 The document shall have a predefined template in which various information such as date, name, and logo of the company, images that were processed, and explanatory paragraphs of text are present.
 The images found in WASDI's workspace are in TIFF format and therefore before they are inserted into the document, they must be processed. 
-On the various servers in which these images are stored an instance of GeoServer is present. 
+On the various servers in which these images are stored an instance of GeoServer is present. <br>
 So the idea is to take the images from the WASDI workspace, process them with GeoServer by, for example, selecting a certain area of that image, or applying a style, and return this image in a desirable format (PNG or GIF). <br>
 Moreover, we would like to take the different layers in a workspace and overlay them in various ways by selecting the final bounding box from different options such as union, intersection or the bbox of a specific layer. After that we would like to generate this image in different formats such as PNG, JPG or GIF. The generated images should then be inserted into the report.
 
@@ -110,7 +111,7 @@ Moreover, we would like to take the different layers in a workspace and overlay 
 | M | **Mandatory:**   |
 | D | **Desiderable:** |
 | O | **Optional:**    |
-| E | **future Enhancement:** |
+| E | **Future Enhancement:** |
 
 <a name="sp3.1"></a>
 ### 3.1 Stakeholders
