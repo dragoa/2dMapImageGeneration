@@ -72,7 +72,7 @@ This paper introduces the Requirements Analysis for the Software Engineering cou
 
 ### 1.3 References 
 1. [WASDI Docs](https://wasdi.readthedocs.io/en/latest/index.html)
-2. [WASDI Youtube Channel]()
+2. [WASDI Youtube Channel](https://www.youtube.com/@wasdi3874/featured)
 3. [Some Reference](https://github.com/mnarizzano/se23-p08/tree/main/docs/ref)
 4. [GeoServer Docs](https://docs.geoserver.org/)
 5. [Web Map Service](https://www.ogc.org/standard/wms/)
